@@ -17,9 +17,9 @@ minimal_mistakes_skin    : "neon" #"default" # "air", "aqua", "contrast", "dark"
 
 # Site Settings
 locale                   : "en-US" 
-title                    : "پوررنگ آتشی"
+title                    : "مهدی جاوید"
 title_separator          : "-"
-name                     : "Poorang" 
+name                     : "Mahdi" 
 description              : "Welcome to my web site."
 url                      : # the base hostname & protocol for your site e.g. "https://mmistakes.github.io"
 baseurl                  : #the subpath of your site, e.g. "/blog"
@@ -84,9 +84,9 @@ naver_site_verification  :
 
 # Social Sharing
 twitter:
-  username               : sauleh_e
+  username               : mahdijavid1380
 facebook:
-  username               : sauleh.eetemadi
+  username               : mahdijavid1380
   app_id                 :
   publisher              :
 og_image                 : # Open Graph/Twitter default site image
@@ -107,35 +107,35 @@ analytics:
 
 # Site Author
 author:
-  name             : "Poorrang Atashi"
+  name             : "Mahdi Javid"
   avatar           : "/assets/images/bio-photo.jpg"
-  bio              : I'm an assistant professor of Computer Science at IUST. I enjoy learning new things and sharing what I know with others. So far I've learned some science, math, computers, NLP, IT, BJJ, MMA, swimming, diving, flying... 
+  bio              : I'm a student of Computer engineering at IUST. I enjoy learning new things and sharing what I know with others. So far I've learned some science, math, computers, NLP, IT, BJJ, MMA, swimming, diving, flying... 
   location         : "تهران"
-  email            : sauleh@gmail.com
-  twitter: sauleh_e
-  linkedin: sauleh
+  email            : mahdijavid1380@yahoo.com
+  twitter: https://twitter.com/mahdijavid1380
+  linkedin: https://www.linkedin.com/in/mahdi-javid-92166b181/
   google_scholar: Q25s5KkAAAAJ
-  github: sauleh
-  instagram: saulehe
+  github: https://mahdi-javid.github.io/mahdijavid/
+  instagram: https://www.instagram.com/mmahdi.javid/
   links:
     - label: "Email"
       icon: "fas fa-fw fa-envelope-square"
-      # url: mailto:your.name@email.com
+      # url: mailto:mahdijavid1380@yahoo.com
     - label: "Website"
       icon: "fas fa-fw fa-link"
-      # url: "https://your-website.com"
+      # url: "https://mahdi-javid.github.io/mahdijavid/"
     - label: "Twitter"
       icon: "fab fa-fw fa-twitter-square"
-      # url: "https://twitter.com/"
+      # url: "https://twitter.com/mahdijavid1380"
     - label: "Facebook"
       icon: "fab fa-fw fa-facebook-square"
-      # url: "https://facebook.com/"
+      # url: "https://www.facebook.com/mahdijavid1380"
     - label: "GitHub"
       icon: "fab fa-fw fa-github"
-      # url: "https://github.com/"
+      # url: "https://mahdi-javid.github.io/mahdijavid/"
     - label: "Instagram"
       icon: "fab fa-fw fa-instagram"
-      # url: "https://instagram.com/"
+      # url: "https://www.instagram.com/mmahdi.javid/"
 
 # Site Footer
 footer:
