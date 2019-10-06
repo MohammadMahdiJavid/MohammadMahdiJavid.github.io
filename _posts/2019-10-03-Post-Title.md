@@ -1,6 +1,6 @@
 ---
 layout: posts
-title:   ** 7 Ethical Hacking Certifications for Your IT Career **
+title: 7 Ethical Hacking Certifications for Your IT Career 
 ---
 avatar           : "/assets/images/eh-.jpg"
 ---
