@@ -2,10 +2,9 @@
 layout: posts
 title: 7 Ethical Hacking Certifications for Your IT Career 
 ---
--url: /assets/images/eh-.jpg
-    image_path: /assets/images/eh-.jpg
-    alt: "placeholder image 1"
-    title: "Image 1 title caption"
+
+image_path: /assets/images/eh-.jpg
+
     
 1. Certified Ethical Hacking Certification
 2. GIAC Penetration Tester
