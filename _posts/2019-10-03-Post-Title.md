@@ -3,7 +3,7 @@ layout: posts
 title: 7 Ethical Hacking Certifications for Your IT Career 
 ---
 
-image_path: /assets/images/eh-.jpg
+/assets/images/eh-.jpg
 
     
 1. Certified Ethical Hacking Certification
