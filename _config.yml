@@ -17,7 +17,7 @@ minimal_mistakes_skin    : "air" #"default" # "air", "aqua", "contrast", "dark",
 
 # Site Settings
 locale                   : "en-US" 
-title                    : "Personal website"
+title                    : "Personal Website"
 title_separator          : "-"
 name                     : "Mahdi" 
 description              : "Welcome to my web site."
