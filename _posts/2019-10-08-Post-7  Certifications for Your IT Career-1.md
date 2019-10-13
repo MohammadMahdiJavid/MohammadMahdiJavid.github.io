@@ -18,6 +18,7 @@ title: How to creat github websites
 
 First step:
 1-Create an account in [Github](https://github.com)
-    1-1- first go to [Github](https://github.com) website
-    1-2- click on sign up bottom on the righterntop of the screen
+    1-1- first, go to [Github](https://github.com) website
+    1-2- Click on sign up button on the top of the screen
+    ![alt text](https://github.com/mahdi-javid/mahdi-javid.github.io/blob/master/assets/images/Capture.PNG?raw=true "Sign up bottom")
 
