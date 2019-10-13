@@ -33,6 +33,22 @@ First step:
     ![alt text](https://github.com/mahdi-javidmahdi-javid.github.ioblob/master/assets/images/Capture5.PNGraw=true "verifying email2")
 
 Second step:
-    1-1-now you have a github account cheerup!
-    1-2-go to this url
+2-Making your personal website
+    2-1-now you have a github account cheerup!
+    2-2-go to this part of your panel by typing this URL:   www.github.com/your user name
+    e.g.: my username is Ali so I should go to github.com/Ali
+    ![alt text](https://github.com/mahdi-javidmahdi-javid.github.ioblob/master/assets/images/Capture6.PNGraw=true "typing URL")
+    2-3-After you did the recent step you should see this page if you aren't in this page check 2-2- step
+    ![alt text](https://github.com/mahdi-javidmahdi-javid.github.ioblob/master/assets/images/Capture7.PNGraw=true "typing URL")
+    2-4-click on **repositories** button
+    ![alt text](https://github.com/mahdi-javidmahdi-javid.github.ioblob/master/assets/images/Capture8.PNGraw=true "clicking on repositories1")
+    2-5-if you did the 2-4- step right your page should be like this picture
+    ![alt text](https://github.com/mahdi-javidmahdi-javid.github.ioblob/master/assets/images/Capture9.PNGraw=true "clicking on repositories2")
+    2-6-Then you should click on New button to make a new repository
+    ![alt text](https://github.com/mahdi-javidmahdi-javid.github.ioblob/master/assets/images/Capture10.PNGraw=true "making new repository1")
+    2-7-In the Repository name blank you should type your username like following images :
+    ![alt text](https://github.com/mahdi-javidmahdi-javid.github.ioblob/master/assets/images/Capture12.PNGraw=true "making new repository2")
+    ![alt text](https://github.com/mahdi-javidmahdi-javid.github.ioblob/master/assets/images/Capture11.PNGraw=true "making new repository3")
+
+
 
