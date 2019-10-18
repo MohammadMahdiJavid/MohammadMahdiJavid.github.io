@@ -56,7 +56,7 @@ Third part:<br />
       ![alt text](https://github.com/mahdi-javid/mahdi-javid.github.io/blob/master/assets/images/Capture27.PNG?raw=true  "typing URL")<br />
     3-3- Then download will automatically start if no do the following steps (2-4 and 2-5)
     3-4- you should go to this website (https://git-scm.com/download/win) [URL](https://git-scm.com/download/win) like following image :
-      ![alt text](https://github.com/mahdi-javid/mahdi-javid.github.io/blob/master/assets/images/Capture28.PNG?raw=true  "typing URL")<br />
+    ![alt text](https://github.com/mahdi-javid/mahdi-javid.github.io/blob/master/assets/images/Capture28.PNG?raw=true"typing URL")<br />
     3-5- Then you should click on download links depend on your OS e.g. my windows is 64 bit so I click on 64 bit like the following image and your download will start :
     ![alt text](https://github.com/mahdi-javid/mahdi-javid.github.io/blob/master/assets/images/Capture29.PNG?raw=true  "typing URL")<br />
     3-6- after you download it open git.exe and start to install the app :
