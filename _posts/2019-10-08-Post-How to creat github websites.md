@@ -107,3 +107,22 @@ Third part:<br />
     ![alt text](https://github.com/mahdi-javid/mahdi-javid.github.io/blob/master/assets/images/Capture48.PNG?raw=true "repository")<br />
 3-23- if your commandprompt page changed like that you did all the steps right and go the Fourth part<br />
     ![alt text](https://github.com/mahdi-javid/mahdi-javid.github.io/blob/master/assets/images/Capture48.PNG?raw=true  "typing URL")<br />
+
+fourth part :
+4-personalizing your website :
+  4-1- open visual studio code 
+  4-2- click on file and then click on open folder or use (ctrl + o) :
+  ![alt text](https://github.com/mahdi-javid/mahdi-javid.github.io/blob/master/assets/images/Capture66.PNG?raw=true  "typing URL")<br />
+  4-3- and then go to Dev directory that you made use this C:\dev\ and then click on select folder
+  ![alt text](https://github.com/mahdi-javid/mahdi-javid.github.io/blob/master/assets/images/Capture67.PNG?raw=true  "typing URL")<br />
+  4-4- then your visual studio code will be like this :
+  ![alt text](https://github.com/mahdi-javid/mahdi-javid.github.io/blob/master/assets/images/Capture68.PNG?raw=true  "typing URL")<br />
+  4-5- then click on _config.yml and lets start changes :
+  ![alt text](https://github.com/mahdi-javid/mahdi-javid.github.io/blob/master/assets/images/Capture69.PNG?raw=true  "typing URL")<br />
+
+fifth part :
+5- personalizing website::
+  5-1- you can change these parts with your name and etc .....
+  ![alt text](https://github.com/mahdi-javid/mahdi-javid.github.io/blob/master/assets/images/Capture70.PNG?raw=true  "typing URL")<br />
+  ![alt text](https://github.com/mahdi-javid/mahdi-javid.github.io/blob/master/assets/images/Capture71.PNG?raw=true  "typing URL")<br />
+  5-2- you can change your website's CV and other parts too
