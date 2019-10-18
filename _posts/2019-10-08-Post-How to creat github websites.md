@@ -81,7 +81,7 @@ Third part:<br />
     ![alt text](https://github.com/mahdi-javid/mahdi-javid.github.io/blob/master/assets/images/Capture39.PNG?raw=true  "typing URL")<br />
     3-16- after install finished you should see this Pic:
     ![alt text](https://github.com/mahdi-javid/mahdi-javid.github.io/blob/master/assets/images/Capture40.PNG?raw=true  "typing URL")<br />
-    3-17- if you want to make sure that you installed git.exe correctly you can open CMD (2-18 and 2-19 steps):<br />
+    3-17- if you want to make sure that you installed git.exe correctly you can open CMD (3-18 and 3-19 steps):<br />
     3-18- in your windows search blank type CMD like following image :
     ![alt text](https://github.com/mahdi-javid/mahdi-javid.github.io/blob/master/assets/images/Capture41.PNG?raw=true  "typing URL")<br />
     3-19- Then you should run command prompt :
@@ -90,7 +90,8 @@ Third part:<br />
     ![alt text](https://github.com/mahdi-javid/mahdi-javid.github.io/blob/master/assets/images/Capture43.PNG?raw=true  "typing URL")<br />
     3-21- your commandprompt page should change like this :
     ![alt text](https://github.com/mahdi-javid/mahdi-javid.github.io/blob/master/assets/images/Capture44.PNG?raw=true  "typing URL")<br />
-    3-22- if your commandprompt page changed like that you did all the steps right and go the Fourth part<br />
+    3-22- 
+    3-23- if your commandprompt page changed like that you did all the steps right and go the Fourth part<br />
     ![alt text](https://github.com/mahdi-javid/mahdi-javid.github.io/blob/master/assets/images/Capture48.PNG?raw=true  "typing URL")<br />
 
 
