@@ -47,7 +47,10 @@ Making personal website:<br />
      ![alt text](https://github.com/mahdi-javid/mahdi-javid.github.io/blob/master/assets/images/Capture55.PNG?raw=true "verifying email2")<br />
 2-6-if you did the previous step right your webpage should be like this :
   ![alt text](https://github.com/mahdi-javid/mahdi-javid.github.io/blob/master/assets/images/Capture56.PNG?raw=true "verifying email2")<br />
-2-7- then click on your repository
+2-7- then click on your personal_website_template repository or you can go to this [URL](https://github.com/alimahdireza/personal_website_template):
+  ![alt text](https://github.com/mahdi-javid/mahdi-javid.github.io/blob/master/assets/images/Capture57.PNG?raw=true "verifying email2")<br />
+  ![alt text](https://github.com/mahdi-javid/mahdi-javid.github.io/blob/master/assets/images/Capture58.PNG?raw=true "verifying email2")<br />
+  
 
 
 
