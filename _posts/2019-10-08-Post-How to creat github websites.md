@@ -27,10 +27,39 @@ First part:<br />
       ![alt text](https://github.com/mahdi-javid/mahdi-javid.github.io/blob/master/assets/images/Capture2.PNG?raw=true "plan")<br />
     1-5-The customize part is optional and you can skip this part as we do for this course<br />
       ![alt text](https://github.com/mahdi-javid/mahdi-javid.github.io/blob/master/assets/images/Capture3.PNG?raw=true "customize part")<br />
-    1-6-Then you need to verify your email address if that isn't in your inbox please check the spam too<br />
+    1-6-Then you need to verify your email address if email isn't in your inbox please check the spam too<br />
       ![alt text](https://github.com/mahdi-javid/mahdi-javid.github.io/blob/master/assets/images/Capture4.PNG?raw=true "verifying email1")<br />
     1-7-Click on verify email address button<br />
       ![alt text](https://github.com/mahdi-javid/mahdi-javid.github.io/blob/master/assets/images/Capture5.PNG?raw=true "verifying email2")<br />
+
+second part:<br />
+Making personal website:<br />
+2-1- go to this [URL](https://github.com/sauleh/personal_website_template) like following image :<br />
+  ![alt text](https://github.com/mahdi-javid/mahdi-javid.github.io/blob/master/assets/images/Capture51.PNG?raw=true "verifying email2")<br />
+2-2- then click on fork button :
+  ![alt text](https://github.com/mahdi-javid/mahdi-javid.github.io/blob/master/assets/images/Capture52.PNG?raw=true "verifying email2")<br />
+2-3- if this page appears click on refresh button if not so calm down you don't need to be worry:
+  ![alt text](https://github.com/mahdi-javid/mahdi-javid.github.io/blob/master/assets/images/Capture53.PNG?raw=true "verifying email2")<br />
+2-4- if you did 2-2 step right your browser page should be like this and fork button will be disabled :
+  ![alt text](https://github.com/mahdi-javid/mahdi-javid.github.io/blob/master/assets/images/Capture54.PNG?raw=true "verifying email2")<br />
+2-5- then go to your repositories :
+   1-go to this [URL](https://github.com/your username?tab=repositories) (put your username in this URL)
+     ![alt text](https://github.com/mahdi-javid/mahdi-javid.github.io/blob/master/assets/images/Capture55.PNG?raw=true "verifying email2")<br />
+2-6-if you did the previous step right your webpage should be like this :
+  ![alt text](https://github.com/mahdi-javid/mahdi-javid.github.io/blob/master/assets/images/Capture56.PNG?raw=true "verifying email2")<br />
+2-7- then click on your repository
+
+
+
+
+
+
+
+
+
+
+
+
 
 Second part:<br />
 2-Download Git app <br />
