@@ -125,4 +125,5 @@ fifth part :
   5-1- you can change these parts with your name and etc .....
   ![alt text](https://github.com/mahdi-javid/mahdi-javid.github.io/blob/master/assets/images/Capture70.PNG?raw=true  "typing URL")<br />
   ![alt text](https://github.com/mahdi-javid/mahdi-javid.github.io/blob/master/assets/images/Capture71.PNG?raw=true  "typing URL")<br />
-  5-2- you can change your website's CV and other parts too
+  5-2- you can change your website's CV and other parts too:
+  ![alt text](https://github.com/mahdi-javid/mahdi-javid.github.io/blob/master/assets/images/Capture72.PNG?raw=true  "typing URL")<br />
