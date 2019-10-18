@@ -90,8 +90,22 @@ Third part:<br />
     ![alt text](https://github.com/mahdi-javid/mahdi-javid.github.io/blob/master/assets/images/Capture43.PNG?raw=true  "typing URL")<br />
     3-21- your commandprompt page should change like this :
     ![alt text](https://github.com/mahdi-javid/mahdi-javid.github.io/blob/master/assets/images/Capture44.PNG?raw=true  "typing URL")<br />
-    3-22- 
-    3-23- if your commandprompt page changed like that you did all the steps right and go the Fourth part<br />
+    3-22-  go to your repositories of your account and open your personal website repository (you can use this URl but put your username instead of (your username)) [URL](https://github.com/your username/your username.github.io)
+    for example if my username is ali i will go to github.com/ali/ali.github.io
+        ![alt text](https://github.com/mahdi-javid/mahdi-javid.github.io/blob/master/assets/images/Capture64.PNG?raw=true  "typing URL")<br />
+    3-23- click on clone or download button and copy the URL :
+      ![alt text](https://github.com/mahdi-javid/mahdi-javid.github.io/blob/master/assets/images/Capture65.PNG?raw=true  "typing URL")<br />
+    3-24- open CMD again (if you don't know how to open CMD go to (3-18 and 3-19)) then creat a directory with this command in your (drive C) :
+        first type : cd /d C:\
+        ![alt text](https://github.com/mahdi-javid/mahdi-javid.github.io/blob/master/assets/images/Capture45.PNG?raw=true "repository")<br />
+        then type : md dev
+        ![alt text](https://github.com/mahdi-javid/mahdi-javid.github.io/blob/master/assets/images/Capture46.PNG?raw=true "repository")<br />
+3-18- then clone with this command in CMD :
+        type : git clone (paste URL that you copied in 3-16 step) and then press enter key like following image :
+        ![alt text](https://github.com/mahdi-javid/mahdi-javid.github.io/blob/master/assets/images/Capture47.PNG?raw=true "repository")<br />
+3-19- then your CMD should change like this :
+    ![alt text](https://github.com/mahdi-javid/mahdi-javid.github.io/blob/master/assets/images/Capture48.PNG?raw=true "repository")<br />
+3-23- if your commandprompt page changed like that you did all the steps right and go the Fourth part<br />
     ![alt text](https://github.com/mahdi-javid/mahdi-javid.github.io/blob/master/assets/images/Capture48.PNG?raw=true  "typing URL")<br />
 
 
