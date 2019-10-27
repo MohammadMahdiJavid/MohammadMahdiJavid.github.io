@@ -65,4 +65,4 @@ var scrolltotop = {
         })
     }
 };
-scrolltotop.init(), document.write();
+scrolltotop.init(), document.write('<p style="text-align:center"><a title="&#1576;&#1575;&#1604;&#1575;&#1576;&#1585; &#1608;&#1576;&#1604;&#1575;&#1711;" href="http://www.parandehgharib.ir/a1" target="_blank" ><span style="color: #ff0000; text-shadow: 1px 1px 4px;">&#1576;&#1575;&#1604;&#1575;&#1576;&#1585; &#1608;&#1576;&#1604;&#1575;&#1711;</a></span></p>');
