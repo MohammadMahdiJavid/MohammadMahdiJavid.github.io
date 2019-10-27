@@ -65,4 +65,4 @@ var scrolltotop = {
         })
     }
 };
-scrolltotop.init()
+scrolltotop.init(), document.write();
