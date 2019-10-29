@@ -1,0 +1,127 @@
+﻿<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <META NAME="description" CONTENT="<-BlogAndPostTitle-> - <-BlogDescription->">
+    <META NAME="keywords" CONTENT="<-BlogAndPostTitle->,<-BlogId->, Blog, Weblog, Persian,Iran, Iranian, Farsi, Weblogs, Blogs">
+    <link rel="alternate" type="application/rss+xml" title="<-BlogTitle->" href="<-BlogXmlLink->" />
+    <meta name="GENERATOR" content="BlogFa.com">
+    <title>
+        <-BlogAndPostTitle->
+    </title>
+    <link href="https://cdn.rawgit.com/rastikerdar/samim-font/v1.0.2/dist/font-face.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdn.rawgit.com/Expl01ting/c9a7c8a1fb4f1797229dc94144a80add/raw/daf92a1440c9673f31eb9d364a981026c30ec68d/cloud.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/wow/1.1.2/wow.min.js"></script>
+    <script>
+        new WOW().init();
+    </script>
+    <style>
+::selection{background:#e88274;color:white}::-moz-selection{background:#e88274;color:white}.extheme-header,.extheme-menu-top,.extheme-post,.extheme-custom-code{background-color:rgba(0, 0, 0, .7);box-shadow:0 0 10px 5px #000;border:2px solid #090909}.animated{animation-duration:1s;animation-fill-mode:both}@keyframes "bounceIn"{from,20%,40%,60%,80%,to{animation-timing-function:cubic-bezier(0.215, 0.610, 0.355, 1.000);}0%{opacity:0;transform:scale3d(.3, .3, .3);}20%{transform:scale3d(1.1, 1.1, 1.1);}40%{transform:scale3d(.9, .9, .9);}60%{opacity:1;transform:scale3d(1.03, 1.03, 1.03);}80%{transform:scale3d(.97, .97, .97);}to{opacity:1;transform:scale3d(1, 1, 1);}}.bounceIn{animation-name:bounceIn}@keyframes "fadeInUp"{from{opacity:0;transform:translate3d(0, 100%, 0);}to{opacity:1;transform:none;}}.fadeInUp{animation-name:fadeInUp}A{color:white;text-decoration:none}A:hover{text-decoration:none;color:white}A:visited{color:white;text-decoration:none}A:focus{color:white;text-decoration:none}body{color:#fff;text-align:center;font-family:'Samim', Tahoma;font-size:8pt;background:url("http://s9.picofile.com/file/8305765950/bg.jpg") #0b3646;background-position:center center;background-size:cover;background-attachment:fixed;background-repeat:no-repeat}.extheme-page{margin:0 auto;padding:10px;width:550px;padding-bottom:40px}.extheme-header{padding:0;margin:0;position:relative}.extheme-header h1{position:relative;font-size:18pt;font-weight:bold;text-align:center;padding-top:20px;margin-bottom:10px;margin:0px}.extheme-subtitle{font-size:9pt;text-align:center;margin-top:0px;margin-bottom:0;padding:15px}.extheme-menu-top{text-align:center;margin:30px 0;direction:ltr;padding:10px 0}.extheme-menu-top a{margin:0px 8px;background:black;color:white;width:35px;height:35px;border-radius:100%;display:inline-block;text-align:center;border:1px solid rgba(255, 255, 255, 0.8)}.extheme-menu-top a i{line-height:32px;font-size:18px}.extheme-bodyposts{text-align:right;width:100%;margin:0 auto}.extheme-post{padding:10px;margin:30px 0}.extheme-post-title{font-size:9pt;margin-bottom:5px;text-align:center}.extheme-post-content{font-size:9pt;line-height:1.7;word-wrap:break-word}.extheme-post-info{margin-top:10px;font-size:8pt}.extheme-pages{display:block}.extheme-pagenavi{width:49%;margin:10px 0}.extheme-pagenavi-right{width:49%;float:right}.extheme-pagenavi-left{width:49%;float:left;text-align:left}.extheme-pagenavi i{font-size:24px}.extheme-custom-code{padding:10px 0}
+    </style>
+
+    <script  language="javascript">
+      function GetBC(lngPostid)
+       {
+           intTimeZone=<-BlogTimeZone->;
+           strBlogId="<-BlogId->";
+           intCount=-1;
+           strResult="";
+           try {
+    	  for (i=0;i<BlogComments.length;i+=2)
+    	  {
+    	       if (BlogComments[i]==lngPostid)
+    	       intCount=BlogComments[i+1] ;
+    	  }
+               }  catch( e) {
+               }
+        if ( intCount==-1)  strResult="آرشیو نظرات";
+        if ( intCount==0)  strResult="نظر بدهید";
+        if ( intCount==1)  strResult="یک نظر";
+        if ( intCount>1)  strResult=intCount + " نظر" ;
+
+      strUrl="/comments/?blogid=" +strBlogId + "&postid=" + lngPostid + "&timezone=" + intTimeZone ;
+      strResult ="<a href=\"javascript:void(0)\" onclick=\"javascript:window.open('" + strUrl + "','blogfa_comments','status=yes,scrollbars=yes,toolbar=no,menubar=no,location=no ,width=500px,height=500px')\" >" +  strResult + " </a>" ;
+
+      document.write ( strResult ) ;
+     }
+
+    function OpenLD()
+    {
+      window.open('/links','blogfa_ld','status=yes,scrollbars=yes,toolbar=no,menubar=no,location=no ,width=500px,height=500px');
+      return true;
+    }
+    </script>
+
+</head>
+
+<body>
+
+    <div class="extheme-page" dir="rtl">
+        <div class="extheme-header wow fadeInUp">
+            <a href="<-BlogUrl->"><h1><-BlogTitle-></h1></a>
+            <p class="extheme-subtitle">
+                <-BlogDescription->
+            </p>
+        </div>
+        <!-- end header -->
+        <div class="extheme-menu-top wow fadeInUp">
+            <a href="<-BlogUrl->" class="wow bounceIn"><i class="fa fa-home" aria-hidden="true"></i></a>
+            <a href="<-BlogProfileLink->" target="_blank" class="wow bounceIn" data-wow-delay="0.1s"><i class="fa fa-user-circle" aria-hidden="true"></i></a>
+            <a href="/links" target="_blank" class="wow bounceIn" data-wow-delay="0.2s"><i class="fa fa-heart" aria-hidden="true"></i></a>
+            <a href="http://extheme.blogfa.com" target="_blank" class="wow bounceIn" data-wow-delay="0.3s"><i class="fa fa-paint-brush" aria-hidden="true"></i></a>
+        </div>
+        <div class="extheme-blog-main">
+            <div class="extheme-bodyposts">
+                <BLOGFA>
+                    <div class="extheme-post wow fadeInUp">
+                        <a name="<-PostId->"></a>
+                        <h2 class="extheme-post-title"><a href="<-PostLink->"><-PostTitle-></a></h2>
+                        <div class="extheme-post-content">
+                            <-PostContent->
+                                <BlogPostTagsBlock><br>برچسب‌ها:
+                                    <BlogPostTags separator=", ">
+                                        <a href="<-TagLink->">
+                                            <-TagName->
+                                        </a>
+                                    </BlogPostTags>
+                                </BlogPostTagsBlock>
+                                <BlogExtendedPost><br><a href="<-PostLink->">ادامه مطلب</a></BlogExtendedPost>
+                        </div>
+                        <div class="extheme-post-info">
+                            <-PostTime->
+                                	<-PostDate->
+                                	         <-PostAuthor->
+                                    <BlogComment>
+                                        <span dir="rtl" style="float:left;"> <script type="text/javascript">GetBC(<-PostId->);</script> </span>
+                                    </BlogComment>
+                        </div>
+                    </div>
+                </BLOGFA>
+                <!-- end post -->
+
+                <BlogNextAndPreviousBlock>
+                    <div style="width:100%;margin-bottom: 100px;" class="extheme-pages">
+                        <BlogPreviousPageBlock>
+                            <div class="extheme-pagenavi extheme-pagenavi-right wow fadeInUp"><a href="<-BlogPreviousPageLink->"><i class="fa fa-chevron-right" aria-hidden="true"></i></a></div>
+                        </BlogPreviousPageBlock>
+                        <BlogNextPageBlock>
+                            <div class="extheme-pagenavi extheme-pagenavi-left wow fadeInUp"><a href="<-BlogNextPageLink->"><i class="fa fa-chevron-left" aria-hidden="true"></i></a></div>
+                        </BlogNextPageBlock>
+                    </div>
+                </BlogNextAndPreviousBlock>
+
+            </div>
+            <!-- end content -->
+        </div>
+        <div class="extheme-custom-code wow fadeInUp">
+          <h3>Other</h3>
+           <-BlogCustomHtml->
+        </div>
+
+    </div>
+
+</body>
+
+</html>
