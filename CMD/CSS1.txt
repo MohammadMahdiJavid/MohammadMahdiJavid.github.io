@@ -1,0 +1,72 @@
+/* GreenSkin.ir
+ * CSS GreenSkin theme V2
+ * http://www.GreenSkin.ir
+ * Copyright (c) 2015 Vahid Darbandi
+ * Date: 1393/12/24 12:00:00 (Mo, 2015 March 18) */
+ @font-face {font-family: 'BYekan';src: url('http://fontonline.ir/fonts/BYekan.eot?#') format('eot'),url('http://fontonline.ir/fonts/BYekan.ttf') format('truetype'),url('http://fontonline.ir/fonts/BYekan.woff') format('woff');}
+body{margin:0;font-family:'BYekan',Tahoma;background:#edeced url('../images/site-background.jpg')repeat;text-algin:right;direction:rtl;}
+h1{font-size:16px;font-family:'BYekan',Tahoma;font-weight: normal;}
+h2{font-size:14px;font-family:'BYekan',Tahoma;font-weight: normal;}
+h3{font-size:14px;font-family:'BYekan',Tahoma;font-weight: normal;}
+h4{font-size:12px;font-family:'BYekan',Tahoma;font-weight: normal;}
+h5{font-size:12px;font-family:'BYekan',Tahoma;font-weight: normal;}
+h6{font-size:12px;font-family:'BYekan',Tahoma;font-weight: normal;}
+a {text-decoration: none;color: #111;}
+a:hover {color: #999;}
+h2 a{color: #fff;}
+input[type="text"] {border: 1px solid #dcdcdc;padding: 10px;font: 11px Tahoma, Arial;transition: all 0.5s ease 0s;-webkit-box-shadow: inset 3px 4px 4px 0px rgba(223,223,223,1);-moz-box-shadow: inset 3px 4px 4px 0px rgba(223,223,223,1);box-shadow: inset 3px 4px 4px 0px rgba(223,223,223,1);}
+input[type="password"] {border: 1px solid #dcdcdc;padding: 10px;font: 11px Tahoma, Arial;transition: all 0.5s ease 0s;-webkit-box-shadow: inset 3px 4px 4px 0px rgba(223,223,223,1);-moz-box-shadow: inset 3px 4px 4px 0px rgba(223,223,223,1);box-shadow: inset 3px 4px 4px 0px rgba(223,223,223,1);}
+input[type="submit"] {background: #ff4e00;border: 0;color: #fff;padding: 5px;font: 16px Tahoma;transition: all 0.5s ease 0s;cursor: pointer;}
+input[type="submit"]:hover {background-color: #696969;}
+input[type="button"] {background: #ff4e00;border: 0;color: #fff;padding: 5px;font: 16px Tahoma;transition: all 0.5s ease 0s;cursor: pointer;}
+input[type="button"]:hover {background-color: #696969;}
+input[type="reset"] {background: #ff4e00;border: 0;color: #fff;padding: 5px;font: 16px Tahoma;transition: all 0.5s ease 0s;cursor: pointer;}
+input[type="reset"]:hover {background-color: #696969;}
+.fr {float: right;}
+.fl {float: left;}
+.GreenSkin{width:1000px;background:#edeced;display:block; margin-left:auto; margin-right:auto;margin-top:-8px;-moz-box-shadow:0px 3px 12px 4px #999;-webkit-box-shadow: 0px 3px 12px 4px #999;box-shadow:0px 3px 12px 4px #999;}
+header{width:100%;color:#fff;background:#222 url('../images/header.jpg');no-repeat top;height:334px;vertical-align:top;direction:rtl;}
+header #GS_Slider{position:absolute;padding:96px 584px 0px 0px;}
+header nav{height:30px;width:650px;float: left;bottom:0px;position:relative;top:35px;display:block;}
+header nav ul {margin: 5px -20px 0 3px;list-style: none;list-style-position: inside;}
+header nav ul li a {color: #fff!important;font-weight: normal;}
+header nav ul li {float: right;padding: 9px 12px 7px 12px;transition: all 0.5s ease;border-left: 1px solid #5f5f5f;font-size: 12px;font-family:'BYekan',Tahoma;text-shadow: 1px 1px 0 #000;}
+header nav ul li:hover {background: #606060;text-shadow: 1px 1px 0 #696969;}
+header nav ul li:hover a {color: #eee;text-shadow: 1px 1px 0 #000;}
+header nav .GSSearch{position:relative;margin:0px 0px 0px 10px;padding:6px;}
+header nav .GSSearch input[type=text] {;background:#efefef;width:150px;transition: all 0.8s ease;direction:rtl;padding:6px 10px 6px 8px;margin-left:-6px;text-align:right;}
+header nav .GSSearch input[type=text]:focus {background:#fff;width:200px;direction:ltr;}
+header nav .GSSearch input[type="submit"] {background: #2c2d0c;border: 0;color: #fff;padding:6px 10px 7px 10px;font: 12px Tahoma;transition: all 0.5s ease 0s;cursor: pointer;}
+header nav .GSSearch input[type="submit"]:hover {background-color: #696969;}
+section{width:553px;display:block;float:right;margin-bottom:12px;}
+section article{width:543px;background:#eaeaea;direction:rtl;color:#111;font-size:12px;border:1px #999 solid;display:block;margin:12px 5px 0px 4px;-moz-box-shadow:1px 1px 5px 1px #999;-webkit-box-shadow: 1px 31px 5px 1px #999;box-shadow:1px 1px 5px 1px #999;}
+section article h2{background:#202020;color:#eee;padding:10px;/**/margin-right:20px;}
+section article h2 span{background:url(../images/wal.png) right no-repeat;height:50px;width:50px;float:right;position:relative;margin:-15px -30px 0px 5px;}
+section article .GSPostMain{padding:10px;}
+section article .GSPostMain .meta{margin-top: 10px;}
+section article .GSPostMain .meta span{display: inline-block;font-family:'BYekan',Tahoma;}
+section article .GSPostMain .meta span.more {padding:10px;background: #b04300;text-shadow: 1px 1px 0 #696969;font: 11px;}
+section article .GSPostMain .meta span.date {padding:10px;background: #818181;text-shadow: 1px 1px 0 #696969;font: 11px;color: #fff;}
+section article .GSPostMain .meta span.user {padding:10px;background: #414141;text-shadow: 1px 1px 0 #696969;font: 11px;color: #fff;}
+section article .GSPostMain .meta span.comment {padding:10px;background: #e36407;text-shadow: 1px 1px 0 #696969;font: 11px;color: #fff;}
+section article .GSPostMain .meta span.more a,.meta span.comment a {color: #fff;padding: 5px;}
+section article .GSPostMain .meta span.more:hover{background: #202020;text-shadow: 1px 1px 0 #696969;transition: all 0.5s ease;}
+section article .GSPostMain .meta span.date:hover{background: #202020;text-shadow: 1px 1px 0 #696969;transition: all 0.5s ease;}
+section article .GSPostMain .meta span.user:hover{background: #202020;text-shadow: 1px 1px 0 #696969;transition: all 0.5s ease;}
+section article .GSPostMain .meta span.comment:hover{background: #202020;text-shadow: 1px 1px 0 #696969;transition: all 0.5s ease;}
+aside{width:220px;margin-bottom:12px;}
+.GSside-1{display:block;float:right;}
+.GSside-2{display:block;float:right;}
+aside nav{width:210px;background:#eaeaea;direction:rtl;color:#111;font-size:12px;margin:12px 5px 0px 4px;border:1px #999 solid;-moz-box-shadow:1px 1px 5px 1px #999;-webkit-box-shadow: 1px 1px 5px 1px #999;box-shadow:1px 1px 5px 1px #999;}
+aside nav p{padding:0px 5px 0px 5px;color:#111;text-align: justify;font-size:12px;text-shadow: 1px 1px 0 #eee;}
+aside nav h3{background:#202020;color:#eee;padding:10px;/**/margin-right:20px;}
+aside nav h3 span{background:url(../images/wal.png) right no-repeat;height:50px;width:50px;float:right;position:relative;margin:-15px -30px 0px 5px;}
+aside nav ul{margin-right: -30px;color:#111;}
+aside nav ul li{padding: 6px 25px 7px 8px;background: #ddd url(../images/ul-li.png) right 6px center no-repeat;margin: 5px 5px 5px 15px;font: 14px;font-family:'BYekan',Tahoma;text-shadow: 1px 1px 0 #bbb;transition: all 0.5s ease;overflow: hidden;}
+aside nav ul li:hover a{color: #fff;}
+aside nav ul li:hover{background: #d37305 url(../images/ul-li.png) right 14px center no-repeat;text-shadow: 1px 1px 0 #696969;padding-right:33px;}
+.clear{clear:both;}
+footer{width:100%;text-align:center;background:url('../images/footer.png') repeat;height:130px;font-size:12px;color:#fff;display:block;}
+footer span{margin:105px 0px 0px 0px;width:100%;float:right;bottom:0px;position:relative;}
+footer span a{color:#fff;}
+footer span a:hover{color:#eee} 
