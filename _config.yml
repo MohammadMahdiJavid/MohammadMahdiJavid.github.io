@@ -136,6 +136,9 @@ author:
     - label: "Instagram"
       icon: "fab fa-fw fa-instagram"
       # url: "https://www.instagram.com/mmahdi.javid/"
+    - label: "Calendly"
+      icon: "fas fa-calendar-alt"
+      url: "https://calendly.com/mahdijavid"
 
 # Site Footer
 footer:
@@ -158,6 +161,9 @@ footer:
     - label: "Instagram"
       icon: "fab fa-fw fa-instagram"
       # url:
+    - label: "Calendly"
+      icon: "fas fa-calendar-alt"
+      url: "https://calendly.com/mahdijavid"
 
 
 # Reading Files
