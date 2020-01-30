@@ -35,10 +35,9 @@ title: FinalExam
 <h3>Reason: insufficient time</h3>
 <h3>New things that i learned = nothing</h3>
 
+<br><br>
 
-
-
-
+--------
 
 <h2>q9_view_memory</h2>
 <h3>
@@ -46,7 +45,7 @@ title: FinalExam
       char id[9];
       char name[30];
   }student;
-  
+
   char* get_std_ptr1(student* ps)
   {
       char* ps2 = (char*)ps;
@@ -62,7 +61,7 @@ title: FinalExam
 <h3>Reason: insufficient time</h3>
 <h3>New things that i learned = nothing</h3>
 
-
+<br><br><br><br>
 <!-- 
 First part:<br />
 1-Create an account in [Github](https://github.com)<br />
