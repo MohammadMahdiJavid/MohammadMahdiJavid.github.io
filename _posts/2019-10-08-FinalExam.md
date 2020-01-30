@@ -11,7 +11,9 @@ title: FinalExam
 
 <br><br>
 
-============================================================================================================================================
+----
+----
+----
 
 <h2>q9_view_memory</h2>
 <img src="https://github.com/mahdi-javid/mahdi-javid.github.io/blob/master/Final-Exam/Annotation%202020-01-30%20102204.jpg?raw=true">
