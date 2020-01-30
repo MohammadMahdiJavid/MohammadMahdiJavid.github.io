@@ -3,7 +3,7 @@ layout: posts
 title: FinalExam
 ---
 
-<center><h1><color= "red">Problems that I couldn't solve in the finalExam</color=></h1></center> 
+<center><h1>Problems that I couldn't solve in the finalExam</h1></center> 
 <h2>q4_count_pattern</h2>
 <img src="https://github.com/mahdi-javid/mahdi-javid.github.io/blob/master/Final-Exam/Annotation%202020-01-30%20102238.jpg?raw=true">
 <h3>Reason: insufficient time</h3>
