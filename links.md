@@ -9,8 +9,8 @@ comments: false
 ---
 
 
-* [Linkedin](linkedin.com/in/mohammad-mahdi-javid)
-* [DataCamp](datacamp.com/profile/mahdijavid1380)
-* [Coursera](coursera.org/user/8f433bca8bdb9a4058f8e245a4a52750)
+* [Linkedin](https://www.linkedin.com/in/mohammad-mahdi-javid/)
+* [DataCamp](https://www.datacamp.com/profile/mahdijavid1380)
+* [Coursera](https://www.coursera.org/user/8f433bca8bdb9a4058f8e245a4a52750)
 * [My Personal Website](https://mahdi-javid.github.io/)
 
