@@ -17,7 +17,7 @@ minimal_mistakes_skin    : "air" #"default" # "air", "aqua", "contrast", "dark",
 
 # Site Settings
 locale                   : "en-US" 
-title                    : "Personal Website"
+title                    : "MohammadMahdi Javid"
 title_separator          : "-"
 name                     : "MohammadMahdi" 
 description              : "Welcome to my web site."
@@ -109,14 +109,16 @@ analytics:
 author:
   name             : "MohammadMahdi Javid"
   avatar           : "/assets/images/photo_2019-10-31_22-42-03.jpg"
-  bio              : I'm a student of Computer engineering at IUST. I enjoy learning new things and sharing what I know with others. and I'm interested in computer and information security.
+  bio              : "Hi Hallo سلام😊\n
+                      I'm a Security geek 🐧 \n
+                      who loves Linux and Web Application Security \n"
   location         : "تهران"
   email            : mahdijavid1380@yahoo.com
   twitter: mahdijavid1380
   linkedin: mohammadmahdijavid
-  google_scholar: Q25s5KkAAAAJ
-  github: mahdi-javid
-  instagram: m.mahdijavid/
+  google_scholar: ruUtSOgAAAAJ
+  github: mohammadmahdijavid
+  instagram: m.mahdijavid
   links:
     - label: "Email"
       icon: "fas fa-fw fa-envelope-square"
@@ -199,7 +201,7 @@ exclude:
 keep_files:
   - .git
   - .svn
-encoding: "utf-8"
+encoding: "UTF-8"
 markdown_ext: "markdown,mkdown,mkdn,mkd,md"
 
 
