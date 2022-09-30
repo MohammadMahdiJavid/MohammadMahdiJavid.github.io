@@ -119,14 +119,15 @@ author:
   google_scholar: ruUtSOgAAAAJ
   github: mohammadmahdijavid
   instagram: m.mahdijavid
+  uri: https://www.mohammadmahdijavid.ir/
   links:
     - label: "Email"
       icon: "fas fa-fw fa-envelope-square"
       url: mailto:mahdijavid1380@yahoo.com
-    - label: "Uri"
+    - label: "Website"
       icon: "fas fa-fw fa-link"
       # url: "https://mahdi-javid.github.io/mahdijavid/"
-      url: "http://mohammadmahdijavid.ir/"
+      # url: "http://mohammadmahdijavid.ir/"
     - label: "Twitter"
       icon: "fab fa-fw fa-twitter-square"
       # url: "https://twitter.com/mahdijavid1380"
