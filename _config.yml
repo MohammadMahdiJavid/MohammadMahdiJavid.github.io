@@ -123,9 +123,10 @@ author:
     - label: "Email"
       icon: "fas fa-fw fa-envelope-square"
       url: mailto:mahdijavid1380@yahoo.com
-    - label: "Website"
+    - label: "Uri"
       icon: "fas fa-fw fa-link"
       # url: "https://mahdi-javid.github.io/mahdijavid/"
+      url: "http://mohammadmahdijavid.ir/"
     - label: "Twitter"
       icon: "fab fa-fw fa-twitter-square"
       # url: "https://twitter.com/mahdijavid1380"
@@ -141,6 +142,10 @@ author:
     - label: "Calendly"
       icon: "fas fa-calendar-alt"
       url: "https://calendly.com/mahdijavid"
+    - label: "Google Scholar"
+      # icon: "fas fa-calendar-alt"
+      url: "https://calendly.com/mahdijavid"
+      image: "/assets/icons/icons8-google-scholar-500.png"
 
 # Site Footer
 footer:

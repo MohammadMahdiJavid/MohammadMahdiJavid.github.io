@@ -51,7 +51,11 @@
       {% if author.links %}
         {% for link in author.links %}
           {% if link.label and link.url %}
-            <li><a href="{{ link.url }}" rel="nofollow noopener noreferrer"><i class="{{ link.icon | default: 'fas fa-link' }}" aria-hidden="true"></i> {{ link.label }}</a></li>
+            {% if link.icon %}
+              <li><a href="{{ link.url }}" rel="nofollow noopener noreferrer"><i class="{{ link.icon | default: 'fas fa-link' }}" aria-hidden="true"></i> {{ link.label }}</a></li>
+            {% else link.image %}
+              <li><a href="{{ link.url }}" rel="nofollow noopener noreferrer"><img src="{{ link.image }}" alt="MohammadMahdi Javid's {{ link.label }}" width="20.625" height="16.500" ></a></li>
+            {% endif %}
           {% endif %}
         {% endfor %}
       {% endif %}
