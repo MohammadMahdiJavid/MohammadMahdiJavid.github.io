@@ -54,7 +54,7 @@
             {% if link.icon %}
               <li><a href="{{ link.url }}" rel="nofollow noopener noreferrer"><i class="{{ link.icon | default: 'fas fa-link' }}" aria-hidden="true"></i> {{ link.label }}</a></li>
             {% else link.image %}
-              <li><a href="{{ link.url }}" rel="nofollow noopener noreferrer"><img src="{{ link.image }}" alt="MohammadMahdi Javid's {{ link.label }}" width="20.625" height="16.500" ></a></li>
+              <li><a href="{{ link.url }}" rel="nofollow noopener noreferrer"><img style="width: auto;height: auto;" src="{{ link.image }}" alt="MohammadMahdi Javid's {{ link.label }}" ></a></li>
             {% endif %}
           {% endif %}
         {% endfor %}
