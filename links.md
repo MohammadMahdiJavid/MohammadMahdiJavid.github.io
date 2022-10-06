@@ -1,8 +1,10 @@
 ---
 layout: single
 author_profile: true
-permalink: /links/
-title: Links
+# permalink: /links/
+permalink: /Follow Me/
+# title: Links
+title: Follow Me
 tags: [MohammadMahdi javid, social media, mohammadmahdi javid, mahdi javid, mohammadmahdijavid, mahdijavid, javid,      mahdi, mohammadmahdi]
 modified: 06-25-2020
 comments: false
@@ -26,3 +28,8 @@ comments: false
 * [ORCID](http://orcid.org/0000-0002-8447-7513)
 * [RG](http://researchgate.net/profile/Mohammadmahdi-Javid)
 * [Twitter](http://twitter.com/mahdijavid1380)
+* [DEV Community](http://dev.to/mohammadmahdijavid)
+* [Stack Overflow](http://stackoverflow.com/users/19659244/mohammadmahdi-javid)
+* [XING](http://xing.com/profile/MohammadMahdi_Javid)
+* [Holopin](http://holopin.io/@mohammadmahdijavid)
+* [Linux Foundation](http://openprofile.dev/profile/mohammadmahdijavid)
