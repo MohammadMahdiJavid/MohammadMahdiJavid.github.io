@@ -112,7 +112,7 @@ author:
   bio              : "Hi Hallo سلام 😊<br />
                       I'm a Security geek 🐧 <br />
                       who loves Linux and Web Application Security (OWASP) <br />"
-  location         : "تهران"
+  location         : "Tehran"
   email            : mahdijavid1380@yahoo.com
   twitter: mahdijavid1380
   linkedin: mohammadmahdijavid
@@ -121,6 +121,9 @@ author:
   instagram: m.mahdijavid
   uri: https://www.mohammadmahdijavid.ir/
   links:
+    - label: "Calendly"
+      icon: "fas fa-calendar-alt"
+      url: "https://calendly.com/mahdijavid"
     - label: "Email"
       icon: "fas fa-fw fa-envelope-square"
       url: mailto:mahdijavid1380@yahoo.com
@@ -134,20 +137,17 @@ author:
     - label: "Facebook"
       icon: "fab fa-fw fa-facebook-square"
       # url: "https://www.facebook.com/mahdijavid1380"
-    - label: "GitHub"
-      icon: "fab fa-fw fa-github"
-      # url: "https://mahdi-javid.github.io/mahdijavid/"
     - label: "Instagram"
       icon: "fab fa-fw fa-instagram"
       # url: "https://www.instagram.com/mmahdi.javid/"
-    - label: "Calendly"
-      icon: "fas fa-calendar-alt"
-      url: "https://calendly.com/mahdijavid"
-    - label: "Google Scholar"
-      # icon: "fas fa-calendar-alt"
-      url: "https://scholar.google.com/citations?hl=en&user=ruUtSOgAAAAJ"
-      # image: "/assets/icons/icons8-google-scholar-500.png"
-      image: "https://img.icons8.com/ios/500/000000/google-scholar--v2.png"
+    - label: "GitHub"
+      icon: "fab fa-fw fa-github"
+      # url: "https://mahdi-javid.github.io/mahdijavid/"
+    # - label: "Google Scholar"
+    #   # icon: "fas fa-calendar-alt"
+    #   url: "https://scholar.google.com/citations?hl=en&user=ruUtSOgAAAAJ"
+    #   # image: "/assets/icons/icons8-google-scholar-500.png"
+    #   image: "https://img.icons8.com/ios/500/000000/google-scholar--v2.png"
 
 # Site Footer
 footer:
