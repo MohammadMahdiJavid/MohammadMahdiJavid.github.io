@@ -124,9 +124,9 @@ author:
     - label: "Calendly"
       icon: "fas fa-calendar-alt"
       url: "https://calendly.com/mahdijavid"
-    - label: "Email"
-      icon: "fas fa-fw fa-envelope-square"
-      url: mailto:mahdijavid1380@yahoo.com
+    # - label: "Email"
+    #   icon: "fas fa-fw fa-envelope-square"
+    #   url: mailto:mahdijavid1380@yahoo.com
     - label: "Website"
       icon: "fas fa-fw fa-link"
       # url: "https://mahdi-javid.github.io/mahdijavid/"
