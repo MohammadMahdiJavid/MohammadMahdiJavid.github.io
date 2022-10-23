@@ -19,7 +19,7 @@ ssh -N -v -L [Source IP]:[Source Port]:[Destination IP]:[Destination Port] [User
 ```
 
 > Hint: `Instead of using IP Address, you can use Domain Name`  
-> Hint: `You can use any port you want for Source Port and Destination Port`  
+> `You can use any port you want for Source Port and Destination Port`  
 
 
 ```sh
