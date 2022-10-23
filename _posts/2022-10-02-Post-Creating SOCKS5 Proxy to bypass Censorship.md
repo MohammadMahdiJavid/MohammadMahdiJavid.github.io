@@ -23,6 +23,6 @@ ssh -N -v -L [Source IP]:[Source Port]:[Destination IP]:[Destination Port] [User
 
 
 ```sh
-ssh -C -N -v -D [Destination IP]:9101 ubuntu@194.5.207.33
+ssh -C -N -v -D [Destination IP]:[Destination Port] [Username]@[IP or Domain Name]
 ```
 
