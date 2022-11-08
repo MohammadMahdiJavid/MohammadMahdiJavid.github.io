@@ -121,6 +121,7 @@ author:
   instagram: m.mahdijavid
   uri: https://www.mohammadmahdijavid.ir/
   links:
+    # https://fontawesome.com/search
     - label: "Calendly"
       icon: "fas fa-calendar-alt"
       url: "https://calendly.com/mahdijavid"
@@ -149,7 +150,7 @@ author:
     #   # image: "/assets/icons/icons8-google-scholar-500.png"
     #   image: "https://img.icons8.com/ios/500/000000/google-scholar--v2.png"
     - label: "Spotify"
-      icon: "fa fa-spotify"
+      icon: "fab fa-spotify"
       url: "https://open.spotify.com/playlist/2XfMB8PX7vbrAeo3oOL2JT?si=8e75f7a9c4f844f7"
 
 # Site Footer
