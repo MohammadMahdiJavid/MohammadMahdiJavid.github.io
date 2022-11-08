@@ -10,8 +10,10 @@ title: Let's listen to music together
 > not looking for anything specific, just something that you like and want to share with others 😉  
 
 
-> [!TIP]
-> *I'll start with a few of my favorites*
+<div class="alert alert-block alert-info">
+    <b>Tip:</b>
+    <i>I'll start with a few of my favorites</i>
+</div>
 
 <iframe style="border-radius:12px"
     src="https://open.spotify.com/embed/playlist/2XfMB8PX7vbrAeo3oOL2JT?utm_source=generator" width="100%" height="380"
