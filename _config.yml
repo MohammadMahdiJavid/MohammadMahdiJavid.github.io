@@ -113,7 +113,7 @@ author:
                       I'm a Security geek 🐧 <br />
                       who loves Linux and Web Application Security (OWASP) <br />"
   location         : "Germany"
-  email            : mahdijavid1380@yahoo.com
+  email            : message_me_on_LinkedIn
   twitter: mahdijavid1380
   linkedin: mohammadmahdijavid
   google_scholar: ruUtSOgAAAAJ
@@ -127,7 +127,7 @@ author:
       url: "https://calendly.com/mahdijavid"
     # - label: "Email"
     #   icon: "fas fa-fw fa-envelope-square"
-    #   url: mailto:mahdijavid1380@yahoo.com
+    #   url: mailto:
     - label: "Website"
       icon: "fas fa-fw fa-link"
       # url: "https://mahdi-javid.github.io/mahdijavid/"
