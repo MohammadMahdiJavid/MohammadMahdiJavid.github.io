@@ -122,9 +122,9 @@ author:
   uri: https://www.mohammadmahdijavid.ir/
   links:
     # https://fontawesome.com/v5/icons/
-    - label: "Calendly"
-      icon: "fas fa-calendar-alt"
-      url: "https://calendly.com/mahdijavid"
+    # - label: "Calendly"
+    #   icon: "fas fa-calendar-alt"
+    #   url: "https://calendly.com/mahdijavid"
     # - label: "Email"
     #   icon: "fas fa-fw fa-envelope-square"
     #   url: mailto:
