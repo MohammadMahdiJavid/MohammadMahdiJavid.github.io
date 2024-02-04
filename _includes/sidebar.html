@@ -14,10 +14,9 @@
       {% endif %}
       {% if s.title %}<h3>{{ s.title }}</h3>{% endif %}
       {% if s.text %}{{ s.text | markdownify }}{% endif %}
-      {% if s.nav %}{% include nav_list nav=s.nav %}{% endif %}
-    {% endfor %}
-    
-    <!-- added by me -->
+
+
+      <!-- added by me -->
     <div id="thm_badge" class="thm_margin" onClick="location.href='https://tryhackme.com/p/Chamrosh17'">
       <div style="width: auto; border-radius: 4px; margin-right: 0px">
         <div class="thm_avatar" style="background-image: url(https://tryhackme-images.s3.amazonaws.com/user-avatars/5ff087126ffc3b68bf754d89-1704949048911)"></div>
@@ -217,9 +216,14 @@
     <!-- added by me -->
 
 
+
+      {% if s.nav %}{% include nav_list nav=s.nav %}{% endif %}
+    {% endfor %}
+
     {% if page.sidebar.nav %}
       {% include nav_list nav=page.sidebar.nav %}
     {% endif %}
+
   {% endif %}
   </div>
 {% endif %}
