@@ -2,6 +2,7 @@
 layout: single
 title: "Hobbies"
 permalink: /hobbies/
+mermaid: true        # optional; harmless if already set globally
 ---
 
 # Choose Your Adventure 🧭  

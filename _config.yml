@@ -14,13 +14,14 @@
 remote_theme: "mmistakes/minimal-mistakes@4.16.0"
 # remote_theme           : "mmistakes/minimal-mistakes"
 minimal_mistakes_skin    : "air" #"default" # "air", "aqua", "contrast", "dark", "dirt", "neon", "mint", "plum", "sunrise"
+mermaid: true
 
 # Site Settings
 locale                   : "en-US" 
 title                    : "MohammadMahdi Javid"
 title_separator          : "-"
 name                     : "MohammadMahdi Javid" 
-description              : "Welcome to my web site."
+description              : "Personal site and blog"
 url                      : # the base hostname & protocol for your site e.g. "https://mmistakes.github.io"
 base url                  : #the subpath of your site, e.g. "/blog"
 repository               : # GitHub username/repo-name e.g. "mmistakes/minimal-mistakes"
