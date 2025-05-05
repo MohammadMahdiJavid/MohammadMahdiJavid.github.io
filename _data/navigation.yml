@@ -9,8 +9,8 @@ main:
     external: true
   - title: "Certifications"
     url: /certifications/
-  - title: "Friends"
-    url: /friends/
+  # - title: "Friends"
+  #   url: /friends/
   # - title: "Links"
   - title: "Follow Me"
     # url: /links/
