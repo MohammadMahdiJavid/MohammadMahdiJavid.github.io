@@ -1,8 +1,8 @@
 ---
-layout: single
+layout: page
 title: "Hobbies"
 permalink: /hobbies/
-mermaid: true        # optional; harmless if already set globally
+mermaid: true
 ---
 
 # Choose Your Adventure 🧭  
