@@ -31,4 +31,124 @@
 
 
 
+
+
+<!-- Flow-chart runtime (≈ 100 kB gzipped total) -->
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@^3/dist/tailwind.min.css" rel="stylesheet">
+<script src="https://unpkg.com/cytoscape@3/dist/cytoscape.min.js"></script>
+<script src="https://unpkg.com/cytoscape-dagre@2/cytoscape-dagre.js"></script>
+
+<script>
+    /* === graph data ======================================================= */
+    const nodes = [
+        { id: 'A', label: 'Feeling bored?', group: 'start' },
+        { id: 'B', label: 'Pick an activity', group: 'decision' },
+
+        { id: 'C', label: '🎬 Stream a movie\nor binge a series' },
+        { id: 'D', label: '🍜 Grab a bite\nsomewhere tasty' },
+        { id: 'E', label: '🌳 Stroll by the river\n(unless ☀️ > 30 °C)' },
+        { id: 'F', label: '👷 Build that project\nyou keep delaying' },
+        { id: 'G', label: '📊 Discuss investments,\nscience, politics' },
+        { id: 'H', label: '🗣️ Learn a new language\nor culture quirk' },
+        { id: 'I', label: '😢 Expectations check', group: 'decision' },
+        { id: 'J', label: '🙂 I’ll listen,\nbut keep expectations low' },
+        { id: 'K', label: '🚀 Learn something brand-new\ntogether' },
+    ];
+
+    const edges = [
+        ['A', 'B'],
+        ['B', 'C', '🎬 Movies / Series'],
+        ['B', 'D', '🍣 Food outing'],
+        ['B', 'E', '🚶 Talk & Walk'],
+        ['B', 'F', '🧩 Puzzle / DIY'],
+        ['B', 'G', '🧠 Deep Talks'],
+        ['B', 'H', '🌍 Language / Culture'],
+        ['B', 'I', '😢 Need to vent?'],
+        ['B', 'K', '💡 Challenge yourself'],
+        ['I', 'J', 'Sure'],
+        ['I', 'B', 'Skip'],
+    ];
+
+    /* === boot Cytoscape =================================================== */
+    document.addEventListener('DOMContentLoaded', () => {
+        const cy = cytoscape({
+            container: document.getElementById('hobbies-flowchart'),
+            elements: [
+                ...nodes.map(n => ({ data: n })),
+                ...edges.map(([s, t, l]) => ({ data: { source: s, target: t, label: l } }))
+            ],
+            style: [
+                /* generic nodes --------------------------------------------------- */
+                {
+                    selector: 'node',
+                    style: {
+                        shape: 'round-rectangle',
+                        padding: '8px',
+                        'background-color': '#F8FAFC',        // slate-50 (light)
+                        'border-color': '#64748B',        // slate-500
+                        'border-width': 2,
+                        'text-wrap': 'wrap',
+                        'text-max-width': 120,
+                        'font-family': 'PT Sans Narrow, sans-serif',
+                        'font-size': 14,
+                        'text-valign': 'center',
+                        'text-halign': 'center',
+                        label: 'data(label)',
+                    }
+                },
+                /* start/terminal --------------------------------------------------- */
+                {
+                    selector: 'node[group = "start"]',
+                    style: {
+                        'background-color': '#E0F2FE',  // sky-100
+                    }
+                },
+                /* diamond decisions ------------------------------------------------ */
+                {
+                    selector: 'node[group = "decision"]',
+                    style: {
+                        shape: 'diamond',
+                        'background-color': '#FEF3C7',  // amber-100
+                    }
+                },
+                /* edges and their pretty labels ------------------------------------ */
+                {
+                    selector: 'edge',
+                    style: {
+                        width: 2,
+                        'line-color': '#64748B',
+                        'target-arrow-shape': 'triangle',
+                        'target-arrow-color': '#64748B',
+                        'curve-style': 'bezier',
+                        label: 'data(label)',
+                        'font-size': 12,
+                        'text-background-color': '#FFFFFF',
+                        'text-background-opacity': 1,
+                        'text-background-padding': 2,
+                        'text-background-shape': 'round-rectangle'
+                    }
+                }
+            ],
+            layout: {
+                name: 'dagre',
+                rankDir: 'TB',   // top-to-bottom
+                nodeSep: 40,
+                rankSep: 80,
+                animate: true,
+                animationDuration: 600
+            }
+        });
+
+        /* cute hover pulse ---------------------------------------------------- */
+        cy.nodes().forEach(n => n.on('mouseover', () => {
+            n.animate({ style: { 'border-width': 4 } }, { duration: 150 });
+        }));
+        cy.nodes().forEach(n => n.on('mouseout', () => {
+            n.animate({ style: { 'border-width': 2 } }, { duration: 150 });
+        }));
+    });
+</script>
+
+
+
 <!-- end custom footer snippets -->
