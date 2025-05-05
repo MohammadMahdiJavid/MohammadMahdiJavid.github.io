@@ -114,7 +114,7 @@ author:
                       I'm a Security geek 🐧 <br />
                       who loves Linux and Web Application Security (OWASP) <br />"
   location         : "Germany"
-  email            : message_me_on_LinkedIn
+  # email            : message_me_on_LinkedIn
   twitter: mahdijavid1380
   linkedin: mohammadmahdijavid
   google_scholar: ruUtSOgAAAAJ
