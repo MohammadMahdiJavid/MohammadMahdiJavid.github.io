@@ -129,6 +129,9 @@ author:
     # - label: "Email"
     #   icon: "fas fa-fw fa-envelope-square"
     #   url: mailto:
+    - label: "Email"
+      icon : "fas fa-fw fa-envelope-square"
+      url  : "#no-email-popup"
     - label: "Website"
       icon: "fas fa-fw fa-link"
       # url: "https://mahdi-javid.github.io/mahdijavid/"
