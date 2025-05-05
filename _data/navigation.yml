@@ -2,8 +2,11 @@
 main:
 #  - title: "Quick-Start Guide"
 #    url: https://mmistakes.github.io/minimal-mistakes/docs/quick-start-guide/
+  # - title: "CV"
+  #   url: /cv/
   - title: "CV"
-    url: /cv/
+    url: "https://www.linkedin.com/in/mohammadmahdijavid/"
+    external: true
   - title: "Certifications"
     url: /certifications/
   - title: "Friends"
