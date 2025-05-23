@@ -4,7 +4,8 @@ title: "Hobbies"
 permalink: /hobbies/
 ---
 
+
 <div id="hobbies-flowchart"
-     class="w-full h-[600px] rounded-2xl shadow-lg border border-gray-200
-            dark:border-gray-700">
+     class="w-full rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700"
+     style="height:600px">
 </div>

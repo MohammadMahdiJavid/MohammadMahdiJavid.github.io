@@ -33,10 +33,24 @@
 
 
 
+
+
+
+
 <!-- Flow-chart runtime (≈ 100 kB gzipped total) -->
-<link href="https://cdn.jsdelivr.net/npm/tailwindcss@^3/dist/tailwind.min.css" rel="stylesheet">
+<!-- 1- Dagre core -->
+<script src="https://unpkg.com/dagre@0.8.5/dist/dagre.min.js"></script>
+
+<!-- 2- Cytoscape core -->
 <script src="https://unpkg.com/cytoscape@3/dist/cytoscape.min.js"></script>
+
+<!-- 3- Dagre layout extension -->
 <script src="https://unpkg.com/cytoscape-dagre@2/cytoscape-dagre.js"></script>
+
+<script>
+    // Needed only when you load the libs yourself (not via a bundler)
+    cytoscape.use(cytoscapeDagre);
+</script>
 
 <script>
     /* === graph data ======================================================= */
@@ -70,7 +84,8 @@
     ];
 
     /* === boot Cytoscape =================================================== */
-    document.addEventListener('DOMContentLoaded', () => {
+    // Wait until *everything* (CSS + scripts) has loaded
+    window.addEventListener('load', () => {
         const cy = cytoscape({
             container: document.getElementById('hobbies-flowchart'),
             elements: [
@@ -138,6 +153,7 @@
                 animationDuration: 600
             }
         });
+
 
         /* cute hover pulse ---------------------------------------------------- */
         cy.nodes().forEach(n => n.on('mouseover', () => {
