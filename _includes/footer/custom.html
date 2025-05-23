@@ -171,12 +171,14 @@
                 const focus = cy.$('#A, #B');
                 fitNodes(cy, focus, 60);
 
+                /*
                 cy.style()
                     .selector('node')
                     .style('font-size', 22)
                     .selector('edge')
                     .style('font-size', 18)
                     .update();
+                */
             } else {
                 /* non-phone = keep the original “fit whole graph” */
                 cy.fit(undefined, 40);
