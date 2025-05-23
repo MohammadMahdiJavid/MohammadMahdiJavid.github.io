@@ -185,5 +185,27 @@
 </script>
 
 
+<script>
+    (function () {
+        const css = `
+            #hobbies-flowchart,
+            #hobbies-flowchart canvas { cursor: grab; }
+
+            #hobbies-flowchart.grabbing,
+            #hobbies-flowchart.grabbing canvas { cursor: grabbing; }
+        `;
+        const styleTag = document.createElement('style');
+        styleTag.appendChild(document.createTextNode(css));
+        document.head.appendChild(styleTag);
+
+        const fc = document.getElementById('hobbies-flowchart');
+
+        fc.addEventListener('mousedown', ev => {
+            if (ev.button === 0) fc.classList.add('grabbing');
+        });
+        window.addEventListener('mouseup', () => fc.classList.remove('grabbing'));
+    })();
+</script>
+
 
 <!-- end custom footer snippets -->

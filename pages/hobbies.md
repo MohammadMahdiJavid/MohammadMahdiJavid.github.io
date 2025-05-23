@@ -11,7 +11,7 @@ permalink: /hobbies/
      style="
         min-height: 600px;
         height:100%;
-        width:100vw;
-        margin-left:calc(50% - 50vw);
+        width:calc(100vw - (100vw - 100%));
+        margin-left:calc(50% - 50vw + (100vw - 100%)/2);
      ">
 </div>
