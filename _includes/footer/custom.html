@@ -204,6 +204,10 @@
             if (ev.button === 0) fc.classList.add('grabbing');
         });
         window.addEventListener('mouseup', () => fc.classList.remove('grabbing'));
+
+        const s = document.createElement('style');
+        s.textContent = 'html,body{overflow-x:hidden}';
+        document.head.appendChild(s);
     })();
 </script>
 
