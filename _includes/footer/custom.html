@@ -98,14 +98,14 @@
                     selector: 'node',
                     style: {
                         shape: 'round-rectangle',
-                        padding: '8px',
-                        'background-color': '#F8FAFC',        // slate-50 (light)
-                        'border-color': '#64748B',        // slate-500
+                        padding: '12px',
+                        'background-color': '#F1F5F9', /* slate-100 */
+                        'border-color': '#64748B',     /* slate-500 */
                         'border-width': 2,
                         'text-wrap': 'wrap',
-                        'text-max-width': 120,
+                        'text-max-width': 200,         /* ← wider text box   */
                         'font-family': 'PT Sans Narrow, sans-serif',
-                        'font-size': 14,
+                        'font-size': 16,
                         'text-valign': 'center',
                         'text-halign': 'center',
                         label: 'data(label)',
@@ -115,7 +115,7 @@
                 {
                     selector: 'node[group = "start"]',
                     style: {
-                        'background-color': '#E0F2FE',  // sky-100
+                        'background-color': '#BAE6FD',  // sky-100
                     }
                 },
                 /* diamond decisions ------------------------------------------------ */
@@ -123,7 +123,7 @@
                     selector: 'node[group = "decision"]',
                     style: {
                         shape: 'diamond',
-                        'background-color': '#FEF3C7',  // amber-100
+                        'background-color': '#FDE68A',  // amber-100
                     }
                 },
                 /* edges and their pretty labels ------------------------------------ */
@@ -136,8 +136,9 @@
                         'target-arrow-color': '#64748B',
                         'curve-style': 'bezier',
                         label: 'data(label)',
-                        'font-size': 12,
-                        'text-background-color': '#FFFFFF',
+                        'font-size': 14,
+                        'text-rotation': 'autorotate',
+                        'text-background-color': '#fff',
                         'text-background-opacity': 1,
                         'text-background-padding': 2,
                         'text-background-shape': 'round-rectangle'
@@ -146,22 +147,37 @@
             ],
             layout: {
                 name: 'dagre',
-                rankDir: 'TB',   // top-to-bottom
-                nodeSep: 40,
-                rankSep: 80,
+                rankDir: 'TB',     /* top-to-bottom */
+                nodeSep: 60,
+                rankSep: 120,
+                padding: 10,
                 animate: true,
                 animationDuration: 600
             }
         });
 
+        cy.ready(() => cy.fit(undefined, 40));
+
+        window.addEventListener('resize', () => {
+            cy.resize();
+            cy.fit(undefined, 40);
+        });
 
         /* cute hover pulse ---------------------------------------------------- */
         cy.nodes().forEach(n => n.on('mouseover', () => {
             n.animate({ style: { 'border-width': 4 } }, { duration: 150 });
         }));
+
         cy.nodes().forEach(n => n.on('mouseout', () => {
             n.animate({ style: { 'border-width': 2 } }, { duration: 150 });
         }));
+
+        cy.on('mouseover', 'node', e =>
+            e.target.animate({ style: { 'border-width': 4 } }, { duration: 150 })
+        );
+        cy.on('mouseout', 'node', e =>
+            e.target.animate({ style: { 'border-width': 2 } }, { duration: 150 })
+        );
     });
 </script>
 
