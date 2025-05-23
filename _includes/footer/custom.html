@@ -53,6 +53,11 @@
 </script>
 
 <script>
+    function fitNodes(cy, nodesColl, pad = 40) {
+        cy.fit(nodesColl, pad);
+        cy.center(nodesColl);
+    }
+
     const isPhone = () => matchMedia('(max-width: 640px)').matches;
 
     /* === graph data ======================================================= */
@@ -163,21 +168,15 @@
 
         cy.ready(() => {
             if (isPhone()) {
-                /* ---------------------------------------------
-                   1. Pick the logical “middle” node.  In your
-                      data the hub is B (“Pick an activity”).
-                   2. Centre it and zoom enough that the label
-                      fits comfortably on a phone (~200 px wide).
-                --------------------------------------------- */
-                const centre = cy.$('#B');          // your hub node
-                cy.center(centre);                 // pan so B sits middle-viewport
-                cy.zoom({                          // 200-250 px wide node ≈ zoom ≈ 1.8-2
-                    level: 2,                      // tweak to taste
-                    renderedPosition: {
-                        x: cy.width() / 2,
-                        y: cy.height() / 2
-                    }
-                });
+                const focus = cy.$('#A, #B');
+                fitNodes(cy, focus, 60);
+
+                cy.style()
+                    .selector('node')
+                    .style('font-size', 22)
+                    .selector('edge')
+                    .style('font-size', 18)
+                    .update();
             } else {
                 /* non-phone = keep the original “fit whole graph” */
                 cy.fit(undefined, 40);
@@ -186,7 +185,12 @@
 
         window.addEventListener('resize', () => {
             cy.resize();
-            if (!isPhone()) cy.fit(undefined, 40);
+            if (isPhone()) {
+                const focus = cy.$('#A, #B');
+                fitNodes(cy, focus, 60);
+            } else {
+                cy.fit(undefined, 40);
+            }
         });
 
         /* cute hover pulse ---------------------------------------------------- */
@@ -206,13 +210,6 @@
         );
     });
 
-    const extraCSS = `
-@media (max-width: 640px) {
-    #hobbies-flowchart .cy-node                       { font-size: 18px; }
-    #hobbies-flowchart .cy-edge                      { font-size: 16px; }
-}
-`;
-    styleTag.appendChild(document.createTextNode(extraCSS));
 </script>
 
 
