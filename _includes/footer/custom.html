@@ -208,6 +208,20 @@
         cy.on('mouseout', 'node', e =>
             e.target.animate({ style: { 'border-width': 2 } }, { duration: 150 })
         );
+
+        cy.on('layoutstop', () => {
+            if (isPhone()) {
+                const focus = cy.$('#A, #B');
+                fitNodes(cy, focus, 60);
+
+                cy.style()
+                    .selector('node').style('font-size', 22)
+                    .selector('edge').style('font-size', 18)
+                    .update();
+            } else {
+                cy.fit(undefined, 40);
+            }
+        });
     });
 
 </script>
