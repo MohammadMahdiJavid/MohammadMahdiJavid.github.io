@@ -1,0 +1,357 @@
+.page__footer {
+  background: #0c1d14;
+  color: #e8f7f1;
+
+  footer {
+    padding: 0;
+    margin-top: 0;
+  }
+}
+
+.pcb-footer {
+  position: relative;
+  margin: 0;
+  padding: 3rem 1.5rem 2.5rem;
+  color: #e8f7f1;
+  background: radial-gradient(circle at 15% 20%, rgba(80, 150, 120, 0.12), transparent 25%),
+    radial-gradient(circle at 80% 60%, rgba(120, 220, 190, 0.12), transparent 30%),
+    linear-gradient(135deg, #0c1d14, #0f2b1d 45%, #0b2217);
+  overflow: hidden;
+  border-top: 1px solid rgba(149, 255, 220, 0.22);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.pcb-footer a {
+  color: #c1fff1;
+}
+
+.pcb-footer__background {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.9;
+}
+
+.pcb-footer__background::before {
+  content: "";
+  position: absolute;
+  inset: -40% -20%;
+  background: linear-gradient(90deg, rgba(159, 255, 230, 0), rgba(159, 255, 230, 0.08), rgba(159, 255, 230, 0));
+  filter: blur(1px);
+  transform: rotate(-12deg);
+  animation: pcb-footer-shimmer 18s linear infinite;
+}
+
+.pcb-footer__traces {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.pcb-footer__trace {
+  fill: none;
+  stroke: rgba(90, 200, 160, 0.6);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 0 6px rgba(90, 200, 160, 0.35));
+}
+
+.pcb-footer__trace--branch {
+  stroke-dasharray: 6 10;
+  opacity: 0.65;
+}
+
+.pcb-footer__trace--pulse {
+  stroke: url(#pcb-footer-glow);
+  stroke-width: 3;
+  stroke-dasharray: 12 140;
+  animation: pcb-footer-pulse 6s linear infinite;
+  opacity: 0.9;
+}
+
+.pcb-footer__via {
+  fill: #9fffe6;
+  opacity: 0.9;
+  filter: drop-shadow(0 0 6px rgba(144, 255, 230, 0.65));
+}
+
+.pcb-footer__via--blink {
+  animation: pcb-footer-via 4s ease-in-out infinite;
+}
+
+.pcb-footer__components {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.pcb-footer__resistor,
+.pcb-footer__capacitor,
+.pcb-footer__sensor {
+  position: absolute;
+  display: block;
+  border-radius: 6px;
+  border: 1px solid rgba(180, 240, 215, 0.35);
+  background: rgba(22, 55, 38, 0.9);
+  box-shadow: 0 0 0 1px rgba(120, 255, 210, 0.08), 0 8px 18px rgba(0, 0, 0, 0.25);
+}
+
+.pcb-footer__resistor {
+  width: 70px;
+  height: 18px;
+  top: 20%;
+  right: 12%;
+  background: repeating-linear-gradient(
+    90deg,
+    rgba(120, 255, 210, 0.18) 0,
+    rgba(120, 255, 210, 0.18) 14%,
+    rgba(12, 30, 22, 0.9) 14%,
+    rgba(12, 30, 22, 0.9) 22%
+  );
+}
+
+.pcb-footer__capacitor {
+  width: 20px;
+  height: 52px;
+  left: 18%;
+  bottom: 12%;
+  background: linear-gradient(180deg, rgba(120, 255, 210, 0.14), rgba(12, 30, 22, 0.9));
+}
+
+.pcb-footer__sensor {
+  width: 48px;
+  height: 48px;
+  left: 50%;
+  top: 10%;
+  transform: translateX(-50%);
+  border-radius: 14px;
+  background: radial-gradient(circle, rgba(140, 255, 225, 0.25), rgba(12, 30, 22, 0.92));
+  box-shadow: 0 0 0 1px rgba(180, 255, 225, 0.1), 0 0 18px rgba(140, 255, 225, 0.26);
+}
+
+.pcb-footer__sensor::after {
+  content: "";
+  position: absolute;
+  inset: 12px;
+  border-radius: 10px;
+  border: 1px dashed rgba(180, 255, 215, 0.4);
+  animation: pcb-footer-sensor 5s ease-in-out infinite;
+}
+
+.pcb-footer__silk {
+  fill: rgba(200, 240, 225, 0.82);
+  font-size: 10px;
+  letter-spacing: 1px;
+}
+
+.pcb-footer__content {
+  position: relative;
+  display: grid;
+  gap: 1.25rem;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  align-items: start;
+  z-index: 1;
+}
+
+.pcb-footer__chip {
+  background: linear-gradient(180deg, rgba(19, 53, 36, 0.9), rgba(14, 37, 27, 0.9));
+  border: 1px solid rgba(149, 255, 220, 0.35);
+  border-radius: 18px;
+  padding: 1.1rem 1.2rem;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  position: relative;
+  overflow: hidden;
+}
+
+.pcb-footer__chip::before,
+.pcb-footer__chip::after {
+  content: "";
+  position: absolute;
+  left: -8px;
+  right: -8px;
+  height: 4px;
+  border-radius: 4px;
+  background: rgba(149, 255, 220, 0.25);
+}
+
+.pcb-footer__chip::before { top: 10px; }
+.pcb-footer__chip::after { bottom: 10px; }
+
+.pcb-footer__chip-tag {
+  color: rgba(192, 245, 224, 0.8);
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 0.25rem;
+}
+
+.pcb-footer__chip-name {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #f1fff8;
+  margin-bottom: 0.3rem;
+}
+
+.pcb-footer__chip-desc {
+  color: rgba(220, 245, 235, 0.82);
+  font-size: 0.95rem;
+}
+
+.pcb-footer__status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-top: 0.75rem;
+  padding: 0.35rem 0.6rem;
+  border-radius: 999px;
+  background: rgba(110, 220, 190, 0.08);
+  color: rgba(210, 245, 235, 0.85);
+  font-size: 0.85rem;
+  border: 1px solid rgba(149, 255, 220, 0.2);
+}
+
+.pcb-footer__led {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #a5ffe6 0%, #5ce2b8 70%, #2d8c68 100%);
+  box-shadow: 0 0 0 0 rgba(165, 255, 230, 0.6);
+  animation: pcb-footer-led 2.8s ease-in-out infinite;
+}
+
+.pcb-footer__io-heading {
+  font-size: 0.95rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(200, 245, 230, 0.86);
+  margin-bottom: 0.6rem;
+}
+
+.pcb-footer__io-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.4rem;
+}
+
+.pcb-footer__io-node {
+  display: flex;
+}
+
+.pcb-footer__io-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.55rem 0.75rem;
+  border-radius: 12px;
+  background: rgba(18, 46, 33, 0.85);
+  border: 1px solid rgba(149, 255, 220, 0.18);
+  box-shadow: 0 0 0 1px rgba(120, 255, 210, 0.06), 0 6px 18px rgba(0, 0, 0, 0.25);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+  color: inherit;
+}
+
+.pcb-footer__io-link:hover,
+.pcb-footer__io-link:focus-visible {
+  border-color: rgba(159, 255, 230, 0.6);
+  box-shadow: 0 0 12px rgba(159, 255, 230, 0.25), 0 8px 20px rgba(0, 0, 0, 0.35);
+  transform: translateY(-1px);
+  outline: none;
+}
+
+.pcb-footer__io-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #cffff3 0%, #7af5cf 60%, #2b8d66 100%);
+  box-shadow: 0 0 0 0 rgba(122, 245, 207, 0.4);
+  animation: pcb-footer-io 3.8s ease-in-out infinite;
+}
+
+.pcb-footer__io-icon {
+  color: rgba(200, 245, 230, 0.88);
+  font-size: 0.95rem;
+  width: 1.1rem;
+  text-align: center;
+}
+
+.pcb-footer__io-label {
+  color: rgba(224, 245, 237, 0.92);
+  font-weight: 600;
+  font-size: 0.98rem;
+}
+
+.pcb-footer__credits {
+  align-self: end;
+  font-size: 0.92rem;
+  color: rgba(210, 235, 225, 0.82);
+  background: rgba(18, 46, 33, 0.85);
+  border: 1px solid rgba(149, 255, 220, 0.2);
+  border-radius: 12px;
+  padding: 0.8rem 0.9rem;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+}
+
+.pcb-footer__credit-line a {
+  color: #a8ffee;
+}
+
+@keyframes pcb-footer-pulse {
+  to { stroke-dashoffset: -280; }
+}
+
+@keyframes pcb-footer-via {
+  0%, 85% { opacity: 0.6; transform: scale(0.98); }
+  90% { opacity: 1; transform: scale(1.08); }
+  100% { opacity: 0.6; transform: scale(0.98); }
+}
+
+@keyframes pcb-footer-sensor {
+  0% { transform: scale(0.95); opacity: 0.8; }
+  50% { transform: scale(1.02); opacity: 1; }
+  100% { transform: scale(0.95); opacity: 0.8; }
+}
+
+@keyframes pcb-footer-led {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(165, 255, 230, 0.35); }
+  50% { box-shadow: 0 0 0 10px rgba(165, 255, 230, 0); }
+}
+
+@keyframes pcb-footer-io {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(122, 245, 207, 0.3); }
+  50% { box-shadow: 0 0 0 12px rgba(122, 245, 207, 0); }
+}
+
+@keyframes pcb-footer-shimmer {
+  from { transform: rotate(-12deg) translateX(-30%); }
+  to { transform: rotate(-12deg) translateX(30%); }
+}
+
+@media (max-width: 720px) {
+  .pcb-footer {
+    padding: 2.5rem 1.1rem 2rem;
+  }
+
+  .pcb-footer__content {
+    grid-template-columns: 1fr;
+  }
+
+  .pcb-footer__background::before {
+    animation-duration: 24s;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pcb-footer__background::before,
+  .pcb-footer__trace--pulse,
+  .pcb-footer__via--blink,
+  .pcb-footer__sensor::after,
+  .pcb-footer__led,
+  .pcb-footer__io-dot {
+    animation: none !important;
+  }
+}
