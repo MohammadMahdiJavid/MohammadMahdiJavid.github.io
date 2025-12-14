@@ -1,41 +1,28 @@
 <!-- start custom footer snippets -->
 
-
-
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
+  document.addEventListener('DOMContentLoaded', () => {
+    // Catch every “email” link we just added
+    const trigger = document.querySelector('a[href="#no-email-popup"]');
+    if (!trigger) return;
 
-        // Catch every “email” link we just added
-        const trigger = document.querySelector('a[href="#no-email-popup"]');
-        if (!trigger) return;
+    trigger.addEventListener('click', (ev) => {
+      ev.preventDefault(); // stop "#" from scrolling to top
 
-        trigger.addEventListener('click', ev => {
-            ev.preventDefault();                 // stop "#" from scrolling to top
-
-            Swal.fire({
-                title: 'E-mail retired 📭',
-                html: `
-        My public inbox turned into a spam playground,<br>
-        so I removed the address.<br><br>
-        👉 <strong>DM me on
-        <a href="https://www.linkedin.com/in/mohammadmahdijavid/"
-           target="_blank" rel="noopener">LinkedIn</a></strong>
-        (or any social link below) — I reply much faster there!`,
-                icon: 'info',
-                confirmButtonText: 'Sounds good!'
-            });
-        });
-
+      Swal.fire({
+        title: 'E-mail retired 📭',
+        html: `
+          My public inbox turned into a spam playground,<br>
+          so I removed the address.<br><br>
+          👉 <strong>DM me on
+          <a href="https://www.linkedin.com/in/mohammadmahdijavid/"
+             target="_blank" rel="noopener">LinkedIn</a></strong>
+          (or any social link below) — I reply much faster there!`,
+        icon: 'info',
+        confirmButtonText: 'Sounds good!'
+      });
     });
+  });
 </script>
 
-
-
-
-
-
-
-
-
 <!-- end custom footer snippets -->
- 
