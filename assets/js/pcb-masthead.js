@@ -144,16 +144,96 @@
   let netMap = new Map();
   let lastActive = null;
   let heartbeatTimer = null;
+  let viaBlinkTimer = null;
+  let decorGroup = null;
+  let busSignal = null;
+  const silkLabels = ['DATA0', 'CLK', 'RST', 'IO1', 'UART', 'SPI', 'CAN', 'I2C', 'DBG', 'BUS'];
+
+  function pulseNet(net, className = 'is-heartbeat', duration = 1100) {
+    if (!net || prefersReducedMotion) return;
+    net.classList.add(className);
+    window.setTimeout(() => net.classList.remove(className), duration);
+  }
+
+  function pulseBus(speed = 1500) {
+    if (!busSignal || prefersReducedMotion) return;
+    busSignal.style.setProperty('--bus-speed', `${speed}ms`);
+    busSignal.classList.add('is-pulse');
+    window.setTimeout(() => busSignal && busSignal.classList.remove('is-pulse'), speed);
+  }
 
   function getLinks() {
     // Only trace the currently visible links (greedy-nav can move items around).
-    const links = Array.from(root.querySelectorAll('.visible-links a.pcb-io'))
+    const links = Array.from(root.querySelectorAll('.pcb-io'))
       .filter(a => a.offsetParent !== null);
     return links;
   }
 
   function clearSvg() {
     while (svg.firstChild) svg.removeChild(svg.firstChild);
+    decorGroup = null;
+    busSignal = null;
+  }
+
+  function buildDecorations(headerRect, baseStart, meta = []) {
+    const decor = svgEl('g');
+    decor.setAttribute('class', 'pcb-decor');
+
+    const busMargin = 12;
+    const busY = clamp(baseStart.y + 10, 14, headerRect.height - 18);
+    const busPath = `M ${busMargin} ${busY.toFixed(1)} H ${(headerRect.width - busMargin).toFixed(1)}`;
+
+    const busBase = svgEl('path');
+    busBase.setAttribute('class', 'pcb-bus pcb-bus--base');
+    busBase.setAttribute('d', busPath);
+
+    busSignal = svgEl('path');
+    busSignal.setAttribute('class', 'pcb-bus pcb-bus--signal');
+    busSignal.setAttribute('d', busPath);
+
+    decor.appendChild(busBase);
+    decor.appendChild(busSignal);
+
+    const labelPositions = meta.length ? meta : [{ start: baseStart, end: { x: headerRect.width - busMargin, y: busY } }];
+    labelPositions.slice(0, silkLabels.length).forEach((item, idx) => {
+      const label = svgEl('text');
+      label.setAttribute('class', 'pcb-label');
+      const midX = item ? (item.start.x + item.end.x) / 2 : headerRect.width * 0.5;
+      const midY = busY - 12 - (idx % 2 === 0 ? 0 : 8);
+      label.setAttribute('x', midX.toFixed(1));
+      label.setAttribute('y', midY.toFixed(1));
+      label.textContent = silkLabels[idx];
+      decor.appendChild(label);
+    });
+
+    const components = [
+      { x: headerRect.width * 0.08, y: busY - 26, w: 32, h: 9 },
+      { x: headerRect.width * 0.22, y: busY + 12, w: 22, h: 8, tiny: true },
+      { x: headerRect.width * 0.46, y: busY - 18, w: 28, h: 10 },
+      { x: headerRect.width * 0.66, y: busY + 10, w: 26, h: 9 },
+      { x: headerRect.width * 0.82, y: busY - 22, w: 20, h: 8, tiny: true }
+    ];
+
+    components.forEach(c => {
+      const rect = svgEl('rect');
+      rect.setAttribute('class', `pcb-component${c.tiny ? ' pcb-component--tiny' : ''}`);
+      rect.setAttribute('x', c.x.toFixed(1));
+      rect.setAttribute('y', c.y.toFixed(1));
+      rect.setAttribute('width', c.w.toFixed(1));
+      rect.setAttribute('height', c.h.toFixed(1));
+      decor.appendChild(rect);
+
+      const line = svgEl('line');
+      line.setAttribute('class', 'pcb-component-line');
+      line.setAttribute('x1', (c.x - 10).toFixed(1));
+      line.setAttribute('y1', (c.y + c.h / 2).toFixed(1));
+      line.setAttribute('x2', (c.x - 2).toFixed(1));
+      line.setAttribute('y2', (c.y + c.h / 2).toFixed(1));
+      decor.appendChild(line);
+    });
+
+    svg.insertBefore(decor, svg.firstChild || null);
+    decorGroup = decor;
   }
 
   function rebuildTraces() {
@@ -178,6 +258,8 @@
       y: clamp(cpuRect.top - headerRect.top + cpuRect.height / 2, 6, headerRect.height - 6)
     };
 
+    const meta = [];
+
     links.forEach((a, idx) => {
       const id = a.dataset.pcbId || `io-${idx}`;
       const r = a.getBoundingClientRect();
@@ -198,6 +280,8 @@
 
       const points = computeRoute(start, end, idx, links.length, headerRect.width, headerRect.height);
       const d = chamferPath(points, 10);
+
+      meta.push({ start, end });
 
       const net = svgEl('g');
       net.setAttribute('class', 'pcb-net');
@@ -234,8 +318,10 @@
       net.appendChild(viaEnd);
       svg.appendChild(net);
 
-      netMap.set(id, { net, link: a });
+      netMap.set(id, { net, link: a, start, end });
     });
+
+    buildDecorations(headerRect, baseStart, meta);
   }
 
   function setActive(id) {
@@ -244,14 +330,16 @@
     lastActive = id;
 
     const item = netMap.get(id);
+    item.net.classList.remove('is-heartbeat', 'is-idle');
     item.net.classList.add('is-active');
     item.link.classList.add('is-active');
+    pulseNet(item.net, 'is-heartbeat', 900);
   }
 
   function clearActive(id) {
     const item = netMap.get(id);
     if (!item) return;
-    item.net.classList.remove('is-active');
+    item.net.classList.remove('is-active', 'is-heartbeat', 'is-idle');
     item.link.classList.remove('is-active');
     if (lastActive === id) lastActive = null;
   }
@@ -271,6 +359,11 @@
       a.addEventListener('focus', () => setActive(id));
       a.addEventListener('blur', () => clearActive(id));
     });
+
+    const current = links.find(a => a.classList.contains('current') || a.getAttribute('aria-current') === 'page');
+    if (current && current.dataset.pcbId) {
+      setActive(current.dataset.pcbId);
+    }
   }
 
   function scheduleHeartbeat() {
@@ -290,27 +383,66 @@
 
       const item = netMap.get(pick);
       if (item) {
-        item.net.classList.add('is-heartbeat');
-        window.setTimeout(() => item.net.classList.remove('is-heartbeat'), 700);
+        pulseNet(item.net, 'is-idle', 1200);
       }
 
-      // Next beat in 1.2s–3.2s
-      heartbeatTimer = window.setTimeout(beat, 1200 + Math.random() * 2000);
+      if (Math.random() < 0.65) {
+        pulseBus(1500 + Math.random() * 400);
+      }
+
+      // Next beat in ~2s–4s
+      heartbeatTimer = window.setTimeout(beat, 2000 + Math.random() * 2000);
     };
 
-    heartbeatTimer = window.setTimeout(beat, 900 + Math.random() * 800);
+    heartbeatTimer = window.setTimeout(beat, 1600 + Math.random() * 900);
+  }
+
+  function blinkVias() {
+    if (prefersReducedMotion) return;
+    if (viaBlinkTimer) window.clearTimeout(viaBlinkTimer);
+
+    const blink = () => {
+      const vias = Array.from(svg.querySelectorAll('.pcb-via'));
+      if (vias.length === 0) return;
+      const pick = vias[Math.floor(Math.random() * vias.length)];
+      pick.classList.add('is-blink');
+      window.setTimeout(() => pick.classList.remove('is-blink'), 1400);
+      viaBlinkTimer = window.setTimeout(blink, 2600 + Math.random() * 2600);
+    };
+
+    viaBlinkTimer = window.setTimeout(blink, 2000 + Math.random() * 1200);
+  }
+
+  function fanoutFromCpu() {
+    if (prefersReducedMotion) return;
+    const keys = Array.from(netMap.keys());
+    keys.forEach((id, idx) => {
+      const item = netMap.get(id);
+      window.setTimeout(() => {
+        if (!item) return;
+        pulseNet(item.net, 'is-heartbeat', 1100);
+      }, idx * 140);
+    });
+    pulseBus(1200);
   }
 
   const rebuildAll = debounce(() => {
     rebuildTraces();
     attachInteractions();
     scheduleHeartbeat();
+    blinkVias();
   }, 90);
 
   // Hovering your name (CPU) gently animates all non-active nets.
-  cpu.addEventListener('mouseenter', () => root.classList.add('is-cpu-hover'));
+  cpu.addEventListener('mouseenter', () => {
+    root.classList.add('is-cpu-hover');
+    fanoutFromCpu();
+  });
   cpu.addEventListener('mouseleave', () => root.classList.remove('is-cpu-hover'));
-  cpu.addEventListener('focus', () => root.classList.add('is-cpu-hover'));
+  cpu.addEventListener('focus', () => {
+    root.classList.add('is-cpu-hover');
+    fanoutFromCpu();
+  });
   cpu.addEventListener('blur', () => root.classList.remove('is-cpu-hover'));
 
   // Initial build after layout is stable.
