@@ -1,23 +1,37 @@
-
 .masthead.pcb-masthead {
-  /* Palette: Classic Soldermask Green / Copper / Neon */
+  /* Palette: Soldermask Green + Copper + ENIG Gold + Cute Sparks */
   --pcb-bg-0: #041c16;
   --pcb-bg-1: #0a3b2d;
+
   --pcb-silk: rgba(235, 255, 246, 0.82);
-  --pcb-copper: rgba(191, 122, 64, 0.62);
-  --pcb-copper-dim: rgba(191, 122, 64, 0.25);
+
+  /* Copper + Gold accents */
+  --pcb-copper: rgba(214, 132, 70, 0.68);
+  --pcb-copper-dim: rgba(214, 132, 70, 0.22);
+  --pcb-gold: rgba(255, 215, 120, 0.95);
+  --pcb-gold-dim: rgba(255, 215, 120, 0.22);
+  --pcb-amber: rgba(255, 180, 80, 0.92);
+
+  /* Signals */
   --pcb-signal: rgba(110, 255, 210, 0.96);
   --pcb-signal-2: rgba(120, 210, 255, 0.92);
+
+  /* Glows */
   --pcb-glow: rgba(110, 255, 210, 0.35);
+  --pcb-glow-gold: rgba(255, 215, 120, 0.38);
+  --pcb-spark: rgba(255, 240, 190, 0.96);
+  --pcb-spark-pink: rgba(255, 140, 230, 0.92);
 
   position: relative;
   overflow: hidden;
 
-  /* Replace the theme's plain background with a board-like texture */
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+
+  /* Board-like background with warmer ENIG highlights */
   background:
-    radial-gradient(circle at 14% 20%, rgba(110, 255, 210, 0.12), transparent 60%),
-    radial-gradient(circle at 84% 30%, rgba(255, 210, 120, 0.10), transparent 55%),
+    radial-gradient(circle at 16% 18%, rgba(255, 215, 120, 0.14), transparent 60%),
+    radial-gradient(circle at 82% 26%, rgba(110, 255, 210, 0.10), transparent 62%),
+    radial-gradient(circle at 70% 82%, rgba(120, 210, 255, 0.08), transparent 60%),
     linear-gradient(180deg, var(--pcb-bg-1), var(--pcb-bg-0));
   isolation: isolate;
 }
@@ -40,15 +54,22 @@ body.pcb-theme--black .masthead.pcb-masthead {
   --pcb-bg-0: #050608;
   --pcb-bg-1: #101318;
   --pcb-silk: rgba(240, 245, 255, 0.78);
-  --pcb-copper: rgba(190, 200, 215, 0.48);
+
+  --pcb-copper: rgba(190, 200, 215, 0.55);
   --pcb-copper-dim: rgba(190, 200, 215, 0.22);
+  --pcb-gold: rgba(255, 230, 160, 0.92);
+  --pcb-gold-dim: rgba(255, 230, 160, 0.20);
+
   --pcb-signal: rgba(120, 210, 255, 0.96);
   --pcb-signal-2: rgba(170, 255, 220, 0.92);
+
   --pcb-glow: rgba(120, 210, 255, 0.38);
+  --pcb-glow-gold: rgba(255, 230, 160, 0.30);
 }
 
+/* Texture layers */
 .masthead.pcb-masthead::before {
-  /* Subtle fiberglass weave + silkscreen dots */
+  /* Fiberglass weave + silkscreen dots + faint copper micro-traces */
   content: "";
   position: absolute;
   inset: 0;
@@ -56,24 +77,32 @@ body.pcb-theme--black .masthead.pcb-masthead {
     /* silkscreen dot matrix */
     radial-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1.6px) 0 0 / 18px 18px,
     /* weave */
-    repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.03) 0 2px, transparent 2px 8px);
-  opacity: 0.55;
+    repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.03) 0 2px, transparent 2px 8px),
+    /* copper micro-traces (vertical + horizontal) */
+    repeating-linear-gradient(0deg, rgba(214, 132, 70, 0.055) 0 1px, transparent 1px 22px),
+    repeating-linear-gradient(90deg, rgba(255, 215, 120, 0.040) 0 1px, transparent 1px 26px);
+  opacity: 0.62;
   mix-blend-mode: overlay;
   pointer-events: none;
   animation: pcbSilkScan 24s linear infinite;
 }
 
 .masthead.pcb-masthead::after {
-  /* A gentle "soldermask shine" strip */
+  /* A gentle soldermask shine strip (warmer + goldy) */
   content: "";
   position: absolute;
   left: -10%;
   right: -10%;
   top: -40%;
   height: 200%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.06), transparent);
+  background: linear-gradient(90deg,
+    transparent,
+    rgba(255, 215, 120, 0.08),
+    rgba(255, 255, 255, 0.045),
+    transparent
+  );
   transform: rotate(-12deg) translateX(-8%);
-  opacity: 0.55;
+  opacity: 0.60;
   pointer-events: none;
   animation: pcbShimmer 18s ease-in-out infinite;
 }
@@ -114,17 +143,18 @@ body.pcb-theme--black .masthead.pcb-masthead {
 /* Make toggle buttons match the dark board */
 .masthead.pcb-masthead .search__toggle {
   color: var(--pcb-signal);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.10);
   border-radius: 999px;
   background: rgba(0, 0, 0, 0.18);
   padding: 0.35rem 0.5rem;
-  transition: box-shadow 160ms ease, border-color 160ms ease;
+  transition: box-shadow 160ms ease, border-color 160ms ease, transform 160ms ease;
 }
 
 .masthead.pcb-masthead .search__toggle:hover {
   color: rgba(255, 255, 255, 0.95);
   border-color: rgba(255, 255, 255, 0.22);
   box-shadow: 0 12px 28px rgba(0, 0, 0, 0.22);
+  transform: translateY(-1px);
 }
 
 .masthead.pcb-masthead .greedy-nav__toggle {
@@ -159,22 +189,83 @@ body.pcb-theme--black .masthead.pcb-masthead {
 /* CPU chip styling (site title) */
 .masthead.pcb-masthead .site-title.pcb-cpu {
   position: relative;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+
   padding: 0.35rem 0.85rem 0.35rem 0.95rem;
   border-radius: 0.85rem;
   border: 1px solid var(--pcb-copper-dim);
-  background: rgba(0, 0, 0, 0.16);
+
+  background:
+    radial-gradient(circle at 20% 20%, rgba(255, 215, 120, 0.09), transparent 55%),
+    rgba(0, 0, 0, 0.16);
+
   -webkit-backdrop-filter: blur(6px);
   backdrop-filter: blur(6px);
+
   box-shadow:
     0 0 0 1px rgba(0, 0, 0, 0.25),
     0 10px 24px rgba(0, 0, 0, 0.22);
 }
 
-.masthead.pcb-masthead .site-title.pcb-cpu:hover {
-  border-color: rgba(110, 255, 210, 0.35);
+.masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__text {
+  position: relative;
+  z-index: 1;
+}
+
+.masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__face {
+  position: relative;
+  flex: 0 0 auto;
+  width: 1.05rem;
+  height: 1.05rem;
+  border-radius: 999px;
+  opacity: 0.92;
+
+  background:
+    /* eyes */
+    radial-gradient(circle at 35% 42%, rgba(255, 255, 255, 0.92) 0 1.2px, transparent 1.35px),
+    radial-gradient(circle at 65% 42%, rgba(255, 255, 255, 0.92) 0 1.2px, transparent 1.35px),
+    /* blush */
+    radial-gradient(circle at 28% 64%, rgba(255, 140, 230, 0.38) 0 2px, transparent 2.2px),
+    radial-gradient(circle at 72% 64%, rgba(255, 140, 230, 0.38) 0 2px, transparent 2.2px),
+    /* base */
+    radial-gradient(circle at 45% 35%, rgba(255, 215, 120, 0.22), transparent 60%),
+    rgba(0, 0, 0, 0.18);
+
   box-shadow:
-    0 0 0 1px rgba(110, 255, 210, 0.18),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.12),
+    0 0 10px rgba(255, 215, 120, 0.16);
+}
+
+.masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__face::after {
+  /* tiny smile */
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 58%;
+  width: 0.52rem;
+  height: 0.30rem;
+  transform: translateX(-50%);
+  border-radius: 0 0 999px 999px;
+  border: 2px solid transparent;
+  border-bottom-color: rgba(255, 255, 255, 0.74);
+  opacity: 0.9;
+}
+
+.masthead.pcb-masthead .site-title.pcb-cpu:hover {
+  border-color: rgba(255, 215, 120, 0.34);
+  box-shadow:
+    0 0 0 1px rgba(255, 215, 120, 0.16),
     0 12px 28px rgba(0, 0, 0, 0.24);
+}
+
+.masthead.pcb-masthead .site-title.pcb-cpu:hover .pcb-cpu__face {
+  animation: pcbFaceBlink 3.6s ease-in-out infinite;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.16),
+    0 0 14px rgba(255, 215, 120, 0.24);
 }
 
 .masthead.pcb-masthead .site-title.pcb-cpu::before {
@@ -201,13 +292,13 @@ body.pcb-theme--black .masthead.pcb-masthead {
   border-radius: 0.95rem;
   padding: 2px;
   background:
-    repeating-linear-gradient(90deg, rgba(191, 122, 64, 0.18) 0 6px, transparent 6px 14px);
+    repeating-linear-gradient(90deg, rgba(214, 132, 70, 0.18) 0 6px, transparent 6px 14px);
   -webkit-mask:
     linear-gradient(#000 0 0) content-box,
     linear-gradient(#000 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
-  opacity: 0.55;
+  opacity: 0.58;
   pointer-events: none;
 }
 
@@ -220,7 +311,7 @@ body.pcb-theme--black .masthead.pcb-masthead {
   background: rgba(0, 0, 0, 0.12);
   -webkit-backdrop-filter: blur(6px);
   backdrop-filter: blur(6px);
-  transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
+  transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease, filter 160ms ease;
 }
 
 .masthead.pcb-masthead .pcb-io::after {
@@ -235,12 +326,38 @@ body.pcb-theme--black .masthead.pcb-masthead {
   border-radius: 50%;
   background: rgba(110, 255, 210, 0.25);
   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.35);
-  opacity: 0.9;
+  opacity: 0.95;
+}
+
+/* Cute sparkle that pops near the LED on hover / active */
+.masthead.pcb-masthead .pcb-io::before {
+  content: "";
+  position: absolute;
+  left: -0.96rem;
+  top: 50%;
+  width: 14px;
+  height: 14px;
+  transform: translateY(-50%) scale(0.38) rotate(0deg);
+  opacity: 0;
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(255, 240, 190, 0.95) 0 2px, transparent 2.2px),
+    linear-gradient(transparent 46%, rgba(255, 215, 120, 0.58) 46% 54%, transparent 54%),
+    linear-gradient(90deg, transparent 46%, rgba(255, 215, 120, 0.58) 46% 54%, transparent 54%),
+    linear-gradient(45deg, transparent 47%, rgba(255, 215, 120, 0.28) 47% 53%, transparent 53%),
+    linear-gradient(-45deg, transparent 47%, rgba(255, 215, 120, 0.28) 47% 53%, transparent 53%);
+  filter: drop-shadow(0 0 10px rgba(255, 215, 120, 0.20));
+  pointer-events: none;
 }
 
 .masthead.pcb-masthead .pcb-io:hover {
   transform: translateY(-1px);
   border-color: rgba(255, 255, 255, 0.18);
+}
+
+.masthead.pcb-masthead .pcb-io:hover::before {
+  opacity: 1;
+  animation: pcbSparkleSpin 900ms ease-out both;
 }
 
 .masthead.pcb-masthead .pcb-io:focus-visible {
@@ -251,20 +368,25 @@ body.pcb-theme--black .masthead.pcb-masthead {
 .masthead.pcb-masthead .pcb-io.is-active {
   color: rgba(255, 255, 255, 0.98);
   text-shadow:
-    0 0 10px rgba(110, 255, 210, 0.28),
-    0 0 18px rgba(110, 255, 210, 0.18);
+    0 0 10px rgba(255, 215, 120, 0.22),
+    0 0 18px rgba(110, 255, 210, 0.12);
   box-shadow:
-    0 0 0 1px rgba(110, 255, 210, 0.22),
+    0 0 0 1px rgba(255, 215, 120, 0.20),
     0 12px 28px rgba(0, 0, 0, 0.22);
   animation: pcbLedFlicker 900ms steps(2) infinite;
 }
 
 .masthead.pcb-masthead .pcb-io.is-active::after {
-  background: rgba(110, 255, 210, 0.95);
+  background: rgba(255, 215, 120, 0.92);
   box-shadow:
     0 0 0 1px rgba(0, 0, 0, 0.35),
-    0 0 10px rgba(110, 255, 210, 0.55),
-    0 0 18px rgba(110, 255, 210, 0.35);
+    0 0 12px rgba(255, 215, 120, 0.52),
+    0 0 18px rgba(110, 255, 210, 0.20);
+}
+
+.masthead.pcb-masthead .pcb-io.is-active::before {
+  opacity: 1;
+  animation: pcbSparkleSpin 1100ms ease-out both;
 }
 
 .masthead.pcb-masthead .pcb-io.pcb-io--icon {
@@ -280,6 +402,11 @@ body.pcb-theme--black .masthead.pcb-masthead {
   right: -0.55rem;
 }
 
+.masthead.pcb-masthead .pcb-io.pcb-io--icon::before {
+  left: auto;
+  right: -0.96rem;
+}
+
 .pcb-decor .pcb-bus {
   fill: none;
   stroke-linecap: round;
@@ -288,8 +415,15 @@ body.pcb-theme--black .masthead.pcb-masthead {
 
 .pcb-bus--base {
   stroke: var(--pcb-copper-dim);
-  stroke-width: 3.2;
+  stroke-width: 3.3;
   opacity: 0.28;
+}
+
+.pcb-bus--gold {
+  stroke: url(#pcbGoldHot);
+  stroke-width: 1.5;
+  opacity: 0.18;
+  filter: drop-shadow(0 0 8px rgba(255, 215, 120, 0.18));
 }
 
 .pcb-bus--signal {
@@ -343,6 +477,19 @@ body.pcb-theme--black .masthead.pcb-masthead {
   opacity: 0.7;
 }
 
+/* Gold pads (test pads / bus pads / heart pad) */
+.pcb-pad {
+  fill: url(#pcbPadFill);
+  stroke: url(#pcbCopperGold);
+  stroke-width: 1.05;
+  opacity: 0.70;
+  filter: drop-shadow(0 0 8px rgba(255, 215, 120, 0.14));
+}
+
+.pcb-pad--heart {
+  opacity: 0.78;
+}
+
 @keyframes pcbLedFlicker {
   0%, 100% { filter: brightness(1); }
   50% { filter: brightness(1.22); }
@@ -350,17 +497,29 @@ body.pcb-theme--black .masthead.pcb-masthead {
 
 /* SVG trace styling */
 .pcb-net .pcb-trace--base {
-  stroke: var(--pcb-copper);
-  stroke-width: 2.2;
+  stroke: url(#pcbCopperGold);
+  stroke-width: 2.4;
   fill: none;
-  opacity: 0.35;
+  opacity: 0.34;
   stroke-linecap: round;
   stroke-linejoin: round;
+  filter: drop-shadow(0 0 8px rgba(214, 132, 70, 0.12));
+}
+
+.pcb-net .pcb-trace--highlight {
+  stroke: url(#pcbGoldHot);
+  stroke-width: 1.25;
+  fill: none;
+  opacity: 0;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 10 260;
+  filter: drop-shadow(0 0 10px rgba(255, 215, 120, 0.18));
 }
 
 .pcb-net .pcb-trace--signal {
   stroke: var(--trace-color, var(--pcb-signal));
-  stroke-width: 2.6;
+  stroke-width: 2.75;
   fill: none;
   opacity: 0;
   stroke-linecap: round;
@@ -369,10 +528,15 @@ body.pcb-theme--black .masthead.pcb-masthead {
   filter: drop-shadow(0 0 6px var(--pcb-glow));
 }
 
-/* Hovering the CPU wakes the whole board up (subtle bus activity) */
+/* Hovering the CPU wakes the whole board up */
 .masthead.pcb-masthead.is-cpu-hover .pcb-net:not(.is-active):not(.is-heartbeat) .pcb-trace--signal {
-  opacity: 0.22;
+  opacity: 0.20;
   animation: pcbTraceFlow 1500ms linear infinite;
+}
+
+.masthead.pcb-masthead.is-cpu-hover .pcb-net:not(.is-active) .pcb-trace--highlight {
+  opacity: 0.18;
+  animation: pcbGoldFlow 1800ms linear infinite;
 }
 
 .pcb-net.is-active .pcb-trace--signal {
@@ -380,9 +544,19 @@ body.pcb-theme--black .masthead.pcb-masthead {
   animation: pcbTraceFlow var(--trace-speed, 820ms) linear infinite;
 }
 
+.pcb-net.is-active .pcb-trace--highlight {
+  opacity: 0.78;
+  animation: pcbGoldFlow var(--trace-speed, 900ms) linear infinite;
+}
+
 .pcb-net.is-idle .pcb-trace--signal {
   opacity: 0.18;
   animation: pcbTraceFlow var(--trace-speed, 1400ms) linear infinite;
+}
+
+.pcb-net.is-idle .pcb-trace--highlight {
+  opacity: 0.22;
+  animation: pcbGoldFlow 1500ms linear infinite;
 }
 
 /* playful nets can spin hue a bit */
@@ -397,15 +571,19 @@ body.pcb-theme--black .masthead.pcb-masthead {
   animation: pcbTraceFlow 1100ms linear infinite;
 }
 
-/* Hovering the CPU = system wakes up (subtle global activity) */
-.masthead.pcb-masthead.is-cpu-hover .pcb-net .pcb-trace--signal {
-  opacity: 0.22;
-  animation: pcbTraceFlow 1500ms linear infinite;
+.pcb-net.is-heartbeat .pcb-trace--highlight {
+  opacity: 0.30;
+  animation: pcbGoldFlow 1100ms linear infinite;
 }
 
 @keyframes pcbTraceFlow {
   from { stroke-dashoffset: 0; }
   to { stroke-dashoffset: -230; }
+}
+
+@keyframes pcbGoldFlow {
+  from { stroke-dashoffset: 0; }
+  to { stroke-dashoffset: -280; }
 }
 
 @keyframes pcbHueSpin {
@@ -414,36 +592,66 @@ body.pcb-theme--black .masthead.pcb-masthead {
 }
 
 @keyframes pcbSilkScan {
-  from { background-position: 0 0, 0 0; }
-  to { background-position: 36px 28px, 0 0; }
+  from { background-position: 0 0, 0 0, 0 0, 0 0; }
+  to { background-position: 36px 28px, 0 0, 0 40px, 52px 0; }
 }
 
 @keyframes pcbShimmer {
-  from { transform: rotate(-12deg) translateX(-14%); opacity: 0.38; }
-  to { transform: rotate(-12deg) translateX(14%); opacity: 0.62; }
+  from { transform: rotate(-12deg) translateX(-14%); opacity: 0.40; }
+  to { transform: rotate(-12deg) translateX(14%); opacity: 0.66; }
 }
 
 @keyframes pcbViaBlink {
   0% { opacity: 0.35; }
-  40% { opacity: 1; filter: drop-shadow(0 0 6px var(--pcb-glow)); }
-  100% { opacity: 0.55; }
+  40% { opacity: 1; filter: drop-shadow(0 0 8px var(--pcb-glow-gold)); }
+  100% { opacity: 0.70; }
 }
 
+/* Vias become little gold-plated rings */
 .pcb-net .pcb-via {
-  fill: rgba(0, 0, 0, 0.25);
-  stroke: var(--pcb-copper);
-  stroke-width: 1.2;
-  opacity: 0.65;
+  fill: url(#pcbPadFill);
+  stroke: url(#pcbCopperGold);
+  stroke-width: 1.35;
+  opacity: 0.78;
 }
 
 .pcb-net.is-active .pcb-via {
-  stroke: var(--trace-color, var(--pcb-signal));
-  opacity: 0.9;
-  filter: drop-shadow(0 0 8px var(--pcb-glow));
+  stroke: url(#pcbGoldHot);
+  opacity: 0.95;
+  filter: drop-shadow(0 0 10px rgba(255, 215, 120, 0.22));
 }
 
 .pcb-net .pcb-via.is-blink {
   animation: pcbViaBlink 1.8s ease-out;
+}
+
+/* SVG spark particles (animated by JS) */
+.pcb-sparks {
+  pointer-events: none;
+}
+
+.pcb-sparks .pcb-spark {
+  fill: var(--spark-fill, var(--pcb-spark));
+  opacity: 0;
+  mix-blend-mode: screen;
+  filter: drop-shadow(0 0 10px rgba(255, 215, 120, 0.22));
+}
+
+.pcb-sparks .pcb-spark--heart {
+  filter: drop-shadow(0 0 10px rgba(255, 140, 230, 0.20));
+}
+
+/* Cute little sparkle spin on nav */
+@keyframes pcbSparkleSpin {
+  0% { transform: translateY(-50%) scale(0.28) rotate(0deg); opacity: 0; }
+  25% { opacity: 1; }
+  100% { transform: translateY(-50%) scale(1.00) rotate(95deg); opacity: 0; }
+}
+
+@keyframes pcbFaceBlink {
+  0%, 92%, 100% { transform: scaleY(1); }
+  94% { transform: scaleY(0.25); }
+  96% { transform: scaleY(1); }
 }
 
 /* Reduce effects on small screens (greedy-nav collapses anyway) */
@@ -452,10 +660,14 @@ body.pcb-theme--black .masthead.pcb-masthead {
     min-height: 3.6rem;
   }
   .pcb-masthead__traces {
-    opacity: 0.6;
+    opacity: 0.65;
+  }
+  .masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__face {
+    display: none; /* keep it clean on tiny screens */
   }
 }
 
+/* Respect reduced motion */
 @media (prefers-reduced-motion: reduce) {
   .masthead.pcb-masthead::before {
     animation: none;
@@ -467,9 +679,17 @@ body.pcb-theme--black .masthead.pcb-masthead {
   .masthead.pcb-masthead .pcb-io.is-active {
     animation: none;
   }
+  .masthead.pcb-masthead .pcb-io::before {
+    animation: none;
+    opacity: 0.6;
+  }
+  .masthead.pcb-masthead .site-title.pcb-cpu:hover .pcb-cpu__face {
+    animation: none;
+  }
   .pcb-bus--signal,
   .pcb-net.is-active .pcb-trace--signal,
-  .pcb-net.is-playful.is-active .pcb-trace--signal {
+  .pcb-net.is-playful.is-active .pcb-trace--signal,
+  .pcb-net.is-active .pcb-trace--highlight {
     animation: none;
     opacity: 0.42;
   }
@@ -478,5 +698,8 @@ body.pcb-theme--black .masthead.pcb-masthead {
   }
   .pcb-net .pcb-via.is-blink {
     animation: none;
+  }
+  .pcb-sparks {
+    display: none; /* no animated sparks */
   }
 }
