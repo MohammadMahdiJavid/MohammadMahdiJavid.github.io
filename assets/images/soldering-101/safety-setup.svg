@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 320">
+  <style>
+    .title { font: bold 20px 'Arial', sans-serif; fill: #1a1a1a; }
+    .label { font: 15px 'Arial', sans-serif; fill: #1a1a1a; }
+    .note { font: 13px 'Arial', sans-serif; fill: #1a1a1a; }
+  </style>
+  <rect width="500" height="320" fill="#f6f7fb"/>
+  <text x="20" y="36" class="title">Start safe: quiet table, bright light, eye protection.</text>
+  <rect x="25" y="60" width="140" height="80" rx="8" fill="#d6e9f8" stroke="#1a73e8" stroke-width="2"/>
+  <text x="35" y="95" class="label">Safety glasses</text>
+  <rect x="190" y="60" width="140" height="80" rx="8" fill="#d6f8e9" stroke="#14a76c" stroke-width="2"/>
+  <text x="205" y="95" class="label">Ventilation</text>
+  <rect x="355" y="60" width="120" height="80" rx="8" fill="#ffe9b5" stroke="#f4a300" stroke-width="2"/>
+  <text x="365" y="95" class="label">Mat / Stand</text>
+  <line x1="90" y1="140" x2="90" y2="260" stroke="#1a1a1a" stroke-dasharray="4 4"/>
+  <line x1="260" y1="140" x2="260" y2="260" stroke="#1a1a1a" stroke-dasharray="4 4"/>
+  <line x1="415" y1="140" x2="415" y2="260" stroke="#1a1a1a" stroke-dasharray="4 4"/>
+  <text x="40" y="180" class="note">Clear desk</text>
+  <text x="35" y="205" class="note">No drinks nearby</text>
+  <text x="205" y="180" class="note">Small fan helps</text>
+  <text x="190" y="205" class="note">Work in open room</text>
+  <text x="365" y="180" class="note">Use heat mat</text>
+  <text x="360" y="205" class="note">Keep iron in stand</text>
+</svg>

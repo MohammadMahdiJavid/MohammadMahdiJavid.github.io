@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 320">
+  <style>
+    .title { font: bold 20px 'Arial', sans-serif; fill: #1a1a1a; }
+    .step { font: 15px 'Arial', sans-serif; fill: #1a1a1a; }
+    .hint { font: 13px 'Arial', sans-serif; fill: #1a1a1a; }
+  </style>
+  <rect width="500" height="320" fill="#fff8f0"/>
+  <text x="20" y="32" class="title">Three-move joint: heat, feed, freeze</text>
+  <rect x="60" y="70" width="120" height="70" rx="8" fill="#dff0ff" stroke="#1a73e8" stroke-width="2"/>
+  <text x="75" y="110" class="step">Heat pad + lead</text>
+  <rect x="190" y="70" width="120" height="70" rx="8" fill="#e7f7e7" stroke="#14a76c" stroke-width="2"/>
+  <text x="205" y="110" class="step">Feed solder</text>
+  <rect x="320" y="70" width="120" height="70" rx="8" fill="#ffe7f2" stroke="#e64db5" stroke-width="2"/>
+  <text x="340" y="110" class="step">Hold still</text>
+  <line x1="180" y1="105" x2="190" y2="105" stroke="#1a1a1a" marker-end="url(#arrow)" stroke-width="2"/>
+  <line x1="310" y1="105" x2="320" y2="105" stroke="#1a1a1a" marker-end="url(#arrow)" stroke-width="2"/>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="5" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#1a1a1a"/>
+    </marker>
+  </defs>
+  <text x="40" y="190" class="hint">• 2-3 seconds: touch iron to pad + wire together.</text>
+  <text x="40" y="220" class="hint">• 1 second: feed solder where iron meets pad until it flows.</text>
+  <text x="40" y="250" class="hint">• Remove solder first, iron second. Do not blow on the joint.</text>
+</svg>

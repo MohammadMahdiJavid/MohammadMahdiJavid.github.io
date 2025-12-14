@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 320">
+  <style>
+    .title { font: bold 20px 'Arial', sans-serif; fill: #1a1a1a; }
+    .step { font: 15px 'Arial', sans-serif; fill: #1a1a1a; }
+    .note { font: 13px 'Arial', sans-serif; fill: #1a1a1a; }
+  </style>
+  <rect width="500" height="320" fill="#f6fff7"/>
+  <text x="20" y="32" class="title">Finish well so parts last</text>
+  <rect x="40" y="70" width="190" height="80" rx="10" fill="#dff0ff" stroke="#1a73e8" stroke-width="2"/>
+  <text x="60" y="110" class="step">Inspect: shiny cone, no cracks</text>
+  <rect x="270" y="70" width="190" height="80" rx="10" fill="#ffe7f2" stroke="#e64db5" stroke-width="2"/>
+  <text x="295" y="110" class="step">Clean: swab + alcohol</text>
+  <rect x="155" y="180" width="190" height="90" rx="10" fill="#e7f7e7" stroke="#14a76c" stroke-width="2"/>
+  <text x="175" y="220" class="step">Reset: iron back on stand</text>
+  <text x="175" y="245" class="note">unplug when done</text>
+</svg>
