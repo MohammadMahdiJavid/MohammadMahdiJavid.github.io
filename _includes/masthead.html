@@ -4,14 +4,17 @@
   {% capture logo_path %}{{ site.logo }}{% endcapture %}
 {% endif %}
 
-<div class="masthead">
+<div class="masthead pcb-masthead" data-pcb-masthead>
+  <div class="pcb-masthead__bg" aria-hidden="true">
+    <svg class="pcb-masthead__traces" xmlns="http://www.w3.org/2000/svg"></svg>
+  </div>
   <div class="masthead__inner-wrap">
     <div class="masthead__menu">
       <nav id="site-nav" class="greedy-nav">
         {% unless logo_path == empty %}
           <a class="site-logo" href="{{ '/' | relative_url }}"><img src="{{ logo_path | relative_url }}" alt=""></a>
         {% endunless %}
-        <a class="site-title" href="{{ '/' | relative_url }}">{{ site.masthead_title | default: site.title }}</a>
+        <a class="site-title pcb-cpu" id="pcb-cpu" href="{{ '/' | relative_url }}">{{ site.masthead_title | default: site.title }}</a>
         <ul class="visible-links">
           {%- for link in site.data.navigation.main -%}
             {%- if link.url contains '://' -%}
@@ -20,7 +23,7 @@
               {%- assign url = link.url | relative_url -%}
             {%- endif -%}
             <li class="masthead__menu-item">
-              <a href="{{ url }}" {% if link.description %}title="{{ link.description }}"{% endif %}>{{ link.title }}</a>
+              <a class="pcb-io" data-pcb-id="{{ link.title | slugify }}" href="{{ url }}" {% if link.description %}title="{{ link.description }}"{% endif %}>{{ link.title }}</a>
             </li>
           {%- endfor -%}
         </ul>

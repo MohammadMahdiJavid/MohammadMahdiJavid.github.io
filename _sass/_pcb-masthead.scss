@@ -1,0 +1,358 @@
+
+.masthead.pcb-masthead {
+  /* Palette: Classic Soldermask Green / Copper / Neon */
+  --pcb-bg-0: #041c16;
+  --pcb-bg-1: #0a3b2d;
+  --pcb-silk: rgba(235, 255, 246, 0.82);
+  --pcb-copper: rgba(191, 122, 64, 0.62);
+  --pcb-copper-dim: rgba(191, 122, 64, 0.25);
+  --pcb-signal: rgba(110, 255, 210, 0.96);
+  --pcb-signal-2: rgba(120, 210, 255, 0.92);
+  --pcb-glow: rgba(110, 255, 210, 0.35);
+
+  position: relative;
+  overflow: hidden;
+
+  /* Replace the theme's plain background with a board-like texture */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background:
+    radial-gradient(circle at 14% 20%, rgba(110, 255, 210, 0.12), transparent 60%),
+    radial-gradient(circle at 84% 30%, rgba(255, 210, 120, 0.10), transparent 55%),
+    linear-gradient(180deg, var(--pcb-bg-1), var(--pcb-bg-0));
+}
+
+/* Layering: pseudo texture < SVG traces < actual nav */
+.masthead.pcb-masthead::before,
+.masthead.pcb-masthead::after {
+  z-index: 0;
+}
+
+.masthead.pcb-masthead .masthead__inner-wrap {
+  position: relative;
+  z-index: 2;
+}
+
+/* Optional alternate palette (Matte Black FR4 / Silver / Electric Blue)
+   Usage: add class "pcb-theme--black" to <body> in your layout.
+*/
+body.pcb-theme--black .masthead.pcb-masthead {
+  --pcb-bg-0: #050608;
+  --pcb-bg-1: #101318;
+  --pcb-silk: rgba(240, 245, 255, 0.78);
+  --pcb-copper: rgba(190, 200, 215, 0.48);
+  --pcb-copper-dim: rgba(190, 200, 215, 0.22);
+  --pcb-signal: rgba(120, 210, 255, 0.96);
+  --pcb-signal-2: rgba(170, 255, 220, 0.92);
+  --pcb-glow: rgba(120, 210, 255, 0.38);
+}
+
+.masthead.pcb-masthead::before {
+  /* Subtle fiberglass weave + silkscreen dots */
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    /* silkscreen dot matrix */
+    radial-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1.6px) 0 0 / 18px 18px,
+    /* weave */
+    repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.03) 0 2px, transparent 2px 8px);
+  opacity: 0.55;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+}
+
+.masthead.pcb-masthead::after {
+  /* A gentle "soldermask shine" strip */
+  content: "";
+  position: absolute;
+  left: -10%;
+  right: -10%;
+  top: -40%;
+  height: 200%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.06), transparent);
+  transform: rotate(-12deg);
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.pcb-masthead__bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.pcb-masthead__traces {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Ensure the actual navigation stays above the SVG */
+.masthead.pcb-masthead .masthead__inner-wrap {
+  padding: 0.55rem 1rem;
+}
+
+.masthead.pcb-masthead .greedy-nav {
+  background: transparent;
+  min-height: 4.2rem;
+}
+
+.masthead.pcb-masthead .greedy-nav a {
+  color: rgba(235, 255, 246, 0.92);
+}
+
+.masthead.pcb-masthead .greedy-nav a:hover {
+  color: rgba(255, 255, 255, 0.98);
+}
+
+/* Make toggle buttons match the dark board */
+.masthead.pcb-masthead .search__toggle {
+  color: var(--pcb-signal);
+}
+
+.masthead.pcb-masthead .search__toggle:hover {
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.masthead.pcb-masthead .greedy-nav__toggle {
+  color: rgba(235, 255, 246, 0.92);
+}
+
+.masthead.pcb-masthead .navicon,
+.masthead.pcb-masthead .navicon:before,
+.masthead.pcb-masthead .navicon:after {
+  background: rgba(235, 255, 246, 0.88);
+}
+
+.masthead.pcb-masthead .hidden-links {
+  background: rgba(0, 0, 0, 0.78);
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+.masthead.pcb-masthead .hidden-links a {
+  color: rgba(235, 255, 246, 0.92);
+}
+
+.masthead.pcb-masthead .hidden-links a:hover {
+  color: rgba(255, 255, 255, 0.98);
+  background: rgba(110, 255, 210, 0.10);
+}
+
+/* Remove the theme's underline bar so it doesn't fight the LED effect */
+.masthead.pcb-masthead .greedy-nav .visible-links a:before {
+  display: none;
+}
+
+/* CPU chip styling (site title) */
+.masthead.pcb-masthead .site-title.pcb-cpu {
+  position: relative;
+  padding: 0.35rem 0.85rem 0.35rem 0.95rem;
+  border-radius: 0.85rem;
+  border: 1px solid var(--pcb-copper-dim);
+  background: rgba(0, 0, 0, 0.16);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.25),
+    0 10px 24px rgba(0, 0, 0, 0.22);
+}
+
+.masthead.pcb-masthead .site-title.pcb-cpu:hover {
+  border-color: rgba(110, 255, 210, 0.35);
+  box-shadow:
+    0 0 0 1px rgba(110, 255, 210, 0.18),
+    0 12px 28px rgba(0, 0, 0, 0.24);
+}
+
+.masthead.pcb-masthead .site-title.pcb-cpu::before {
+  content: "CPU";
+  position: absolute;
+  left: 0.65rem;
+  top: -0.85rem;
+  font-size: 0.58rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--pcb-silk);
+  opacity: 0.9;
+  padding: 0.12rem 0.38rem;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+}
+
+.masthead.pcb-masthead .site-title.pcb-cpu::after {
+  /* tiny "pins" illusion */
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: 0.95rem;
+  padding: 2px;
+  background:
+    repeating-linear-gradient(90deg, rgba(191, 122, 64, 0.18) 0 6px, transparent 6px 14px);
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+/* I/O peripheral styling (nav links) */
+.masthead.pcb-masthead .visible-links a.pcb-io {
+  position: relative;
+  padding: 0.28rem 0.65rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  background: rgba(0, 0, 0, 0.12);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
+}
+
+.masthead.pcb-masthead .visible-links a.pcb-io::after {
+  /* LED indicator dot */
+  content: "";
+  position: absolute;
+  left: -0.55rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: rgba(110, 255, 210, 0.25);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.35);
+  opacity: 0.9;
+}
+
+.masthead.pcb-masthead .visible-links a.pcb-io:hover {
+  transform: translateY(-1px);
+  border-color: rgba(255, 255, 255, 0.18);
+}
+
+.masthead.pcb-masthead .visible-links a.pcb-io:focus-visible {
+  outline: 2px solid rgba(110, 255, 210, 0.65);
+  outline-offset: 3px;
+}
+
+.masthead.pcb-masthead .visible-links a.pcb-io.is-active {
+  color: rgba(255, 255, 255, 0.98);
+  text-shadow:
+    0 0 10px rgba(110, 255, 210, 0.28),
+    0 0 18px rgba(110, 255, 210, 0.18);
+  box-shadow:
+    0 0 0 1px rgba(110, 255, 210, 0.22),
+    0 12px 28px rgba(0, 0, 0, 0.22);
+  animation: pcbLedFlicker 900ms steps(2) infinite;
+}
+
+.masthead.pcb-masthead .visible-links a.pcb-io.is-active::after {
+  background: rgba(110, 255, 210, 0.95);
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.35),
+    0 0 10px rgba(110, 255, 210, 0.55),
+    0 0 18px rgba(110, 255, 210, 0.35);
+}
+
+@keyframes pcbLedFlicker {
+  0%, 100% { filter: brightness(1); }
+  50% { filter: brightness(1.22); }
+}
+
+/* SVG trace styling */
+.pcb-net .pcb-trace--base {
+  stroke: var(--pcb-copper);
+  stroke-width: 2.2;
+  fill: none;
+  opacity: 0.35;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.pcb-net .pcb-trace--signal {
+  stroke: var(--trace-color, var(--pcb-signal));
+  stroke-width: 2.6;
+  fill: none;
+  opacity: 0;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 10 220;
+  filter: drop-shadow(0 0 6px var(--pcb-glow));
+}
+
+/* Hovering the CPU wakes the whole board up (subtle bus activity) */
+.masthead.pcb-masthead.is-cpu-hover .pcb-net:not(.is-active):not(.is-heartbeat) .pcb-trace--signal {
+  opacity: 0.22;
+  animation: pcbTraceFlow 1500ms linear infinite;
+}
+
+.pcb-net.is-active .pcb-trace--signal {
+  opacity: 1;
+  animation: pcbTraceFlow var(--trace-speed, 820ms) linear infinite;
+}
+
+/* playful nets can spin hue a bit */
+.pcb-net.is-playful.is-active .pcb-trace--signal {
+  animation:
+    pcbTraceFlow var(--trace-speed, 860ms) linear infinite,
+    pcbHueSpin 1800ms linear infinite;
+}
+
+.pcb-net.is-heartbeat .pcb-trace--signal {
+  opacity: 0.55;
+  animation: pcbTraceFlow 1100ms linear infinite;
+}
+
+/* Hovering the CPU = system wakes up (subtle global activity) */
+.masthead.pcb-masthead.is-cpu-hover .pcb-net .pcb-trace--signal {
+  opacity: 0.22;
+  animation: pcbTraceFlow 1500ms linear infinite;
+}
+
+@keyframes pcbTraceFlow {
+  from { stroke-dashoffset: 0; }
+  to { stroke-dashoffset: -230; }
+}
+
+@keyframes pcbHueSpin {
+  from { filter: hue-rotate(0deg) drop-shadow(0 0 6px var(--pcb-glow)); }
+  to { filter: hue-rotate(360deg) drop-shadow(0 0 6px var(--pcb-glow)); }
+}
+
+.pcb-net .pcb-via {
+  fill: rgba(0, 0, 0, 0.25);
+  stroke: var(--pcb-copper);
+  stroke-width: 1.2;
+  opacity: 0.65;
+}
+
+.pcb-net.is-active .pcb-via {
+  stroke: var(--trace-color, var(--pcb-signal));
+  opacity: 0.9;
+  filter: drop-shadow(0 0 8px var(--pcb-glow));
+}
+
+/* Reduce effects on small screens (greedy-nav collapses anyway) */
+@media (max-width: 768px) {
+  .masthead.pcb-masthead .greedy-nav {
+    min-height: 3.6rem;
+  }
+  .pcb-masthead__traces {
+    opacity: 0.6;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .masthead.pcb-masthead::after {
+    display: none;
+  }
+  .masthead.pcb-masthead .visible-links a.pcb-io.is-active {
+    animation: none;
+  }
+  .pcb-net.is-active .pcb-trace--signal,
+  .pcb-net.is-playful.is-active .pcb-trace--signal {
+    animation: none;
+    opacity: 0.9;
+  }
+}
