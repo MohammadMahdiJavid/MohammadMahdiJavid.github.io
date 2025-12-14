@@ -1,19 +1,81 @@
-<div class="page__footer-follow">
-  <ul class="social-icons">
-    {% if site.data.ui-text[site.locale].follow_label %}
-      <li><strong>{{ site.data.ui-text[site.locale].follow_label }}</strong></li>
-    {% endif %}
+<div class="pcb-footer">
+  <div class="pcb-footer__background" aria-hidden="true">
+    <svg class="pcb-footer__traces" viewBox="0 0 1200 320" preserveAspectRatio="none" role="presentation">
+      <defs>
+        <linearGradient id="pcb-footer-glow" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#7fffd4" stop-opacity="0.9" />
+          <stop offset="100%" stop-color="#7fffd4" stop-opacity="0" />
+        </linearGradient>
+      </defs>
+      <path class="pcb-footer__trace" d="M160 200 H360" />
+      <path class="pcb-footer__trace" d="M360 200 Q480 200 540 140 T720 140" />
+      <path class="pcb-footer__trace" d="M720 140 H1000" />
+      <path class="pcb-footer__trace" d="M360 200 Q520 200 620 240 T840 240" />
+      <path class="pcb-footer__trace pcb-footer__trace--branch" d="M720 140 Q800 80 940 80" />
+      <path class="pcb-footer__trace pcb-footer__trace--branch" d="M840 240 Q960 260 1100 260" />
+      <path class="pcb-footer__trace pcb-footer__trace--pulse" d="M160 200 H360 Q520 200 620 240 T840 240" />
+      <path class="pcb-footer__trace pcb-footer__trace--pulse" d="M360 200 Q480 200 540 140 T720 140 H1000" />
+      <circle class="pcb-footer__via" cx="360" cy="200" r="3" />
+      <circle class="pcb-footer__via" cx="540" cy="140" r="3" />
+      <circle class="pcb-footer__via" cx="620" cy="240" r="3" />
+      <circle class="pcb-footer__via" cx="720" cy="140" r="3" />
+      <circle class="pcb-footer__via" cx="840" cy="240" r="3" />
+      <circle class="pcb-footer__via pcb-footer__via--blink" cx="940" cy="80" r="3" />
+      <circle class="pcb-footer__via pcb-footer__via--blink" cx="1100" cy="260" r="3" />
+      <text x="170" y="188" class="pcb-footer__silk">CLK</text>
+      <text x="400" y="188" class="pcb-footer__silk">IO-A</text>
+      <text x="585" y="132" class="pcb-footer__silk">BUS</text>
+      <text x="640" y="252" class="pcb-footer__silk">UART</text>
+      <text x="920" y="92" class="pcb-footer__silk">DATA2</text>
+      <text x="1020" y="252" class="pcb-footer__silk">CAN</text>
+    </svg>
+    <div class="pcb-footer__components">
+      <span class="pcb-footer__resistor" aria-hidden="true"></span>
+      <span class="pcb-footer__capacitor" aria-hidden="true"></span>
+      <span class="pcb-footer__sensor" aria-hidden="true"></span>
+    </div>
+  </div>
 
-    {% if site.footer.links %}
-      {% for link in site.footer.links %}
-        {% if link.label and link.url %}
-          <li><a href="{{ link.url }}" rel="nofollow noopener noreferrer"><i class="{{ link.icon | default: 'fas fa-link' }}" aria-hidden="true"></i> {{ link.label }}</a></li>
+  <div class="pcb-footer__content">
+    <div class="pcb-footer__chip" aria-label="Footer CPU">
+      <div class="pcb-footer__chip-tag">CPU</div>
+      <div class="pcb-footer__chip-name">{{ site.name | default: site.title }}</div>
+      {% if site.description %}
+      <div class="pcb-footer__chip-desc">{{ site.description }}</div>
+      {% endif %}
+      <div class="pcb-footer__status"><span class="pcb-footer__led" aria-hidden="true"></span> Footer bus: idle &amp; cozy</div>
+    </div>
+
+    <div class="pcb-footer__io">
+      <div class="pcb-footer__io-heading">{{ site.data.ui-text[site.locale].follow_label | default: "Follow" }} I/O</div>
+      <ul class="pcb-footer__io-list">
+        {% if site.footer.links %}
+          {% for link in site.footer.links %}
+            {% if link.label and link.url %}
+              <li class="pcb-footer__io-node">
+                <a class="pcb-footer__io-link" href="{{ link.url }}" rel="nofollow noopener noreferrer">
+                  <span class="pcb-footer__io-dot" aria-hidden="true"></span>
+                  {% if link.icon %}<i class="pcb-footer__io-icon {{ link.icon }}" aria-hidden="true"></i>{% endif %}
+                  <span class="pcb-footer__io-label">{{ link.label }}</span>
+                </a>
+              </li>
+            {% endif %}
+          {% endfor %}
         {% endif %}
-      {% endfor %}
-    {% endif %}
+        <li class="pcb-footer__io-node">
+          <a class="pcb-footer__io-link" href="{% if site.atom_feed.path %}{{ site.atom_feed.path }}{% else %}{{ '/feed.xml' | relative_url }}{% endif %}">
+            <span class="pcb-footer__io-dot" aria-hidden="true"></span>
+            <i class="pcb-footer__io-icon fas fa-fw fa-rss" aria-hidden="true"></i>
+            <span class="pcb-footer__io-label">{{ site.data.ui-text[site.locale].feed_label | default: "Feed" }}</span>
+          </a>
+        </li>
+      </ul>
+    </div>
 
-    <li><a href="{% if site.atom_feed.path %}{{ site.atom_feed.path }}{% else %}{{ '/feed.xml' | relative_url }}{% endif %}"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> {{ site.data.ui-text[site.locale].feed_label | default: "Feed" }}</a></li>
-  </ul>
+    <div class="pcb-footer__credits">
+      <div class="pcb-footer__silk">Silkscreen</div>
+      <div class="pcb-footer__credit-line">&copy; {{ site.time | date: '%Y' }} {{ site.name | default: site.title }}.</div>
+      <div class="pcb-footer__credit-line">{{ site.data.ui-text[site.locale].powered_by | default: "Powered by" }} <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+    </div>
+  </div>
 </div>
-
-<div class="page__footer-copyright">&copy; {{ site.time | date: '%Y' }} {{ site.name | default: site.title }}. {{ site.data.ui-text[site.locale].powered_by | default: "Powered by" }} <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
