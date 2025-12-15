@@ -1,5 +1,4 @@
-/* assets/js/pcb-masthead.js
- */
+/* assets/js/pcb-masthead.js */
 
 (() => {
   "use strict";
@@ -20,7 +19,9 @@
 
   const state = {
     ioMap: new Map(),
-    nets: new Map(), // id -> { g, end:{x,y}, vias:[] }
+    nets: new Map(),   // id -> { g, end:{x,y}, vias:[], busKey }
+    buses: new Map(),  // key -> { g, y, x0, x1 }
+
     hoverId: null,
     activeId: null,
     inView: true,
@@ -31,19 +32,15 @@
     layoutRaf: 0,
     idleInterval: 0,
     awakeTimer: 0,
-    blinkTimer: 0,
-
-    parallaxRaf: 0,
-    lastPointer: null
+    blinkTimer: 0
   };
 
-  // ---------- Helpers ----------
+  // ---------- Small math helpers ----------
   const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
   const lerp = (a, b, t) => a + (b - a) * t;
+  const snap = (n) => Math.round(n * 2) / 2; // 0.5px snapping helps crisp strokes
 
-  // Snap to 0.5px to reduce blur on thin strokes
-  const snap = (n) => Math.round(n * 2) / 2;
-
+  // ---------- SVG helpers ----------
   function svgEl(name, attrs = {}, className = "") {
     const el = document.createElementNS(SVG_NS, name);
     if (className) el.setAttribute("class", className);
@@ -63,6 +60,7 @@
     }, ms);
   }
 
+  // ---------- URL matching for active nav ----------
   function normalizePath(urlLike) {
     try {
       const u = new URL(urlLike, window.location.origin);
@@ -86,13 +84,14 @@
       if (!el || el.tagName !== "A") continue;
       const href = el.getAttribute("href");
       if (!href) continue;
+
       const p = normalizePath(href);
       if (p && p === here) return id;
     }
     return null;
   }
 
-  // Collect visible .pcb-io elements (greedy-nav may duplicate/move)
+  // ---------- DOM collection ----------
   function collectVisibleIO() {
     const all = Array.from(masthead.querySelectorAll(".pcb-io[data-pcb-id]"));
     const byId = new Map();
@@ -101,7 +100,7 @@
       const id = el.dataset.pcbId;
       if (!id) continue;
 
-      const isVisible = !!(el.offsetParent);
+      const isVisible = !!el.offsetParent;
       if (!byId.has(id)) {
         byId.set(id, el);
       } else {
@@ -113,160 +112,86 @@
     return byId;
   }
 
-  function pointForIO(ioEl, mastRect) {
+  function pointForIO(ioEl, mastRect, w, h) {
     const r = ioEl.getBoundingClientRect();
     const isIcon = ioEl.classList.contains("pcb-io--icon");
+    const pad = 14; // more space than before → cleaner look
 
-    // normal links: "LED dot" is left side; icon button: dot is on right side
     const x = isIcon
-      ? (r.right - mastRect.left) + 10
-      : (r.left - mastRect.left) - 10;
+      ? (r.right - mastRect.left) + pad
+      : (r.left - mastRect.left) - pad;
 
     const y = (r.top - mastRect.top) + (r.height * 0.5);
-    return { x: snap(clamp(x, 0, mastRect.width)), y: snap(clamp(y, 0, mastRect.height)) };
+
+    return {
+      x: snap(clamp(x, 0, w)),
+      y: snap(clamp(y, 0, h))
+    };
   }
 
-  function cpuPins(cpuEl, mastRect, n) {
-    // Generates N pin points along the CPU right edge
-    if (!cpuEl || n <= 0) {
-      const fallbackY = mastRect.height * 0.5;
-      return Array.from({ length: n }, () => ({
-        x: snap(40),
-        y: snap(fallbackY)
-      }));
+  function cpuBox(cpuEl, mastRect, w, h) {
+    if (!cpuEl) {
+      return { x: snap(w * 0.10), y: snap(h * 0.25), w: snap(w * 0.18), h: snap(h * 0.50) };
     }
-
     const r = cpuEl.getBoundingClientRect();
-
-    const pinX = (r.right - mastRect.left) + 8;
-
-    // Keep pins inside a “safe band” so they look like chip pins
-    const top = (r.top - mastRect.top) + r.height * 0.20;
-    const bot = (r.top - mastRect.top) + r.height * 0.80;
-
-    const pins = [];
-    for (let i = 0; i < n; i++) {
-      const t = (i + 1) / (n + 1);
-      pins.push({
-        x: snap(clamp(pinX, 0, mastRect.width)),
-        y: snap(clamp(lerp(top, bot, t), 0, mastRect.height))
-      });
-    }
-    return pins;
+    const x = snap(clamp(r.left - mastRect.left, 0, w));
+    const y = snap(clamp(r.top - mastRect.top, 0, h));
+    const ww = snap(clamp(r.width, 10, w));
+    const hh = snap(clamp(r.height, 10, h));
+    return { x, y, w: ww, h: hh };
   }
 
-  // Manhattan-ish routing through a laneX to keep traces separated
-  function routeLane(start, end, laneX, w) {
-    const sx = start.x, sy = start.y;
-    const ex = end.x, ey = end.y;
+  function cpuPinsPerimeter(box, w, h, counts) {
+    const out = 8;
+    const safeX0 = box.x + box.w * 0.18;
+    const safeX1 = box.x + box.w * 0.82;
+    const safeY0 = box.y + box.h * 0.22;
+    const safeY1 = box.y + box.h * 0.78;
 
-    const dx = ex - sx;
-    const dy = ey - sy;
-
-    // If not enough horizontal room, fall back to a smooth bezier
-    if (dx < 120) {
-      const c1x = sx + dx * 0.35;
-      const c2x = sx + dx * 0.65;
-      return `M ${sx} ${sy} C ${snap(c1x)} ${sy}, ${snap(c2x)} ${ey}, ${ex} ${ey}`;
+    function pinLine(count, a0, a1, fixed, horizontal) {
+      if (count <= 0) return [];
+      const pts = [];
+      for (let i = 0; i < count; i++) {
+        const t = (i + 1) / (count + 1);
+        const v = lerp(a0, a1, t);
+        pts.push(horizontal
+          ? { x: snap(clamp(v, 0, w)), y: snap(clamp(fixed, 0, h)) }
+          : { x: snap(clamp(fixed, 0, w)), y: snap(clamp(v, 0, h)) }
+        );
+      }
+      return pts;
     }
 
-    const r = 12; // corner radius
-    const sign = (dy >= 0) ? 1 : -1;
-
-    const minLane = sx + 40;
-    const maxLane = ex - 40;
-    const lx = snap(clamp(laneX, minLane, maxLane));
-
-    // If vertical move is tiny, keep it mostly horizontal
-    if (Math.abs(dy) < (r * 2 + 6)) {
-      return `M ${sx} ${sy} L ${lx} ${sy} L ${ex} ${ey}`;
-    }
-
-    const x1 = snap(lx - r);
-    const y2 = snap(ey - sign * r);
-    const yCorner1 = snap(sy + sign * r);
-    const xCorner2 = snap(lx + r);
-
-    return [
-      `M ${sx} ${sy}`,
-      `L ${x1} ${sy}`,
-      `Q ${lx} ${sy} ${lx} ${yCorner1}`,
-      `L ${lx} ${y2}`,
-      `Q ${lx} ${ey} ${xCorner2} ${ey}`,
-      `L ${ex} ${ey}`
-    ].join(" ");
+    return {
+      top:    pinLine(counts.top,    safeX0, safeX1, box.y - out, true),
+      right:  pinLine(counts.right,  safeY0, safeY1, box.x + box.w + out, false),
+      bottom: pinLine(counts.bottom, safeX0, safeX1, box.y + box.h + out, true),
+      left:   pinLine(counts.left,   safeY0, safeY1, box.x - out, false)
+    };
   }
 
+  // ---------- SVG defs ----------
   function addDefs(svgRoot) {
     const defs = svgEl("defs");
 
-    // Safer than rgba() in attributes: use stop-opacity
     const copperGold = svgEl("linearGradient", {
-      id: "pcbCopperGold",
-      x1: "0%", y1: "0%",
-      x2: "100%", y2: "0%"
+      id: "pcbCopperGold", x1: "0%", y1: "0%", x2: "100%", y2: "0%"
     });
-
-    copperGold.appendChild(svgEl("stop", {
-      offset: "0%",
-      "stop-color": "#d68446",
-      "stop-opacity": "0.95"
-    }));
-    copperGold.appendChild(svgEl("stop", {
-      offset: "55%",
-      "stop-color": "#ffd778",
-      "stop-opacity": "0.92"
-    }));
-    copperGold.appendChild(svgEl("stop", {
-      offset: "100%",
-      "stop-color": "#d68446",
-      "stop-opacity": "0.80"
-    }));
+    copperGold.appendChild(svgEl("stop", { offset: "0%", "stop-color": "#d68446", "stop-opacity": "0.95" }));
+    copperGold.appendChild(svgEl("stop", { offset: "55%", "stop-color": "#ffd778", "stop-opacity": "0.92" }));
+    copperGold.appendChild(svgEl("stop", { offset: "100%", "stop-color": "#d68446", "stop-opacity": "0.80" }));
 
     const goldHot = svgEl("linearGradient", {
-      id: "pcbGoldHot",
-      x1: "0%", y1: "0%",
-      x2: "100%", y2: "0%"
+      id: "pcbGoldHot", x1: "0%", y1: "0%", x2: "100%", y2: "0%"
     });
+    goldHot.appendChild(svgEl("stop", { offset: "0%", "stop-color": "#ffd778", "stop-opacity": "0.00" }));
+    goldHot.appendChild(svgEl("stop", { offset: "45%", "stop-color": "#fff0be", "stop-opacity": "0.95" }));
+    goldHot.appendChild(svgEl("stop", { offset: "100%", "stop-color": "#ffd778", "stop-opacity": "0.00" }));
 
-    goldHot.appendChild(svgEl("stop", {
-      offset: "0%",
-      "stop-color": "#ffd778",
-      "stop-opacity": "0.00"
-    }));
-    goldHot.appendChild(svgEl("stop", {
-      offset: "45%",
-      "stop-color": "#fff0be",
-      "stop-opacity": "0.95"
-    }));
-    goldHot.appendChild(svgEl("stop", {
-      offset: "100%",
-      "stop-color": "#ffd778",
-      "stop-opacity": "0.00"
-    }));
-
-    const padFill = svgEl("radialGradient", {
-      id: "pcbPadFill",
-      cx: "40%",
-      cy: "35%",
-      r: "70%"
-    });
-
-    padFill.appendChild(svgEl("stop", {
-      offset: "0%",
-      "stop-color": "#fff0be",
-      "stop-opacity": "0.92"
-    }));
-    padFill.appendChild(svgEl("stop", {
-      offset: "70%",
-      "stop-color": "#ffd778",
-      "stop-opacity": "0.62"
-    }));
-    padFill.appendChild(svgEl("stop", {
-      offset: "100%",
-      "stop-color": "#d68446",
-      "stop-opacity": "0.35"
-    }));
+    const padFill = svgEl("radialGradient", { id: "pcbPadFill", cx: "40%", cy: "35%", r: "70%" });
+    padFill.appendChild(svgEl("stop", { offset: "0%", "stop-color": "#fff0be", "stop-opacity": "0.92" }));
+    padFill.appendChild(svgEl("stop", { offset: "70%", "stop-color": "#ffd778", "stop-opacity": "0.62" }));
+    padFill.appendChild(svgEl("stop", { offset: "100%", "stop-color": "#d68446", "stop-opacity": "0.35" }));
 
     defs.appendChild(copperGold);
     defs.appendChild(goldHot);
@@ -274,47 +199,105 @@
     svgRoot.appendChild(defs);
   }
 
-  function buildDecor(svgRoot, w, h) {
-    const decor = svgEl("g", {}, "pcb-decor");
-    state.decorG = decor;
+  // ---------- Decorative silkscreen (parallax-safe) ----------
+  function buildSilkscreen(svgRoot, w, h) {
+    const g = svgEl("g", {}, "pcb-decor");
+    state.decorG = g;
 
-    // Bottom “bus” (purely decorative)
-    const busY = snap(h * 0.86);
-    const dBus = `M ${snap(w * 0.06)} ${busY}
-                  C ${snap(w * 0.22)} ${snap(busY - 8)}, ${snap(w * 0.38)} ${snap(busY + 10)}, ${snap(w * 0.54)} ${busY}
-                  S ${snap(w * 0.82)} ${snap(busY - 8)}, ${snap(w * 0.94)} ${busY}`;
-
-    const bus = svgEl("g", {}, "pcb-bus");
-    bus.appendChild(svgEl("path", { d: dBus }, "pcb-bus pcb-bus--base"));
-    bus.appendChild(svgEl("path", { d: dBus }, "pcb-bus pcb-bus--gold"));
-    const sig = svgEl("path", { d: dBus }, "pcb-bus pcb-bus--signal is-pulse");
-    sig.style.setProperty("--bus-speed", `${900 + Math.random() * 900}ms`);
-    bus.appendChild(sig);
-
-    decor.appendChild(bus);
-
-    // Cute silkscreen components
     const comps = [
-      { x: w * 0.18, y: h * 0.70, ww: 36, hh: 14, label: "R1" },
-      { x: w * 0.34, y: h * 0.62, ww: 44, hh: 16, label: "C3" },
-      { x: w * 0.56, y: h * 0.72, ww: 40, hh: 14, label: "U2" },
-      { x: w * 0.74, y: h * 0.62, ww: 52, hh: 16, label: "LDO" }
+      { x: w * 0.18, y: h * 0.78, ww: 36, hh: 14, label: "R1" },
+      { x: w * 0.34, y: h * 0.70, ww: 44, hh: 16, label: "C3" },
+      { x: w * 0.56, y: h * 0.80, ww: 40, hh: 14, label: "U2" },
+      { x: w * 0.74, y: h * 0.70, ww: 52, hh: 16, label: "LDO" }
     ];
 
     for (const c of comps) {
-      decor.appendChild(svgEl("rect", {
+      g.appendChild(svgEl("rect", {
         x: snap(c.x), y: snap(c.y),
         width: snap(c.ww), height: snap(c.hh)
       }, "pcb-component"));
 
       const t = svgEl("text", { x: snap(c.x + c.ww * 0.5), y: snap(c.y - 8) }, "pcb-label");
       t.textContent = c.label;
-      decor.appendChild(t);
+      g.appendChild(t);
     }
 
-    svgRoot.appendChild(decor);
+    svgRoot.appendChild(g);
   }
 
+  // ---------- Bus building ----------
+  function busPath(x0, x1, y, amp = 4) {
+    const dx = x1 - x0;
+    return [
+      `M ${x0} ${y}`,
+      `C ${snap(x0 + dx * 0.22)} ${snap(y - amp)}, ${snap(x0 + dx * 0.38)} ${snap(y + amp)}, ${snap(x0 + dx * 0.54)} ${y}`,
+      `S ${snap(x0 + dx * 0.82)} ${snap(y - amp)}, ${x1} ${y}`
+    ].join(" ");
+  }
+
+  function buildBus(parent, key, x0, x1, y, amp = 4) {
+    const g = svgEl("g", {}, `pcb-bus pcb-bus--${key}`);
+    g.dataset.pcbBus = key;
+
+    const d = busPath(x0, x1, y, amp);
+
+    g.appendChild(svgEl("path", { d }, "pcb-bus--base"));
+    g.appendChild(svgEl("path", { d }, "pcb-bus--gold"));
+
+    const sig = svgEl("path", { d }, "pcb-bus--signal is-pulse");
+    sig.style.setProperty("--bus-speed", `${950 + Math.random() * 950}ms`);
+    g.appendChild(sig);
+
+    parent.appendChild(g);
+    state.buses.set(key, { g, y, x0, x1 });
+    return { g, y, x0, x1 };
+  }
+
+  function buildRail(parent, key, x, y0, y1) {
+    const g = svgEl("g", {}, `pcb-bus pcb-bus--${key}`);
+    g.dataset.pcbBus = key;
+
+    const d = `M ${x} ${y0} L ${x} ${y1}`;
+
+    g.appendChild(svgEl("path", { d }, "pcb-bus--base"));
+    g.appendChild(svgEl("path", { d }, "pcb-bus--gold"));
+
+    const sig = svgEl("path", { d }, "pcb-bus--signal is-pulse");
+    sig.style.setProperty("--bus-speed", `${1200 + Math.random() * 900}ms`);
+    g.appendChild(sig);
+
+    parent.appendChild(g);
+    state.buses.set(key, { g, y: null, x0: x, x1: x });
+    return { g, x };
+  }
+
+  // ---------- Routing (rounded V→H corner) ----------
+  function routeVH(start, end, r = 10) {
+    const sx = start.x, sy = start.y;
+    const ex = end.x, ey = end.y;
+
+    const dy = ey - sy;
+    const dx = ex - sx;
+
+    if (Math.abs(dy) < r * 2 || Math.abs(dx) < r * 2) {
+      return `M ${sx} ${sy} L ${sx} ${ey} L ${ex} ${ey}`;
+    }
+
+    const signY = dy >= 0 ? 1 : -1;
+    const signX = dx >= 0 ? 1 : -1;
+
+    const y1 = snap(ey - signY * r);
+    const x2 = snap(sx + signX * r);
+
+    return [
+      `M ${sx} ${sy}`,
+      `L ${sx} ${y1}`,
+      `Q ${sx} ${ey} ${x2} ${ey}`,
+      `L ${ex} ${ey}`
+    ].join(" ");
+  }
+
+  // ---------- Sparks / via blink ----------
   function buildSparksLayer(svgRoot) {
     const sparks = svgEl("g", {}, "pcb-sparks");
     svgRoot.appendChild(sparks);
@@ -334,8 +317,7 @@
   }
 
   function spawnSparks(x, y, kind = "star", count = 6) {
-    if (!state.sparkLayer) return;
-    if (prefersReducedMotion) return;
+    if (!state.sparkLayer || prefersReducedMotion) return;
 
     for (let i = 0; i < count; i++) {
       const holder = svgEl("g", { transform: `translate(${x} ${y})` });
@@ -366,47 +348,49 @@
     }
   }
 
-  function blinkViasRun(net) {
-    if (!net || !net.vias || prefersReducedMotion) return;
-    const vias = net.vias;
+  function blinkViasRun(meta) {
+    if (!meta || !meta.vias || prefersReducedMotion) return;
 
-    vias.forEach(v => v.classList.remove("is-blink"));
-    vias.forEach((via, i) => {
+    meta.vias.forEach(v => v.classList.remove("is-blink"));
+    meta.vias.forEach((via, i) => {
       window.setTimeout(() => {
         via.classList.add("is-blink");
         window.setTimeout(() => via.classList.remove("is-blink"), 1800);
-      }, i * 120);
+      }, i * 110);
     });
   }
 
+  // ---------- Net building ----------
   function buildNet(parent, id, d, end, opts = {}) {
     const g = svgEl("g", {}, "pcb-net");
     g.dataset.pcbId = id;
 
     if (opts.playful) g.classList.add("is-playful");
-    g.style.setProperty("--trace-speed", opts.speed || `${780 + Math.random() * 620}ms`);
+    g.style.setProperty("--trace-speed", opts.speed || `${760 + Math.random() * 680}ms`);
     if (opts.color) g.style.setProperty("--trace-color", opts.color);
 
     const base = svgEl("path", { d }, "pcb-trace--base");
-    const hi = svgEl("path", { d }, "pcb-trace--highlight");
-    const sig = svgEl("path", { d }, "pcb-trace--signal");
+    const hi   = svgEl("path", { d }, "pcb-trace--highlight");
+    const sig  = svgEl("path", { d }, "pcb-trace--signal");
 
     g.appendChild(base);
     g.appendChild(hi);
     g.appendChild(sig);
 
-    // Vias placed at the two “corners” and near the end (helps the PCB vibe)
     const vias = [];
-    if (opts.vias && Array.isArray(opts.vias)) {
+    if (opts.vias) {
       for (const pt of opts.vias) {
-        const via = svgEl("circle", { cx: pt.x, cy: pt.y, r: 3.1 }, "pcb-via");
+        const via = svgEl("circle", { cx: pt.x, cy: pt.y, r: 3.05 }, "pcb-via");
         g.appendChild(via);
         vias.push(via);
       }
     }
 
+    // End pad inside the net group so active state can glow it
+    g.appendChild(svgEl("circle", { cx: end.x, cy: end.y, r: 4.7 }, "pcb-pad"));
+
     parent.appendChild(g);
-    state.nets.set(id, { g, end, vias });
+    state.nets.set(id, { g, end, vias, busKey: opts.busKey || null });
     return g;
   }
 
@@ -417,13 +401,26 @@
   function applyActiveVisuals() {
     const id = displayedId();
 
+    // IO chips
     for (const [key, el] of state.ioMap.entries()) {
       if (!el) continue;
       el.classList.toggle("is-active", key === id);
     }
 
+    // Nets
     for (const [key, meta] of state.nets.entries()) {
       meta.g.classList.toggle("is-active", key === id);
+    }
+
+    // Buses: light up the one feeding the active net
+    for (const [, bus] of state.buses.entries()) {
+      bus.g && bus.g.classList && bus.g.classList.remove("is-hot");
+    }
+    if (id && state.nets.has(id)) {
+      const busKey = state.nets.get(id).busKey;
+      if (busKey && state.buses.has(busKey)) {
+        state.buses.get(busKey).g.classList.add("is-hot");
+      }
     }
   }
 
@@ -432,10 +429,10 @@
     wakeFor(1400);
     applyActiveVisuals();
 
-    const net = state.nets.get(id);
-    if (net) {
-      blinkViasRun(net);
-      spawnSparks(net.end.x, net.end.y, "star", 6);
+    const meta = state.nets.get(id);
+    if (meta) {
+      blinkViasRun(meta);
+      spawnSparks(meta.end.x, meta.end.y, "star", 6);
     }
   }
 
@@ -444,7 +441,7 @@
     applyActiveVisuals();
   }
 
-  // ---------- Build / Layout ----------
+  // ---------- Build / layout ----------
   function rebuild() {
     const mastRect = masthead.getBoundingClientRect();
     const w = Math.max(1, Math.floor(mastRect.width));
@@ -457,72 +454,125 @@
 
     clearSvg(svg);
     state.nets.clear();
+    state.buses.clear();
     state.ioMap = collectVisibleIO();
 
     addDefs(svg);
-    buildDecor(svg, w, h);
+    buildSilkscreen(svg, w, h);
 
-    const tracesGroup = svgEl("g", {}, "pcb-traces");
-    svg.appendChild(tracesGroup);
+    // ---- Backbones (static, spaced, visible)
+    const backbones = svgEl("g", {}, "pcb-backbones");
+    svg.appendChild(backbones);
 
-    // Targets (endpoints)
-    const targets = [];
-    for (const [id, el] of state.ioMap.entries()) {
-      const end = pointForIO(el, mastRect);
-      targets.push({ id, el, end });
+    const x0 = snap(w * 0.05);
+    const x1 = snap(w * 0.95);
+
+    // top + bottom buses near edges (keeps middle clean behind nav text)
+    let yTop = snap(clamp(h * 0.20, 10, 18));
+    let yBot = snap(clamp(h * 0.82, h - 18, h - 10));
+    if (yBot - yTop < 26) {
+      const mid = h * 0.5;
+      yTop = snap(mid - 13);
+      yBot = snap(mid + 13);
     }
 
-    // Sort by Y so “pin assignment” follows visual order (reduces crossings)
-    targets.sort((a, b) => a.end.y - b.end.y);
+    const busTop = buildBus(backbones, "top", x0, x1, yTop, 3.5);
+    const busBot = buildBus(backbones, "bottom", x0, x1, yBot, 3.5);
 
-    // CPU pins
-    const pins = cpuPins(cpu, mastRect, targets.length);
+    // left rail (power/ground vibe) — ensures left side is “wired”
+    const cBox = cpuBox(cpu, mastRect, w, h);
+    const railX = snap(clamp(cBox.x - 28, 10, cBox.x - 10));
+    buildRail(backbones, "rail", railX, yTop, yBot);
 
-    // Draw pin pads (cute CPU pins)
-    pins.forEach((p) => {
-      const pad = svgEl("circle", { cx: p.x, cy: p.y, r: 3.8 }, "pcb-pad");
-      tracesGroup.appendChild(pad);
+    // ---- Traces group (actual interactive nets)
+    const traces = svgEl("g", {}, "pcb-traces");
+    svg.appendChild(traces);
+
+    // CPU pins on all 4 sides (visible)
+    const totalPins = clamp(state.ioMap.size + 6, 10, 18);
+    const counts = {
+      top: 3,
+      bottom: 3,
+      left: 3,
+      right: Math.max(3, totalPins - 9)
+    };
+    const pins = cpuPinsPerimeter(cBox, w, h, counts);
+
+    // pin pads
+    const pinPads = svgEl("g", {}, "pcb-pins");
+    traces.appendChild(pinPads);
+    [...pins.top, ...pins.right, ...pins.bottom, ...pins.left].forEach((p) => {
+      pinPads.appendChild(svgEl("circle", { cx: p.x, cy: p.y, r: 3.75 }, "pcb-pad"));
     });
 
-    // Lane settings: this is the key part that prevents traces stacking inside each other
-    const cpuRect = cpu ? cpu.getBoundingClientRect() : null;
-    const baseX = cpuRect ? (cpuRect.right - mastRect.left) + 8 : 50;
+    // connect CPU pins into buses/rail (so top/bottom/left are genuinely connected)
+    // - top pins → top bus
+    pins.top.slice(0, 2).forEach((p, i) => {
+      const end = { x: p.x, y: yTop };
+      const d = routeVH(p, end, 9);
+      buildNet(traces, `__cpu_top_${i}`, d, end, { busKey: "top", color: "var(--pcb-signal)" });
+      state.nets.delete(`__cpu_top_${i}`); // decorative: not hover-targeted
+    });
 
-    const laneCenter = baseX + clamp(w * 0.18, 80, 170);
-    const laneSpacing = clamp(w * 0.012, 6, 11);
+    // - bottom pins → bottom bus
+    pins.bottom.slice(0, 2).forEach((p, i) => {
+      const end = { x: p.x, y: yBot };
+      const d = routeVH(p, end, 9);
+      buildNet(traces, `__cpu_bot_${i}`, d, end, { busKey: "bottom", color: "var(--pcb-signal-2)" });
+      state.nets.delete(`__cpu_bot_${i}`);
+    });
 
-    // Build each net
+    // - left pins → rail
+    pins.left.slice(0, 2).forEach((p, i) => {
+      const end = { x: railX, y: p.y };
+      // simple horizontal is fine here
+      const d = `M ${p.x} ${p.y} L ${end.x} ${end.y}`;
+      buildNet(traces, `__cpu_left_${i}`, d, end, { busKey: "rail" });
+      state.nets.delete(`__cpu_left_${i}`);
+    });
+
+    // ---- IO targets
+    const targets = [];
+    for (const [id, el] of state.ioMap.entries()) {
+      targets.push({
+        id,
+        el,
+        end: pointForIO(el, mastRect, w, h)
+      });
+    }
+
+    // Sort by X and alternate buses for guaranteed separation
+    targets.sort((a, b) => a.end.x - b.end.x);
+
+    const approach = 16; // last segment into pad (gives clean “pad entry”)
     targets.forEach((t, i) => {
-      const start = pins[i];              // each link gets its own CPU pin
+      const busKey = (i % 2 === 0) ? "top" : "bottom";
+      const bus = (busKey === "top") ? busTop : busBot;
+
+      // tap point on the bus, slightly left of the end pad
+      const tapX = snap(clamp(t.end.x - approach, x0 + 24, x1 - 24));
+      const start = { x: tapX, y: bus.y };
       const end = t.end;
 
-      // spread laneX so vertical segments don't overlap
-      const laneX = laneCenter + (i - (targets.length - 1) / 2) * laneSpacing;
+      // two vias: bus tap + corner
+      const corner = { x: tapX, y: end.y };
+      const vias = [start, corner];
 
-      const d = routeLane(start, end, laneX, w);
-
-      // Vias at lane corners + end pad
-      const corner1 = { x: snap(clamp(laneX, start.x + 40, end.x - 40)), y: start.y };
-      const corner2 = { x: corner1.x, y: end.y };
-      const vias = [corner1, corner2];
+      const d = routeVH(start, end, 10);
 
       const playful = (i % 3 === 0);
       const color = playful ? "var(--pcb-signal-2)" : "var(--pcb-signal)";
 
-      buildNet(tracesGroup, t.id, d, end, {
+      buildNet(traces, t.id, d, end, {
         playful,
         color,
-        vias
+        vias,
+        busKey
       });
-
-      // End pad near the component LED
-      const endPad = svgEl("circle", { cx: end.x, cy: end.y, r: 4.6 }, "pcb-pad");
-      tracesGroup.appendChild(endPad);
     });
 
     buildSparksLayer(svg);
 
-    // Active link based on current URL
     state.activeId = pickActiveFromLocation(state.ioMap);
     applyActiveVisuals();
   }
@@ -559,7 +609,7 @@
       window.setTimeout(() => meta.g.classList.remove("is-idle"), 1400);
 
       if (Math.random() < 0.25) spawnSparks(meta.end.x, meta.end.y, "star", 5);
-    }, 1900);
+    }, 2100);
   }
 
   function stopIdlePulses() {
@@ -585,6 +635,7 @@
         loop();
       }, wait);
     };
+
     loop();
   }
 
@@ -593,39 +644,8 @@
     state.blinkTimer = 0;
   }
 
-  // ---------- Optional parallax (DECOR ONLY, not traces) ----------
-  function applyDecorParallax() {
-    state.parallaxRaf = 0;
-    if (!state.lastPointer || !state.decorG) return;
-
-    const r = masthead.getBoundingClientRect();
-    const cx = r.left + r.width / 2;
-    const cy = r.top + r.height / 2;
-
-    const nx = clamp((state.lastPointer.x - cx) / (r.width / 2), -1, 1);
-    const ny = clamp((state.lastPointer.y - cy) / (r.height / 2), -1, 1);
-
-    const dx = snap(nx * 6);
-    const dy = snap(ny * 4);
-
-    state.decorG.setAttribute("transform", `translate(${dx} ${dy})`);
-  }
-
-  function onPointerMove(ev) {
-    if (prefersReducedMotion) return;
-    if (!state.inView) return;
-
-    state.lastPointer = { x: ev.clientX, y: ev.clientY };
-    if (!state.parallaxRaf) state.parallaxRaf = requestAnimationFrame(applyDecorParallax);
-  }
-
-  function resetDecorParallax() {
-    if (state.decorG) state.decorG.setAttribute("transform", "translate(0 0)");
-  }
-
   // ---------- Events ----------
   function wireEvents() {
-    // Hover/focus interactions
     masthead.addEventListener("pointerover", (ev) => {
       const io = ev.target.closest && ev.target.closest(".pcb-io[data-pcb-id]");
       if (!io) return;
@@ -657,24 +677,16 @@
     // Click sparks (cute)
     masthead.addEventListener("pointerdown", (ev) => {
       const io = ev.target.closest && ev.target.closest(".pcb-io[data-pcb-id]");
-      if (io) {
-        const id = io.dataset.pcbId;
-        const net = state.nets.get(id);
-        if (net) spawnSparks(net.end.x, net.end.y, "heart", 7);
-        wakeFor(1800);
-      }
-    });
+      if (!io) return;
 
-    // Decor parallax only
-    masthead.addEventListener("pointermove", onPointerMove);
-    masthead.addEventListener("pointerleave", () => {
-      state.lastPointer = null;
-      resetDecorParallax();
+      const id = io.dataset.pcbId;
+      const meta = state.nets.get(id);
+      if (meta) spawnSparks(meta.end.x, meta.end.y, "heart", 7);
+      wakeFor(1800);
     });
   }
 
   function wireObservers() {
-    // Rebuild when masthead size changes
     if ("ResizeObserver" in window) {
       const ro = new ResizeObserver(() => scheduleRebuild());
       ro.observe(masthead);
@@ -682,20 +694,17 @@
       window.addEventListener("resize", scheduleRebuild);
     }
 
-    // Greedy-nav changes DOM when it hides/shows links
     if ("MutationObserver" in window) {
       const nav = masthead.querySelector("#site-nav") || masthead;
       const mo = new MutationObserver(() => scheduleRebuild());
       mo.observe(nav, { childList: true, subtree: true });
     }
 
-    // Stop idle animation when not visible
     if ("IntersectionObserver" in window) {
       const io = new IntersectionObserver((entries) => {
         state.inView = !!(entries[0] && entries[0].isIntersecting);
         if (!state.inView) {
           stopIdlePulses();
-          resetDecorParallax();
         } else {
           startIdlePulses();
         }
@@ -712,8 +721,6 @@
   startIdlePulses();
   startRandomBlink();
 
-  // Rebuild again after full load (fonts/layout settle)
   window.addEventListener("load", () => scheduleRebuild());
   window.setTimeout(scheduleRebuild, 250);
 })();
-
