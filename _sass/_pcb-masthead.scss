@@ -805,3 +805,28 @@ body.pcb-theme--black .masthead.pcb-masthead {
   .pcb-sparks .pcb-spark.is-pop { animation: none; opacity: 0.35; }
   .masthead.pcb-masthead .site-title.pcb-cpu.is-boop { animation: none; }
 }
+
+.masthead.pcb-masthead .pcb-masthead__bg {
+  transform: none !important;
+}
+
+
+/* SVG spark pop animation (required for JS sparks) */
+.pcb-sparks .pcb-spark.is-pop {
+  opacity: 1;
+  animation: pcbSparkPop var(--spark-life, 900ms) ease-out forwards;
+}
+
+@keyframes pcbSparkPop {
+  0%   { transform: translate(0,0) scale(0.15) rotate(0deg); opacity: 0; }
+  12%  { opacity: 1; }
+  100% {
+    transform:
+      translate(calc(var(--dx, 0px)), calc(var(--dy, 0px)))
+      scale(1.08)
+      rotate(var(--rot, 90deg));
+    opacity: 0;
+  }
+}
+
+
