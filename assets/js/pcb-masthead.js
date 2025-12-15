@@ -40,6 +40,13 @@
   const lerp = (a, b, t) => a + (b - a) * t;
   const snap = (n) => Math.round(n * 2) / 2; // 0.5px snapping helps crisp strokes
 
+  // CPU pin tuning (prevents overlap + looks more like real pins)
+  const CPU_PIN_R = 3.4;          // smaller than before (3.75)
+  const CPU_PIN_OUT = 10;         // distance outside CPU box
+  const CPU_PIN_INSET = 0.14;     // usable band along edges (wider than before)
+  const CPU_PIN_MIN_PITCH = CPU_PIN_R * 2 + 0.35; // must be > diameter to avoid overlap
+
+
   // ---------- SVG helpers ----------
   function svgEl(name, attrs = {}, className = "") {
     const el = document.createElementNS(SVG_NS, name);
@@ -141,12 +148,24 @@
     return { x, y, w: ww, h: hh };
   }
 
-  function cpuPinsPerimeter(box, w, h, counts) {
-    const out = 8;
-    const safeX0 = box.x + box.w * 0.18;
-    const safeX1 = box.x + box.w * 0.82;
-    const safeY0 = box.y + box.h * 0.22;
-    const safeY1 = box.y + box.h * 0.78;
+  function cpuPinsPerimeter(box, w, h, counts, opts = {}) {
+    const out = opts.out ?? CPU_PIN_OUT;
+    const inset = opts.inset ?? CPU_PIN_INSET;
+    const minPitch = opts.minPitch ?? CPU_PIN_MIN_PITCH;
+
+    const safeX0 = box.x + box.w * inset;
+    const safeX1 = box.x + box.w * (1 - inset);
+    const safeY0 = box.y + box.h * inset;
+    const safeY1 = box.y + box.h * (1 - inset);
+
+    function fitCount(requested, a0, a1) {
+      const L = Math.abs(a1 - a0);
+      if (requested <= 0 || L <= 0) return 0;
+
+      // length/(count+1) >= minPitch  => count <= length/minPitch - 1
+      const max = Math.max(1, Math.floor(L / minPitch) - 1);
+      return Math.max(1, Math.min(requested, max));
+    }
 
     function pinLine(count, a0, a1, fixed, horizontal) {
       if (count <= 0) return [];
@@ -162,13 +181,19 @@
       return pts;
     }
 
+    const topCount    = fitCount(counts.top,    safeX0, safeX1);
+    const bottomCount = fitCount(counts.bottom, safeX0, safeX1);
+    const leftCount   = fitCount(counts.left,   safeY0, safeY1);
+    const rightCount  = fitCount(counts.right,  safeY0, safeY1);
+
     return {
-      top:    pinLine(counts.top,    safeX0, safeX1, box.y - out, true),
-      right:  pinLine(counts.right,  safeY0, safeY1, box.x + box.w + out, false),
-      bottom: pinLine(counts.bottom, safeX0, safeX1, box.y + box.h + out, true),
-      left:   pinLine(counts.left,   safeY0, safeY1, box.x - out, false)
+      top:    pinLine(topCount,    safeX0, safeX1, box.y - out, true),
+      right:  pinLine(rightCount,  safeY0, safeY1, box.x + box.w + out, false),
+      bottom: pinLine(bottomCount, safeX0, safeX1, box.y + box.h + out, true),
+      left:   pinLine(leftCount,   safeY0, safeY1, box.x - out, false)
     };
   }
+
 
   // ---------- SVG defs ----------
   function addDefs(svgRoot) {
@@ -361,6 +386,7 @@
   }
 
   // ---------- Net building ----------
+
   function buildNet(parent, id, d, end, opts = {}) {
     const g = svgEl("g", {}, "pcb-net");
     g.dataset.pcbId = id;
@@ -386,13 +412,24 @@
       }
     }
 
-    // End pad inside the net group so active state can glow it
-    g.appendChild(svgEl("circle", { cx: end.x, cy: end.y, r: 4.7 }, "pcb-pad"));
+    if (opts.endPad !== false) {
+      const endPadR = opts.endPadR ?? 4.7;
+      const endPadClass = opts.endPadClass ?? "pcb-pad";
+      g.appendChild(svgEl("circle", { cx: end.x, cy: end.y, r: endPadR }, endPadClass));
+    }
 
     parent.appendChild(g);
-    state.nets.set(id, { g, end, vias, busKey: opts.busKey || null });
+
+    // Allow decorative nets to skip registration if desired
+    if (opts.register !== false) {
+      state.nets.set(id, { g, end, vias, busKey: opts.busKey || null });
+    }
+
     return g;
   }
+
+
+
 
   function displayedId() {
     return state.hoverId || state.activeId;
@@ -501,25 +538,37 @@
     // pin pads
     const pinPads = svgEl("g", {}, "pcb-pins");
     traces.appendChild(pinPads);
+
     [...pins.top, ...pins.right, ...pins.bottom, ...pins.left].forEach((p) => {
-      pinPads.appendChild(svgEl("circle", { cx: p.x, cy: p.y, r: 3.75 }, "pcb-pad"));
+      pinPads.appendChild(
+        svgEl("circle", { cx: p.x, cy: p.y, r: CPU_PIN_R }, "pcb-pad pcb-pad--pin")
+      );
     });
+
 
     // connect CPU pins into buses/rail (so top/bottom/left are genuinely connected)
     // - top pins → top bus
     pins.top.slice(0, 2).forEach((p, i) => {
       const end = { x: p.x, y: yTop };
       const d = routeVH(p, end, 9);
-      buildNet(traces, `__cpu_top_${i}`, d, end, { busKey: "top", color: "var(--pcb-signal)" });
-      state.nets.delete(`__cpu_top_${i}`); // decorative: not hover-targeted
+      buildNet(traces, `__cpu_top_${i}`, d, end, {
+        busKey: "top",
+        color: "var(--pcb-signal)",
+        endPad: false,
+        register: false
+      });
     });
 
     // - bottom pins → bottom bus
     pins.bottom.slice(0, 2).forEach((p, i) => {
       const end = { x: p.x, y: yBot };
       const d = routeVH(p, end, 9);
-      buildNet(traces, `__cpu_bot_${i}`, d, end, { busKey: "bottom", color: "var(--pcb-signal-2)" });
-      state.nets.delete(`__cpu_bot_${i}`);
+      buildNet(traces, `__cpu_bot_${i}`, d, end, {
+        busKey: "bottom",
+        color: "var(--pcb-signal-2)",
+        endPad: false,
+        register: false
+      });
     });
 
     // - left pins → rail
@@ -527,8 +576,11 @@
       const end = { x: railX, y: p.y };
       // simple horizontal is fine here
       const d = `M ${p.x} ${p.y} L ${end.x} ${end.y}`;
-      buildNet(traces, `__cpu_left_${i}`, d, end, { busKey: "rail" });
-      state.nets.delete(`__cpu_left_${i}`);
+      buildNet(traces, `__cpu_left_${i}`, d, end, {
+        busKey: "rail",
+        endPad: false,
+        register: false
+      });
     });
 
     // ---- IO targets
