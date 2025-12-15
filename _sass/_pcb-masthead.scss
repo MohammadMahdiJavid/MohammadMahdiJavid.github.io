@@ -703,3 +703,105 @@ body.pcb-theme--black .masthead.pcb-masthead {
     display: none; /* no animated sparks */
   }
 }
+
+
+.masthead.pcb-masthead {
+  --pcb-par-x: 0;
+  --pcb-par-y: 0;
+}
+
+/* A tiny "awake" vibe when interacting (JS toggles .is-awake) */
+.masthead.pcb-masthead.is-awake {
+  filter: saturate(1.08) contrast(1.02);
+}
+
+.masthead.pcb-masthead .pcb-masthead__bg {
+  transform: translate3d(calc(var(--pcb-par-x) * 1px), calc(var(--pcb-par-y) * 1px), 0);
+  transition: transform 180ms ease-out, filter 240ms ease;
+  will-change: transform;
+  filter: drop-shadow(0 18px 28px rgba(0, 0, 0, 0.22));
+}
+
+.masthead.pcb-masthead.is-awake .pcb-masthead__bg {
+  filter: drop-shadow(0 18px 28px rgba(0, 0, 0, 0.26)) saturate(1.05);
+}
+
+/* Make the SVG slightly softer behind nav text */
+.masthead.pcb-masthead .pcb-masthead__traces {
+  opacity: 0.95;
+}
+
+/* CPU: smoother hover + a cute "boop" when clicked/tapped */
+.masthead.pcb-masthead .site-title.pcb-cpu {
+  transition:
+    transform 220ms cubic-bezier(.2,.9,.2,1),
+    box-shadow 220ms ease,
+    border-color 220ms ease;
+  transform: translateY(0);
+}
+
+.masthead.pcb-masthead .site-title.pcb-cpu:hover {
+  transform: translateY(-1px) rotate(-0.6deg);
+}
+
+.masthead.pcb-masthead .site-title.pcb-cpu.is-boop {
+  animation: pcbBoop 520ms cubic-bezier(.2,.9,.2,1);
+}
+
+@keyframes pcbBoop {
+  0%   { transform: translateY(0) rotate(0deg) scale(1); }
+  35%  { transform: translateY(-2px) rotate(-1.2deg) scale(1.03); }
+  100% { transform: translateY(0) rotate(0deg) scale(1); }
+}
+
+/* Allow face to blink even when not hovered (JS toggles .is-blink) */
+.masthead.pcb-masthead .pcb-cpu__face.is-blink {
+  animation: pcbFaceBlink 450ms ease-in-out;
+}
+
+/* LED dot pulse on hover (non-active links only) */
+.masthead.pcb-masthead .pcb-io:not(.is-active):hover::after {
+  background: rgba(110, 255, 210, 0.55);
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.35),
+    0 0 10px rgba(110, 255, 210, 0.35),
+    0 0 16px rgba(110, 255, 210, 0.18);
+  animation: pcbLedPulse 1.15s ease-in-out infinite;
+}
+
+@keyframes pcbLedPulse {
+  0%, 100% { transform: translateY(-50%) scale(1); filter: brightness(1); }
+  50%      { transform: translateY(-50%) scale(1.28); filter: brightness(1.25); }
+}
+
+/* SVG spark particles (JS-triggered) */
+.pcb-sparks .pcb-spark {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.pcb-sparks .pcb-spark.is-pop {
+  opacity: 1;
+  animation: pcbSparkPop var(--spark-life, 900ms) ease-out forwards;
+}
+
+@keyframes pcbSparkPop {
+  0%   { transform: translate(0,0) scale(0.15) rotate(0deg); opacity: 0; }
+  12%  { opacity: 1; }
+  100% {
+    transform:
+      translate(calc(var(--dx, 0px)), calc(var(--dy, 0px)))
+      scale(1.08)
+      rotate(var(--rot, 90deg));
+    opacity: 0;
+  }
+}
+
+/* Reduced motion: disable the new motion bits too */
+@media (prefers-reduced-motion: reduce) {
+  .masthead.pcb-masthead.is-awake { filter: none; }
+  .masthead.pcb-masthead .pcb-masthead__bg { transform: none !important; transition: none; }
+  .masthead.pcb-masthead .pcb-io:not(.is-active):hover::after { animation: none; }
+  .pcb-sparks .pcb-spark.is-pop { animation: none; opacity: 0.35; }
+  .masthead.pcb-masthead .site-title.pcb-cpu.is-boop { animation: none; }
+}
