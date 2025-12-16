@@ -6,6 +6,9 @@
   const masthead = document.querySelector("[data-pcb-masthead]");
   if (!masthead) return;
 
+  if (masthead.dataset.pcbMastheadInit === "1") return;
+  masthead.dataset.pcbMastheadInit = "1";
+
   const svg = masthead.querySelector(".pcb-masthead__traces");
   if (!svg) return;
 
@@ -30,9 +33,11 @@
     sparkLayer: null,
 
     layoutRaf: 0,
+    rebuildTimer: 0,
+    rebuilding: false,
     idleInterval: 0,
     awakeTimer: 0,
-    blinkTimer: 0
+    blinkTimer: 0,
   };
 
   // ---------- Small math helpers ----------
@@ -56,6 +61,11 @@
   }
 
   function clearSvg(node) {
+    // Much faster than looping removeChild() and reduces mutation churn
+    if (node && typeof node.replaceChildren === "function") {
+      node.replaceChildren();
+      return;
+    }
     while (node.firstChild) node.removeChild(node.firstChild);
   }
 
@@ -480,6 +490,7 @@
 
   // ---------- Build / layout ----------
   function rebuild() {
+    state.rebuilding = true;
     const mastRect = masthead.getBoundingClientRect();
     const w = Math.max(1, Math.floor(mastRect.width));
     const h = Math.max(1, Math.floor(mastRect.height));
@@ -627,15 +638,29 @@
 
     state.activeId = pickActiveFromLocation(state.ioMap);
     applyActiveVisuals();
+
+    // Let MutationObserver microtasks flush before allowing another rebuild trigger
+    window.setTimeout(() => {
+      state.rebuilding = false;
+    }, 0);
+
   }
 
   function scheduleRebuild() {
-    if (state.layoutRaf) return;
-    state.layoutRaf = requestAnimationFrame(() => {
-      state.layoutRaf = 0;
-      rebuild();
-    });
+    // Debounce bursts of resize/mutation events (prevents stutter + animation resets)
+    if (state.rebuildTimer) window.clearTimeout(state.rebuildTimer);
+
+    state.rebuildTimer = window.setTimeout(() => {
+      state.rebuildTimer = 0;
+
+      if (state.layoutRaf) return;
+      state.layoutRaf = requestAnimationFrame(() => {
+        state.layoutRaf = 0;
+        rebuild();
+      });
+    }, 60);
   }
+
 
   // ---------- Idle pulses ----------
   function startIdlePulses() {
@@ -747,10 +772,30 @@
     }
 
     if ("MutationObserver" in window) {
-      const nav = masthead.querySelector("#site-nav") || masthead;
-      const mo = new MutationObserver(() => scheduleRebuild());
-      mo.observe(nav, { childList: true, subtree: true });
+      // Prefer watching the container that holds the IO links, not the whole masthead.
+      const nav =
+        masthead.querySelector("#site-nav") ||
+        masthead.querySelector(".pcb-io[data-pcb-id]")?.closest("nav, ul, ol") ||
+        null;
+
+      // If we couldn't find a safe container, fall back to masthead,
+      // BUT we will ignore SVG-originating mutations in the callback.
+      const root = (nav && !nav.contains(svg)) ? nav : masthead;
+
+      const mo = new MutationObserver((mutations) => {
+        // Prevent rebuild() -> SVG mutations -> MO -> rebuild() loops
+        if (state.rebuilding) return;
+
+        // Ignore mutations caused by the SVG rebuild itself
+        const meaningful = mutations.some((m) => !svg.contains(m.target));
+        if (!meaningful) return;
+
+        scheduleRebuild();
+      });
+
+      mo.observe(root, { childList: true, subtree: true });
     }
+
 
     if ("IntersectionObserver" in window) {
       const io = new IntersectionObserver((entries) => {
