@@ -405,9 +405,10 @@ body.pcb-theme--black .masthead.pcb-masthead {
   filter: drop-shadow(0 0 6px var(--pcb-glow));
 }
 
+
 .pcb-bus--signal.is-pulse {
   opacity: 0.34;
-  animation: pcbTraceFlow var(--bus-speed, 1500ms) linear infinite;
+  animation: pcbTraceFlowBus var(--bus-speed, 1500ms) linear infinite;
 }
 
 /* When a bus is feeding an active link */
@@ -510,7 +511,7 @@ body.pcb-theme--black .masthead.pcb-masthead {
 
 .pcb-net.is-active .pcb-trace--signal {
   opacity: 0.95;
-  animation: pcbTraceFlow var(--trace-speed, 820ms) linear infinite;
+  animation: pcbTraceFlowNet var(--trace-speed, 820ms) linear infinite;
 }
 
 .pcb-net.is-active .pcb-trace--highlight {
@@ -520,7 +521,7 @@ body.pcb-theme--black .masthead.pcb-masthead {
 
 .pcb-net.is-idle .pcb-trace--signal {
   opacity: 0.24;
-  animation: pcbTraceFlow var(--trace-speed, 1400ms) linear infinite;
+  animation: pcbTraceFlowNet var(--trace-speed, 1400ms) linear infinite;
 }
 
 .pcb-net.is-idle .pcb-trace--highlight {
@@ -530,7 +531,7 @@ body.pcb-theme--black .masthead.pcb-masthead {
 
 .pcb-net.is-playful.is-active .pcb-trace--signal {
   animation:
-    pcbTraceFlow var(--trace-speed, 860ms) linear infinite,
+    pcbTraceFlowNet var(--trace-speed, 860ms) linear infinite,
     pcbHueSpin 1800ms linear infinite;
 }
 
@@ -558,19 +559,24 @@ body.pcb-theme--black .masthead.pcb-masthead {
 }
 
 /* Keyframes */
+@keyframes pcbTraceFlowNet {
+  from { stroke-dashoffset: 0; }
+  to   { stroke-dashoffset: -232; } // 12 + 220
+}
+
+@keyframes pcbTraceFlowBus {
+  from { stroke-dashoffset: 0; }
+  to   { stroke-dashoffset: -204; } // 14 + 190
+}
+
 @keyframes pcbLedFlicker {
   0%, 100% { filter: brightness(1); }
   50% { filter: brightness(1.22); }
 }
 
-@keyframes pcbTraceFlow {
-  from { stroke-dashoffset: 0; }
-  to { stroke-dashoffset: -230; }
-}
-
 @keyframes pcbGoldFlow {
   from { stroke-dashoffset: 0; }
-  to { stroke-dashoffset: -280; }
+  to   { stroke-dashoffset: -272; } // 12 + 260
 }
 
 @keyframes pcbHueSpin {
@@ -647,3 +653,12 @@ body.pcb-theme--black .masthead.pcb-masthead {
   .pcb-sparks { display: none; }
   .masthead.pcb-masthead .pcb-io.is-active { animation: none; }
 }
+
+.pcb-bus--signal.is-pulse,
+.pcb-net.is-active .pcb-trace--signal,
+.pcb-net.is-idle .pcb-trace--signal,
+.pcb-net.is-active .pcb-trace--highlight,
+.pcb-net.is-idle .pcb-trace--highlight {
+  will-change: stroke-dashoffset;
+}
+

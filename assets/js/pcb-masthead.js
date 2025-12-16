@@ -6,11 +6,11 @@
   const masthead = document.querySelector("[data-pcb-masthead]");
   if (!masthead) return;
 
-  if (masthead.dataset.pcbMastheadInit === "1") return;
-  masthead.dataset.pcbMastheadInit = "1";
-
   const svg = masthead.querySelector(".pcb-masthead__traces");
   if (!svg) return;
+
+  if (masthead.dataset.pcbMastheadInit === "1") return;
+  masthead.dataset.pcbMastheadInit = "1";
 
   const cpu = masthead.querySelector("#pcb-cpu");
   const cpuFace = masthead.querySelector(".pcb-cpu__face");
@@ -491,159 +491,164 @@
   // ---------- Build / layout ----------
   function rebuild() {
     state.rebuilding = true;
-    const mastRect = masthead.getBoundingClientRect();
-    const w = Math.max(1, Math.floor(mastRect.width));
-    const h = Math.max(1, Math.floor(mastRect.height));
+    try {
+      const mastRect = masthead.getBoundingClientRect();
+      const w = Math.max(1, Math.floor(mastRect.width));
+      const h = Math.max(1, Math.floor(mastRect.height));
 
-    svg.setAttribute("viewBox", `0 0 ${w} ${h}`);
-    svg.setAttribute("preserveAspectRatio", "none");
-    svg.setAttribute("width", "100%");
-    svg.setAttribute("height", "100%");
+      svg.setAttribute("viewBox", `0 0 ${w} ${h}`);
+      svg.setAttribute("preserveAspectRatio", "none");
+      svg.setAttribute("width", "100%");
+      svg.setAttribute("height", "100%");
 
-    clearSvg(svg);
-    state.nets.clear();
-    state.buses.clear();
-    state.ioMap = collectVisibleIO();
+      clearSvg(svg);
+      state.nets.clear();
+      state.buses.clear();
+      state.ioMap = collectVisibleIO();
 
-    addDefs(svg);
-    buildSilkscreen(svg, w, h);
+      addDefs(svg);
+      buildSilkscreen(svg, w, h);
 
-    // ---- Backbones (static, spaced, visible)
-    const backbones = svgEl("g", {}, "pcb-backbones");
-    svg.appendChild(backbones);
+      // ---- Backbones (static, spaced, visible)
+      const backbones = svgEl("g", {}, "pcb-backbones");
+      svg.appendChild(backbones);
 
-    const x0 = snap(w * 0.05);
-    const x1 = snap(w * 0.95);
+      const x0 = snap(w * 0.05);
+      const x1 = snap(w * 0.95);
 
-    // top + bottom buses near edges (keeps middle clean behind nav text)
-    let yTop = snap(clamp(h * 0.20, 10, 18));
-    let yBot = snap(clamp(h * 0.82, h - 18, h - 10));
-    if (yBot - yTop < 26) {
-      const mid = h * 0.5;
-      yTop = snap(mid - 13);
-      yBot = snap(mid + 13);
+      // top + bottom buses near edges (keeps middle clean behind nav text)
+      let yTop = snap(clamp(h * 0.20, 10, 18));
+      let yBot = snap(clamp(h * 0.82, h - 18, h - 10));
+      if (yBot - yTop < 26) {
+        const mid = h * 0.5;
+        yTop = snap(mid - 13);
+        yBot = snap(mid + 13);
+      }
+
+      const busTop = buildBus(backbones, "top", x0, x1, yTop, 3.5);
+      const busBot = buildBus(backbones, "bottom", x0, x1, yBot, 3.5);
+
+      // left rail (power/ground vibe) — ensures left side is “wired”
+      const cBox = cpuBox(cpu, mastRect, w, h);
+      const railX = snap(clamp(cBox.x - 28, 10, cBox.x - 10));
+      buildRail(backbones, "rail", railX, yTop, yBot);
+
+      // ---- Traces group (actual interactive nets)
+      const traces = svgEl("g", {}, "pcb-traces");
+      svg.appendChild(traces);
+
+      // CPU pins on all 4 sides (visible)
+      const totalPins = clamp(state.ioMap.size + 6, 10, 18);
+      const counts = {
+        top: 3,
+        bottom: 3,
+        left: 3,
+        right: Math.max(3, totalPins - 9)
+      };
+      const pins = cpuPinsPerimeter(cBox, w, h, counts);
+
+      // pin pads
+      const pinPads = svgEl("g", {}, "pcb-pins");
+      traces.appendChild(pinPads);
+
+      [...pins.top, ...pins.right, ...pins.bottom, ...pins.left].forEach((p) => {
+        pinPads.appendChild(
+          svgEl("circle", { cx: p.x, cy: p.y, r: CPU_PIN_R }, "pcb-pad pcb-pad--pin")
+        );
+      });
+
+
+      // connect CPU pins into buses/rail (so top/bottom/left are genuinely connected)
+      // - top pins → top bus
+      pins.top.slice(0, 2).forEach((p, i) => {
+        const end = { x: p.x, y: yTop };
+        const d = routeVH(p, end, 9);
+        buildNet(traces, `__cpu_top_${i}`, d, end, {
+          busKey: "top",
+          color: "var(--pcb-signal)",
+          endPad: false,
+          register: false
+        });
+      });
+
+      // - bottom pins → bottom bus
+      pins.bottom.slice(0, 2).forEach((p, i) => {
+        const end = { x: p.x, y: yBot };
+        const d = routeVH(p, end, 9);
+        buildNet(traces, `__cpu_bot_${i}`, d, end, {
+          busKey: "bottom",
+          color: "var(--pcb-signal-2)",
+          endPad: false,
+          register: false
+        });
+      });
+
+      // - left pins → rail
+      pins.left.slice(0, 2).forEach((p, i) => {
+        const end = { x: railX, y: p.y };
+        // simple horizontal is fine here
+        const d = `M ${p.x} ${p.y} L ${end.x} ${end.y}`;
+        buildNet(traces, `__cpu_left_${i}`, d, end, {
+          busKey: "rail",
+          endPad: false,
+          register: false
+        });
+      });
+
+      // ---- IO targets
+      const targets = [];
+      for (const [id, el] of state.ioMap.entries()) {
+        targets.push({
+          id,
+          el,
+          end: pointForIO(el, mastRect, w, h)
+        });
+      }
+
+      // Sort by X and alternate buses for guaranteed separation
+      targets.sort((a, b) => a.end.x - b.end.x);
+
+      const approach = 16; // last segment into pad (gives clean “pad entry”)
+      targets.forEach((t, i) => {
+        const busKey = (i % 2 === 0) ? "top" : "bottom";
+        const bus = (busKey === "top") ? busTop : busBot;
+
+        // tap point on the bus, slightly left of the end pad
+        const tapX = snap(clamp(t.end.x - approach, x0 + 24, x1 - 24));
+        const start = { x: tapX, y: bus.y };
+        const end = t.end;
+
+        // two vias: bus tap + corner
+        const corner = { x: tapX, y: end.y };
+        const vias = [start, corner];
+
+        const d = routeVH(start, end, 10);
+
+        const playful = (i % 3 === 0);
+        const color = playful ? "var(--pcb-signal-2)" : "var(--pcb-signal)";
+
+        buildNet(traces, t.id, d, end, {
+          playful,
+          color,
+          vias,
+          busKey
+        });
+      });
+
+      buildSparksLayer(svg);
+
+      state.activeId = pickActiveFromLocation(state.ioMap);
+      applyActiveVisuals();
+
+      // Let MutationObserver microtasks flush before allowing another rebuild trigger
+      window.setTimeout(() => {
+        state.rebuilding = false;
+      }, 0);
+    } finally {
+      window.setTimeout(() => {
+        state.rebuilding = false;
+      }, 0);
     }
-
-    const busTop = buildBus(backbones, "top", x0, x1, yTop, 3.5);
-    const busBot = buildBus(backbones, "bottom", x0, x1, yBot, 3.5);
-
-    // left rail (power/ground vibe) — ensures left side is “wired”
-    const cBox = cpuBox(cpu, mastRect, w, h);
-    const railX = snap(clamp(cBox.x - 28, 10, cBox.x - 10));
-    buildRail(backbones, "rail", railX, yTop, yBot);
-
-    // ---- Traces group (actual interactive nets)
-    const traces = svgEl("g", {}, "pcb-traces");
-    svg.appendChild(traces);
-
-    // CPU pins on all 4 sides (visible)
-    const totalPins = clamp(state.ioMap.size + 6, 10, 18);
-    const counts = {
-      top: 3,
-      bottom: 3,
-      left: 3,
-      right: Math.max(3, totalPins - 9)
-    };
-    const pins = cpuPinsPerimeter(cBox, w, h, counts);
-
-    // pin pads
-    const pinPads = svgEl("g", {}, "pcb-pins");
-    traces.appendChild(pinPads);
-
-    [...pins.top, ...pins.right, ...pins.bottom, ...pins.left].forEach((p) => {
-      pinPads.appendChild(
-        svgEl("circle", { cx: p.x, cy: p.y, r: CPU_PIN_R }, "pcb-pad pcb-pad--pin")
-      );
-    });
-
-
-    // connect CPU pins into buses/rail (so top/bottom/left are genuinely connected)
-    // - top pins → top bus
-    pins.top.slice(0, 2).forEach((p, i) => {
-      const end = { x: p.x, y: yTop };
-      const d = routeVH(p, end, 9);
-      buildNet(traces, `__cpu_top_${i}`, d, end, {
-        busKey: "top",
-        color: "var(--pcb-signal)",
-        endPad: false,
-        register: false
-      });
-    });
-
-    // - bottom pins → bottom bus
-    pins.bottom.slice(0, 2).forEach((p, i) => {
-      const end = { x: p.x, y: yBot };
-      const d = routeVH(p, end, 9);
-      buildNet(traces, `__cpu_bot_${i}`, d, end, {
-        busKey: "bottom",
-        color: "var(--pcb-signal-2)",
-        endPad: false,
-        register: false
-      });
-    });
-
-    // - left pins → rail
-    pins.left.slice(0, 2).forEach((p, i) => {
-      const end = { x: railX, y: p.y };
-      // simple horizontal is fine here
-      const d = `M ${p.x} ${p.y} L ${end.x} ${end.y}`;
-      buildNet(traces, `__cpu_left_${i}`, d, end, {
-        busKey: "rail",
-        endPad: false,
-        register: false
-      });
-    });
-
-    // ---- IO targets
-    const targets = [];
-    for (const [id, el] of state.ioMap.entries()) {
-      targets.push({
-        id,
-        el,
-        end: pointForIO(el, mastRect, w, h)
-      });
-    }
-
-    // Sort by X and alternate buses for guaranteed separation
-    targets.sort((a, b) => a.end.x - b.end.x);
-
-    const approach = 16; // last segment into pad (gives clean “pad entry”)
-    targets.forEach((t, i) => {
-      const busKey = (i % 2 === 0) ? "top" : "bottom";
-      const bus = (busKey === "top") ? busTop : busBot;
-
-      // tap point on the bus, slightly left of the end pad
-      const tapX = snap(clamp(t.end.x - approach, x0 + 24, x1 - 24));
-      const start = { x: tapX, y: bus.y };
-      const end = t.end;
-
-      // two vias: bus tap + corner
-      const corner = { x: tapX, y: end.y };
-      const vias = [start, corner];
-
-      const d = routeVH(start, end, 10);
-
-      const playful = (i % 3 === 0);
-      const color = playful ? "var(--pcb-signal-2)" : "var(--pcb-signal)";
-
-      buildNet(traces, t.id, d, end, {
-        playful,
-        color,
-        vias,
-        busKey
-      });
-    });
-
-    buildSparksLayer(svg);
-
-    state.activeId = pickActiveFromLocation(state.ioMap);
-    applyActiveVisuals();
-
-    // Let MutationObserver microtasks flush before allowing another rebuild trigger
-    window.setTimeout(() => {
-      state.rebuilding = false;
-    }, 0);
-
   }
 
   function scheduleRebuild() {
@@ -775,6 +780,7 @@
       // Prefer watching the container that holds the IO links, not the whole masthead.
       const nav =
         masthead.querySelector("#site-nav") ||
+        masthead.querySelector(".greedy-nav") ||
         masthead.querySelector(".pcb-io[data-pcb-id]")?.closest("nav, ul, ol") ||
         null;
 
@@ -818,6 +824,11 @@
   startIdlePulses();
   startRandomBlink();
 
-  window.addEventListener("load", () => scheduleRebuild());
-  window.setTimeout(scheduleRebuild, 250);
+  window.addEventListener("load", scheduleRebuild);
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(scheduleRebuild);
+  } else {
+    window.setTimeout(scheduleRebuild, 250);
+  }
+
 })();
