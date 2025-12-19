@@ -52,7 +52,7 @@
   const CPU_PIN_MIN_PITCH = CPU_PIN_R * 2 + 0.35; // must be > diameter to avoid overlap
 
   const RESISTOR_SVG_CONTENT = `
-<path fill="#000000" opacity="1.000000" stroke="none" 
+<path fill="var(--pcb-bg-1, #0a3b2d)" opacity="1.000000" stroke="none" 
 	d="
 M326.000000,513.000000 
 	C217.359726,513.000000 109.219444,513.000000 1.039583,513.000000 
@@ -487,6 +487,15 @@ z"/>
     svgRoot.appendChild(defs);
   }
 
+  function computeComponentBox(comp) {
+    const scale = comp.scale ?? 1;
+    const ww = snap(comp.ww * scale);
+    const hh = snap(comp.hh * scale);
+    const x = snap(comp.x - (ww - comp.ww) / 2);
+    const y = snap(comp.y - (hh - comp.hh) / 2);
+    return { x, y, ww, hh };
+  }
+
   // ---------- Decorative silkscreen (parallax-safe) ----------
   function buildResistorSilkscreen(parent, comp) {
     const resistor = svgEl("svg", {
@@ -508,22 +517,24 @@ z"/>
 
     const comps = [
       { x: w * 0.18, y: h * 0.78, ww: 36, hh: 14, label: "R1" },
-      { x: w * 0.34, y: h * 0.70, ww: 36, hh: 12, label: "C3", type: "resistor" },
+      { x: w * 0.34, y: h * 0.70, ww: 36, hh: 12, label: "C3", type: "resistor", scale: 5 },
       { x: w * 0.56, y: h * 0.80, ww: 40, hh: 14, label: "U2" },
       { x: w * 0.74, y: h * 0.70, ww: 52, hh: 16, label: "LDO" }
     ];
 
     for (const c of comps) {
+      const dims = computeComponentBox(c);
+
       if (c.type === "resistor") {
-        buildResistorSilkscreen(g, c);
+        buildResistorSilkscreen(g, dims);
       } else {
         g.appendChild(svgEl("rect", {
-          x: snap(c.x), y: snap(c.y),
-          width: snap(c.ww), height: snap(c.hh)
+          x: dims.x, y: dims.y,
+          width: dims.ww, height: dims.hh
         }, "pcb-component"));
       }
 
-      const t = svgEl("text", { x: snap(c.x + c.ww * 0.5), y: snap(c.y - 8) }, "pcb-label");
+      const t = svgEl("text", { x: snap(dims.x + dims.ww * 0.5), y: snap(dims.y - 8) }, "pcb-label");
       t.textContent = c.label;
       g.appendChild(t);
     }
