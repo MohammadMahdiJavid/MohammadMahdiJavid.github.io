@@ -883,3 +883,22 @@ body.pcb-theme--black .masthead.pcb-masthead {
     transform: none;
   }
 }
+
+
+/* Optional upgrade: subtle “breathing” motion for the whole resistor */
+.masthead.pcb-masthead .pcb-decor .pcb-component--resistor {
+  animation: pcbResIdleBreath 6.5s ease-in-out infinite;
+  will-change: transform;
+}
+
+@keyframes pcbResIdleBreath {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-0.35px); }
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .masthead.pcb-masthead .pcb-decor .pcb-component--resistor {
+    animation: none;
+  }
+}
