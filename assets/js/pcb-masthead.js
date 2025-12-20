@@ -251,6 +251,24 @@
     return { x, y, ww, hh };
   }
 
+  function roundedRectPath(x, y, w, h, r) {
+    const rr = Math.max(0, Math.min(r, Math.min(w, h) / 2));
+    const x0 = x, x1 = x + w, y0 = y, y1 = y + h;
+
+    return [
+      `M ${x0 + rr} ${y0}`,
+      `H ${x1 - rr}`,
+      `Q ${x1} ${y0} ${x1} ${y0 + rr}`,
+      `V ${y1 - rr}`,
+      `Q ${x1} ${y1} ${x1 - rr} ${y1}`,
+      `H ${x0 + rr}`,
+      `Q ${x0} ${y1} ${x0} ${y1 - rr}`,
+      `V ${y0 + rr}`,
+      `Q ${x0} ${y0} ${x0 + rr} ${y0}`,
+      "Z"
+    ].join(" ");
+  }
+
   // ---------- Decorative silkscreen (parallax-safe) ----------
   function buildResistorSilkscreen(parent, comp) {
     const resistor = svgEl("svg", {
@@ -270,46 +288,122 @@
     resistor.innerHTML = RESISTOR_SVG_CONTENT;
 
     // ---------------------------
-    // LIVE ANIMATION LAYER (always-on)
-    // Coordinates are in the resistor's cropped viewBox space:
-    // viewBox: "16 112 480 288"  => x: 16..496, y: 112..400
+    // FX LAYER (gold lightning + border highlight)
     // ---------------------------
     const fx = svgEl("g", {}, "pcb-r__fx");
 
-    // Soft glow covering the resistor body area (approx bounds of the body in the artwork)
-    const glow = svgEl("rect", {
-      x: 88,   // near the start of body
-      y: 126,  // near top of body
-      width: 337,
-      height: 152,
-      rx: 44,
-      ry: 44
-    }, "pcb-r__glow");
+    // Placeholder outline (we will refine it after insertion using real SVG bbox)
+    const edgeD0 = roundedRectPath(88, 126, 337, 152, 44);
 
-    // Flow path: up left lead → across body → down right lead
+    // 1) Border halo + 2) border moving packet
+    const edgeHalo = svgEl("path", { d: edgeD0 }, "pcb-r__edge--halo");
+    const edgeFlow = svgEl("path", { d: edgeD0 }, "pcb-r__edge--flow");
+
+    // 3) Current packet path (enters, crosses, exits)
     const flow = svgEl("path", {
       d: "M 37 384 L 37 205 L 476 205 L 476 384",
       fill: "none"
     }, "pcb-r__flow");
 
-    fx.appendChild(glow);
+    fx.appendChild(edgeHalo);
+    fx.appendChild(edgeFlow);
     fx.appendChild(flow);
     resistor.appendChild(fx);
 
-    // Make it feel organic (not robotic) + avoid every rebuild starting at the same phase
-    const speed = 1400 + Math.random() * 1200;   // 1.4s .. 2.6s
-    const phase = -Math.random() * speed;        // negative delay starts “mid-cycle”
+    // organic timing
+    const speed = 1400 + Math.random() * 1200; // 1.4s .. 2.6s
+    const phase = -Math.random() * speed;
 
     resistor.style.setProperty("--res-speed", `${speed}ms`);
     resistor.style.setProperty("--res-phase", `${phase}ms`);
 
-    // Use actual path length so one "packet" makes exactly one lap per cycle
-    // and we can make the dash pattern longer than the path => only 1 packet visible.
-    const len = flow.getTotalLength();
-    flow.style.setProperty("--res-travel-neg", (-len).toFixed(2));      // used by keyframes
-    flow.style.setProperty("--res-gap", (len + 220).toFixed(2));        // long gap => single packet
+    function syncLengths() {
+      // Flow packet length
+      try {
+        const len = flow.getTotalLength();
+        flow.style.setProperty("--res-travel-neg", (-len).toFixed(2));
+        flow.style.setProperty("--res-gap", (len + 240).toFixed(2));
+      } catch {}
+
+      // Border packet length
+      try {
+        const lenEdge = edgeFlow.getTotalLength();
+        edgeFlow.style.setProperty("--res-edge-travel-neg", (-lenEdge).toFixed(2));
+        edgeFlow.style.setProperty("--res-edge-gap", (lenEdge + 260).toFixed(2));
+      } catch {}
+    }
+
+    // initial lengths (works even before bbox refinement)
+    syncLengths();
 
     parent.appendChild(resistor);
+
+    // After insertion: compute real body bbox (from the actual SVG artwork) and fit the outline to it.
+    requestAnimationFrame(() => {
+      if (!resistor.isConnected) return;
+
+      try {
+        // Resistor body pieces are the ones with original fill="#FFC477"
+        const bodyPaths = Array.from(resistor.querySelectorAll('path[fill="#FFC477"]'));
+        if (bodyPaths.length) {
+          let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+
+          for (const p of bodyPaths) {
+            const b = p.getBBox();
+            x0 = Math.min(x0, b.x);
+            y0 = Math.min(y0, b.y);
+            x1 = Math.max(x1, b.x + b.width);
+            y1 = Math.max(y1, b.y + b.height);
+          }
+
+          // small padding so the lightning sits on the “edge”, not cutting into bands
+          const pad = 6;
+          const x = x0 - pad;
+          const y = y0 - pad;
+          const w = (x1 - x0) + pad * 2;
+          const h = (y1 - y0) + pad * 2;
+
+          // radius based on body height (keeps it matching the art’s rounded ends)
+          const r = Math.min(52, h * 0.34);
+
+          const edgeD = roundedRectPath(x, y, w, h, r);
+          edgeHalo.setAttribute("d", edgeD);
+          edgeFlow.setAttribute("d", edgeD);
+
+          // Align the “current” line to the true vertical center of the body
+          const midY = y0 + (y1 - y0) * 0.5;
+
+          // Try to align to lead centers from the metallic parts (fill="#E0E0E2")
+          const leadPaths = Array.from(resistor.querySelectorAll('path[fill="#E0E0E2"]'));
+          let leftX = 37, rightX = 476, bottomY = 384;
+
+          if (leadPaths.length) {
+            let leftB = null, rightB = null;
+
+            for (const p of leadPaths) {
+              const b = p.getBBox();
+              bottomY = Math.max(bottomY, b.y + b.height);
+
+              if (!leftB || b.x < leftB.x) leftB = b;
+              if (!rightB || (b.x + b.width) > (rightB.x + rightB.width)) rightB = b;
+            }
+
+            if (leftB) leftX = leftB.x + leftB.width * 0.5;
+            if (rightB) rightX = rightB.x + rightB.width * 0.5;
+          }
+
+          flow.setAttribute(
+            "d",
+            `M ${leftX} ${bottomY} L ${leftX} ${midY} L ${rightX} ${midY} L ${rightX} ${bottomY}`
+          );
+        }
+
+        // recompute dash gaps after the geometry update
+        syncLengths();
+      } catch {
+        // If bbox fails (rare), keep the placeholder values.
+      }
+    });
   }
 
 
