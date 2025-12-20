@@ -715,36 +715,72 @@ body.pcb-theme--black .masthead.pcb-masthead {
   will-change: stroke-dashoffset;
 }
 
-/* --- Resistor artwork (from resistor-without-bg.svg), blended into PCB --- */
+/* --- Resistor artwork: vivid + present (still fits PCB theme) --- */
+
+/* Quick tuning knobs */
+.masthead.pcb-masthead {
+  --pcb-res-alpha: 0.84; /* overall visibility */
+
+  /* “Real” resistor look, but softened to match PCB palette */
+  --pcb-res-body: rgba(255, 196, 119, 0.78);
+  --pcb-res-lead: rgba(214, 132, 70, 0.82);
+
+  /* Keep bands colorful (this is what makes it feel alive) */
+  --pcb-res-band-green:  rgba(145, 220,  90, 0.92);
+  --pcb-res-band-yellow: rgba(255, 218,  68, 0.92);
+  --pcb-res-band-red:    rgba(255,  80,  35, 0.92);
+  --pcb-res-band-orange: rgba(255, 152,  17, 0.92);
+}
+
+/* The whole resistor “presence” */
 .masthead.pcb-masthead .pcb-decor .pcb-component--resistor {
-  opacity: 0.42;
-  /* subtle depth; remove if you want it flatter */
-  filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.18));
+  opacity: var(--pcb-res-alpha);
+
+  /* Depth + a tiny warm halo + color boost */
+  filter:
+    drop-shadow(0 10px 18px rgba(0, 0, 0, 0.22))
+    drop-shadow(0 0 14px rgba(255, 215, 120, 0.12))
+    saturate(1.25)
+    contrast(1.06);
 }
 
-/* Default: treat artwork like silkscreen ink */
+/* IMPORTANT: don’t silkscreen-wash everything */
 .masthead.pcb-masthead .pcb-decor .pcb-component--resistor path {
-  fill: var(--pcb-silk);
-  opacity: 0.22;
+  opacity: 0.96; /* overrides your old 0.22 */
 }
 
-/* Legs/leads (original fill #E0E0E2) → make them “copper-ish” */
+/* Leads (original fill #E0E0E2) */
 .masthead.pcb-masthead .pcb-decor .pcb-component--resistor path[fill="#E0E0E2"] {
-  fill: var(--pcb-copper);
-  opacity: 0.32;
+  fill: var(--pcb-res-lead);
 }
 
-/* Body (original fill #FFC477) → slightly dimmer silkscreen */
+/* Body (original fill #FFC477) */
 .masthead.pcb-masthead .pcb-decor .pcb-component--resistor path[fill="#FFC477"] {
-  fill: var(--pcb-silk);
-  opacity: 0.18;
+  fill: var(--pcb-res-body);
 }
 
-/* Band colors → gold tint (still subtle) */
-.masthead.pcb-masthead .pcb-decor .pcb-component--resistor path[fill="#91DC5A"],
-.masthead.pcb-masthead .pcb-decor .pcb-component--resistor path[fill="#FFDA44"],
-.masthead.pcb-masthead .pcb-decor .pcb-component--resistor path[fill="#FF5023"],
-.masthead.pcb-masthead .pcb-decor .pcb-component--resistor path[fill="#FF9811"] {
-  fill: var(--pcb-gold);
-  opacity: 0.14;
+/* Bands (keep actual band colors) */
+.masthead.pcb-masthead .pcb-decor .pcb-component--resistor path[fill="#91DC5A"] {
+  fill: var(--pcb-res-band-green);
 }
+.masthead.pcb-masthead .pcb-decor .pcb-component--resistor path[fill="#FFDA44"] {
+  fill: var(--pcb-res-band-yellow);
+}
+.masthead.pcb-masthead .pcb-decor .pcb-component--resistor path[fill="#FF5023"] {
+  fill: var(--pcb-res-band-red);
+}
+.masthead.pcb-masthead .pcb-decor .pcb-component--resistor path[fill="#FF9811"] {
+  fill: var(--pcb-res-band-orange);
+}
+
+/* Optional: make it “come alive” when your masthead wakes up */
+.masthead.pcb-masthead.is-awake .pcb-decor .pcb-component--resistor {
+  opacity: 0.94;
+  filter:
+    drop-shadow(0 12px 20px rgba(0, 0, 0, 0.24))
+    drop-shadow(0 0 18px rgba(110, 255, 210, 0.12))
+    drop-shadow(0 0 14px rgba(255, 215, 120, 0.14))
+    saturate(1.40)
+    contrast(1.08);
+}
+
