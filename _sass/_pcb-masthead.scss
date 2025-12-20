@@ -715,3 +715,36 @@ body.pcb-theme--black .masthead.pcb-masthead {
   will-change: stroke-dashoffset;
 }
 
+/* --- Resistor artwork (from resistor-without-bg.svg), blended into PCB --- */
+.masthead.pcb-masthead .pcb-decor .pcb-component--resistor {
+  opacity: 0.42;
+  /* subtle depth; remove if you want it flatter */
+  filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.18));
+}
+
+/* Default: treat artwork like silkscreen ink */
+.masthead.pcb-masthead .pcb-decor .pcb-component--resistor path {
+  fill: var(--pcb-silk);
+  opacity: 0.22;
+}
+
+/* Legs/leads (original fill #E0E0E2) → make them “copper-ish” */
+.masthead.pcb-masthead .pcb-decor .pcb-component--resistor path[fill="#E0E0E2"] {
+  fill: var(--pcb-copper);
+  opacity: 0.32;
+}
+
+/* Body (original fill #FFC477) → slightly dimmer silkscreen */
+.masthead.pcb-masthead .pcb-decor .pcb-component--resistor path[fill="#FFC477"] {
+  fill: var(--pcb-silk);
+  opacity: 0.18;
+}
+
+/* Band colors → gold tint (still subtle) */
+.masthead.pcb-masthead .pcb-decor .pcb-component--resistor path[fill="#91DC5A"],
+.masthead.pcb-masthead .pcb-decor .pcb-component--resistor path[fill="#FFDA44"],
+.masthead.pcb-masthead .pcb-decor .pcb-component--resistor path[fill="#FF5023"],
+.masthead.pcb-masthead .pcb-decor .pcb-component--resistor path[fill="#FF9811"] {
+  fill: var(--pcb-gold);
+  opacity: 0.14;
+}
