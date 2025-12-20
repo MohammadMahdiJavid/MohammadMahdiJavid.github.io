@@ -85,6 +85,7 @@ bing_site_verification   :
 yandex_site_verification :
 naver_site_verification  :
 after_footer_scripts:
+  - /assets/js/resistor-art.js
   - /assets/js/pcb-masthead.js
 
 # Social Sharing
