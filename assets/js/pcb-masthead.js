@@ -259,11 +259,8 @@
       width: snap(comp.ww),
       height: snap(comp.hh),
 
-      // IMPORTANT: cropped viewBox so it scales like a real component
       viewBox: RESISTOR_VIEWBOX,
       preserveAspectRatio: "xMidYMid meet",
-
-      // prevents shadow/glow clipping if you add any filter later
       overflow: "visible",
 
       "aria-hidden": "true",
@@ -271,8 +268,50 @@
     }, "pcb-component pcb-component--resistor");
 
     resistor.innerHTML = RESISTOR_SVG_CONTENT;
+
+    // ---------------------------
+    // LIVE ANIMATION LAYER (always-on)
+    // Coordinates are in the resistor's cropped viewBox space:
+    // viewBox: "16 112 480 288"  => x: 16..496, y: 112..400
+    // ---------------------------
+    const fx = svgEl("g", {}, "pcb-r__fx");
+
+    // Soft glow covering the resistor body area (approx bounds of the body in the artwork)
+    const glow = svgEl("rect", {
+      x: 88,   // near the start of body
+      y: 126,  // near top of body
+      width: 337,
+      height: 152,
+      rx: 44,
+      ry: 44
+    }, "pcb-r__glow");
+
+    // Flow path: up left lead → across body → down right lead
+    const flow = svgEl("path", {
+      d: "M 37 384 L 37 205 L 476 205 L 476 384",
+      fill: "none"
+    }, "pcb-r__flow");
+
+    fx.appendChild(glow);
+    fx.appendChild(flow);
+    resistor.appendChild(fx);
+
+    // Make it feel organic (not robotic) + avoid every rebuild starting at the same phase
+    const speed = 1400 + Math.random() * 1200;   // 1.4s .. 2.6s
+    const phase = -Math.random() * speed;        // negative delay starts “mid-cycle”
+
+    resistor.style.setProperty("--res-speed", `${speed}ms`);
+    resistor.style.setProperty("--res-phase", `${phase}ms`);
+
+    // Use actual path length so one "packet" makes exactly one lap per cycle
+    // and we can make the dash pattern longer than the path => only 1 packet visible.
+    const len = flow.getTotalLength();
+    flow.style.setProperty("--res-travel-neg", (-len).toFixed(2));      // used by keyframes
+    flow.style.setProperty("--res-gap", (len + 220).toFixed(2));        // long gap => single packet
+
     parent.appendChild(resistor);
   }
+
 
 
   function buildSilkscreen(svgRoot, w, h, anchors = {}) {

@@ -784,3 +784,102 @@ body.pcb-theme--black .masthead.pcb-masthead {
     contrast(1.08);
 }
 
+/* -----------------------------
+   Live resistor animation (always-on)
+   ----------------------------- */
+
+.masthead.pcb-masthead .pcb-decor .pcb-component--resistor {
+  /* defaults; JS randomizes these per rebuild */
+  --res-speed: 1900ms;
+  --res-phase: 0ms;
+}
+
+.masthead.pcb-masthead .pcb-decor .pcb-component--resistor .pcb-r__fx {
+  pointer-events: none;
+}
+
+/* The moving “bits” packet */
+.masthead.pcb-masthead .pcb-decor .pcb-component--resistor .pcb-r__flow {
+  stroke: var(--pcb-signal);
+  stroke-width: 2.6;
+  fill: none;
+
+  stroke-linecap: round;
+  stroke-linejoin: round;
+
+  /* We build 4 tiny dashes (dots) then one LONG gap.
+     Long gap is set by JS to be > path length => only ONE packet exists at a time. */
+  stroke-dasharray:
+    0.01 18
+    0.01 18
+    0.01 18
+    0.01 18
+    var(--res-gap, 1100);
+
+  /* Start hidden; keyframes fade it in while it “flows” */
+  opacity: 0;
+
+  mix-blend-mode: screen;
+  filter: drop-shadow(0 0 8px var(--pcb-glow));
+
+  animation: pcbResBits var(--res-speed) linear infinite;
+  animation-delay: var(--res-phase);
+}
+
+/* The “turns on” glow overlay for the body */
+.masthead.pcb-masthead .pcb-decor .pcb-component--resistor .pcb-r__glow {
+  fill: var(--pcb-signal);
+
+  opacity: 0;
+  mix-blend-mode: screen;
+
+  transform-box: fill-box;
+  transform-origin: center;
+
+  filter:
+    drop-shadow(0 0 10px var(--pcb-glow))
+    drop-shadow(0 0 14px var(--pcb-glow-gold));
+
+  animation: pcbResGlow var(--res-speed) ease-in-out infinite;
+  animation-delay: var(--res-phase);
+}
+
+/* Bits move along the path AND gate on/off.
+   The timing matches the path shape:
+   - early: packet is on the left lead (keep off)
+   - mid: packet is across the body (on)
+   - late: packet is exiting right lead (fade off) */
+@keyframes pcbResBits {
+  0%   { opacity: 0; stroke-dashoffset: 0; }
+  12%  { opacity: 0; }
+  22%  { opacity: 1; }
+  78%  { opacity: 1; }
+  88%  { opacity: 0; }
+  100% { opacity: 0; stroke-dashoffset: var(--res-travel-neg, -820); }
+}
+
+/* Glow is “off” until the packet reaches the body,
+   “on” while it passes through, then “off” after it exits. */
+@keyframes pcbResGlow {
+  0%, 18%   { opacity: 0; transform: scale(0.985); }
+  32%, 68%  { opacity: 0.85; transform: scale(1.02); }
+  82%, 100% { opacity: 0; transform: scale(0.985); }
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .masthead.pcb-masthead .pcb-decor .pcb-component--resistor .pcb-r__flow,
+  .masthead.pcb-masthead .pcb-decor .pcb-component--resistor .pcb-r__glow {
+    animation: none;
+  }
+
+  .masthead.pcb-masthead .pcb-decor .pcb-component--resistor .pcb-r__flow {
+    opacity: 0.25;
+    stroke-dashoffset: 0;
+  }
+
+  .masthead.pcb-masthead .pcb-decor .pcb-component--resistor .pcb-r__glow {
+    opacity: 0.18;
+    transform: none;
+  }
+}
