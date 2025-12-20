@@ -441,6 +441,59 @@ body.pcb-theme--black .masthead.pcb-masthead {
   ry: 2.4;
 }
 
+/* --- SMD resistor footprint (decor layer) --- */
+.pcb-component--resistor * {
+  vector-effect: non-scaling-stroke;
+}
+
+/* Copper-looking stubs */
+.pcb-component--resistor .pcb-r__trace {
+  fill: none;
+  stroke: url(#pcbCopperGold);
+  stroke-width: 2.2;
+  opacity: 0.28;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Resistor body (dark component on top of soldermask) */
+.pcb-component--resistor .pcb-r__body {
+  fill: rgba(0, 0, 0, 0.24);
+  stroke: rgba(255, 255, 255, 0.24);
+  stroke-width: 1.1;
+}
+
+/* Silkscreen outline */
+.pcb-component--resistor .pcb-r__silk {
+  fill: none;
+  stroke: var(--pcb-silk);
+  stroke-width: 1.1;
+  opacity: 0.55;
+}
+
+/* Courtyard / assembly outline (subtle dashed) */
+.pcb-component--resistor .pcb-r__courtyard {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.18);
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+  opacity: 0.35;
+}
+
+/* Small “bands” for texture */
+.pcb-component--resistor .pcb-r__band {
+  fill: none;
+  stroke: rgba(255, 215, 120, 0.26);
+  stroke-width: 1.1;
+  opacity: 0.55;
+}
+
+/* Slightly tone down pads so they don't overpower everything behind nav */
+.pcb-component--resistor .pcb-r__pad {
+  opacity: 0.70;
+}
+
+
 /* Pads / vias */
 .pcb-pad {
   fill: url(#pcbPadFill);
