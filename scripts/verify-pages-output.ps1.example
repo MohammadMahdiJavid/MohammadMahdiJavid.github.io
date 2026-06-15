@@ -1,0 +1,17 @@
+# Purpose
+# Check generated HTML, CSS, and JavaScript markers after a Pages build.
+#
+# Common usage
+# Run from the repository root.
+# .\scripts\verify-pages-output.ps1
+# .\scripts\verify-pages-output.ps1 -SkipBuild
+#
+# Useful options
+# -SkipBuild checks the current _site folder without rebuilding.
+#
+# Recommended next command
+# .\scripts\smoke-pages.ps1 -SkipBuild -Port 4000
+#
+# Notes
+# Use this after build-pages.ps1 when you only need generated file checks.
+# Use verify-pages.ps1 when you need the full verification chain.

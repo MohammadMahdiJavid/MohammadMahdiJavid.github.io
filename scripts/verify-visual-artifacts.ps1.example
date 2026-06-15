@@ -1,0 +1,24 @@
+# Purpose
+# Validate screenshot artifacts and compare them with visual baselines.
+#
+# Common usage
+# Run from the repository root after browser verification.
+# .\scripts\verify-visual-artifacts.ps1 -ArtifactDirectory verification-artifacts\manual-check
+# .\scripts\verify-visual-artifacts.ps1 -ArtifactDirectory verification-artifacts\manual-check -UpdateMissingBaselines
+# .\scripts\verify-visual-artifacts.ps1 -ArtifactDirectory verification-artifacts\manual-check -RequireBaselines
+#
+# Useful options
+# -ArtifactDirectory chooses the screenshot folder to validate.
+# -BaselineDirectory chooses the baseline folder.
+# -PixelDifferenceThreshold sets per pixel tolerance.
+# -SampleStride sets comparison sampling density.
+# -UpdateBaselines refreshes all baselines.
+# -UpdateMissingBaselines creates only missing baselines.
+# -RequireBaselines fails when any baseline is missing.
+#
+# Recommended next command
+# Review browser-verification.json and visual-validation.json in the artifact folder.
+#
+# Notes
+# This script does not run the browser.
+# It checks that screenshots are nonblank and visually varied.

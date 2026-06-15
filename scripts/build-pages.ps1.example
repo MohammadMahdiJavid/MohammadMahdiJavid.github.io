@@ -1,0 +1,20 @@
+# Purpose
+# Build the GitHub Pages compatible Jekyll site into _site.
+#
+# Common usage
+# Run from the repository root.
+# .\scripts\build-pages.ps1
+# .\scripts\build-pages.ps1 -SkipSetup
+# .\scripts\build-pages.ps1 -SkipSetup -NoClean
+#
+# Useful options
+# -SkipSetup uses the existing Ruby bundle and skips dependency setup.
+# -NoClean keeps the current _site folder before building.
+# -Environment sets JEKYLL_ENV for the build.
+#
+# Recommended next command
+# .\scripts\smoke-pages.ps1 -SkipBuild -Port 4000
+#
+# Notes
+# This script writes the generated site to _site.
+# Use pages-local.ps1 when you want the wrapper workflow.

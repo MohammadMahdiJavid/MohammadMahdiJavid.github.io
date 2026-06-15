@@ -1,0 +1,20 @@
+# Purpose
+# Load the shared script environment and common helper functions.
+#
+# Common usage
+# Run from the repository root or from another script.
+# . .\scripts\pages-env.ps1
+# Get-PythonInvocation
+# Get-BrowserInvocation -Browser Auto
+# Require-Command -Name ruby
+#
+# Useful options
+# This helper module has no command line parameters.
+# It initializes common Ruby, Python, Node, Chrome, Edge, and Chromium paths.
+#
+# Recommended next command
+# .\scripts\setup-pages.ps1
+#
+# Notes
+# This file is dot sourced by other scripts.
+# Do not run it expecting a standalone workflow.

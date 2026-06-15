@@ -1,0 +1,17 @@
+# Purpose
+# Check local dependencies and install the Ruby bundle used by GitHub Pages.
+#
+# Common usage
+# Run from the repository root.
+# .\scripts\setup-pages.ps1
+# .\scripts\setup-pages.ps1 -BundlePath vendor/bundle
+#
+# Useful options
+# -BundlePath chooses where Bundler installs gems.
+#
+# Recommended next command
+# .\scripts\build-pages.ps1 -SkipSetup
+#
+# Notes
+# The default bundle path is ignored by git.
+# Reopen PowerShell after installing Ruby or Python.

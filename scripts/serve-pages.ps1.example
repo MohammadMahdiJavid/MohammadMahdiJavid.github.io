@@ -1,0 +1,21 @@
+# Purpose
+# Serve the built _site folder on localhost.
+#
+# Common usage
+# Run from the repository root.
+# .\scripts\serve-pages.ps1
+# .\scripts\serve-pages.ps1 -Port 4000
+# .\scripts\serve-pages.ps1 -Port 4001 -BindAddress 127.0.0.1
+# .\scripts\serve-pages.ps1 -SkipBuild -Port 4000
+#
+# Useful options
+# -Port chooses the localhost port.
+# -BindAddress chooses the local bind address.
+# -SkipBuild serves the current _site folder without rebuilding.
+#
+# Recommended next command
+# Open http://127.0.0.1:4000 in the browser.
+#
+# Notes
+# This command keeps running until you stop it.
+# Use pages-local.ps1 -Mode Serve for the wrapper version.

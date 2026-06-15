@@ -1,0 +1,22 @@
+# Purpose
+# Load reusable localhost server helpers for verification scripts.
+#
+# Common usage
+# Run from the repository root or from another script.
+# . .\scripts\pages-env.ps1
+# . .\scripts\pages-server.ps1
+# $Server = Start-PagesServer -Port 4000 -BindAddress 127.0.0.1
+# Test-PagesServerFreshness -BaseUri http://127.0.0.1:4000 -Port 4000 -BindAddress 127.0.0.1
+# Stop-PagesServer -Server $Server
+#
+# Useful options
+# Start-PagesServer can set Port, BindAddress, and StartupTimeoutSeconds.
+# Test-PagesServerFreshness checks that localhost serves the current _site output.
+# Stop-ExistingPagesServerForBuild stops a known local _site server before a clean build.
+#
+# Recommended next command
+# .\scripts\smoke-pages.ps1 -SkipBuild -Port 4000
+#
+# Notes
+# This helper is dot sourced by smoke and verification scripts.
+# It stops only servers it started or known local _site servers.

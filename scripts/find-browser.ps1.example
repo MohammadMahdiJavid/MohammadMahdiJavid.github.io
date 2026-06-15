@@ -1,0 +1,22 @@
+# Purpose
+# Find the Chromium based browser path used by browser verification scripts.
+#
+# Common usage
+# Run from the repository root.
+# .\scripts\find-browser.ps1
+# .\scripts\find-browser.ps1 -Browser Chrome
+# .\scripts\find-browser.ps1 -Browser Edge
+# .\scripts\find-browser.ps1 -ListAll
+# .\scripts\find-browser.ps1 -Json
+#
+# Useful options
+# -Browser chooses Auto, Chrome, Edge, or Chromium.
+# -ListAll prints all detected candidates.
+# -Json prints machine readable output.
+#
+# Recommended next command
+# .\scripts\verify-browser-pages.ps1 -Browser Chrome
+#
+# Notes
+# Browser paths are initialized through pages-env.ps1.
+# Prefer Auto unless a specific browser must be tested.

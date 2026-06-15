@@ -1,0 +1,25 @@
+# Purpose
+# Use one wrapper command for build, smoke, or serve workflows.
+#
+# Common usage
+# Run from the repository root.
+# .\scripts\pages-local.ps1 -Mode Build
+# .\scripts\pages-local.ps1 -Mode Smoke -Port 4000
+# .\scripts\pages-local.ps1 -Mode Serve -Port 4000
+# .\scripts\pages-local.ps1 -Mode Serve -Port 4001 -SkipBuild
+#
+# Useful options
+# -Mode chooses Build, Smoke, or Serve.
+# -Port chooses the localhost port.
+# -BindAddress chooses the local bind address.
+# -SkipBuild serves or smokes the current _site folder.
+# -SkipSetup skips dependency setup before build.
+# -NoClean keeps the current _site folder before build.
+# -Environment sets JEKYLL_ENV for the build.
+#
+# Recommended next command
+# .\scripts\verify-pages.ps1 -SkipBuild -Port 4000
+#
+# Notes
+# This is the preferred entry point for everyday local use.
+# Serve mode keeps the webserver running.

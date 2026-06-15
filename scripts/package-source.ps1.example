@@ -1,0 +1,23 @@
+# Purpose
+# Create a transfer zip with source files needed to rebuild the project.
+#
+# Common usage
+# Run from the repository root.
+# .\scripts\package-source.ps1
+# .\scripts\package-source.ps1 -ArchiveName handoff.zip -Force
+# .\scripts\package-source.ps1 -OutputDirectory source-packages -ArchiveName site-source.zip
+# .\scripts\package-source.ps1 -ListOnly
+#
+# Useful options
+# -OutputDirectory chooses where the zip is written.
+# -ArchiveName chooses the zip file name.
+# -Force overwrites an existing zip with the same name.
+# -IncludeArchiveAssets includes archive support assets when needed.
+# -ListOnly prints included files without creating a zip.
+#
+# Recommended next command
+# .\scripts\package-source.ps1 -ListOnly
+#
+# Notes
+# Build outputs and fetched packages are excluded.
+# The default output folder is source-packages.

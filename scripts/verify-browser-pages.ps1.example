@@ -1,0 +1,28 @@
+# Purpose
+# Run browser based visual, DOM, keyboard, console, network, and target size checks.
+#
+# Common usage
+# Run from the repository root with localhost already serving _site.
+# .\scripts\verify-browser-pages.ps1
+# .\scripts\verify-browser-pages.ps1 -BaseUri http://127.0.0.1:4000
+# .\scripts\verify-browser-pages.ps1 -Browser Chrome
+# .\scripts\verify-browser-pages.ps1 -OutputDirectory verification-artifacts\manual-check
+# .\scripts\verify-browser-pages.ps1 -UpdateVisualBaselines
+#
+# Useful options
+# -BaseUri chooses the local site URL.
+# -Browser chooses Auto, Chrome, Edge, or Chromium.
+# -OutputDirectory chooses where reports and screenshots are written.
+# -SkipScreenshots skips screenshot capture.
+# -SkipVisualValidation skips visual artifact validation.
+# -VisualBaselineDirectory chooses a baseline folder.
+# -UpdateVisualBaselines refreshes visual baselines.
+# -RequireVisualBaselines fails when a baseline is missing.
+# -KeepBrowser leaves the browser open for debugging.
+#
+# Recommended next command
+# .\scripts\verify-visual-artifacts.ps1 -ArtifactDirectory verification-artifacts\manual-check
+#
+# Notes
+# Prefer verify-pages.ps1 for full local verification.
+# This script expects a running local server.

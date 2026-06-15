@@ -1,0 +1,21 @@
+# Purpose
+# Start or reuse localhost and check important generated routes.
+#
+# Common usage
+# Run from the repository root.
+# .\scripts\smoke-pages.ps1
+# .\scripts\smoke-pages.ps1 -SkipBuild -Port 4000
+# .\scripts\smoke-pages.ps1 -Port 4001 -BindAddress 127.0.0.1
+#
+# Useful options
+# -SkipBuild checks the current _site folder.
+# -Port chooses the localhost port.
+# -BindAddress chooses the local bind address.
+# -StartupTimeoutSeconds changes how long to wait for the server.
+#
+# Recommended next command
+# .\scripts\verify-browser-pages.ps1 -BaseUri http://127.0.0.1:4000
+#
+# Notes
+# The script verifies that the server is serving fresh _site output.
+# It stops only the temporary server it started.
