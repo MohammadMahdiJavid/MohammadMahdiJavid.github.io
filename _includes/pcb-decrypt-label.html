@@ -1,0 +1,10 @@
+{%- assign decrypt_label = include.label | default: include.text | default: "" -%}
+{%- assign decrypt_text = include.text | default: decrypt_label -%}
+{%- assign decrypt_alt = include.alt | default: decrypt_label -%}
+{%- assign decrypt_class = include.class | default: "" -%}
+{%- assign decrypt_label_attr = decrypt_label | strip_html | normalize_whitespace | escape -%}
+{%- assign decrypt_alt_attr = decrypt_alt | strip_html | normalize_whitespace | escape -%}
+{%- if decrypt_class != "" -%}
+  {%- assign decrypt_class = " " | append: decrypt_class -%}
+{%- endif -%}
+<span class="pcb-decrypt{{ decrypt_class }}" data-pcb-decrypt data-pcb-decrypt-label="{{ decrypt_label_attr }}" data-pcb-decrypt-alt="{{ decrypt_alt_attr }}" aria-hidden="true"><span class="pcb-decrypt__text" data-pcb-decrypt-text>{{ decrypt_text }}</span></span>

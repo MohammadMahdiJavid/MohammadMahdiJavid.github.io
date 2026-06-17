@@ -97,6 +97,7 @@ after_footer_scripts:
   - /assets/js/mmj/header/observers.js
   - /assets/js/mmj/header/interaction.js
   - /assets/js/mmj/header/index.js
+  - /assets/js/pcb-decrypt-hover.js
 
 # Social Sharing
 twitter:

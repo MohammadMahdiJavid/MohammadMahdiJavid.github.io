@@ -69,3 +69,179 @@
   }
 }
 
+@keyframes pcbCpuOpenEyeBlink {
+  0%, 18% {
+    opacity: 1;
+    transform: translateY(0) scaleY(1);
+  }
+
+  31%, 54% {
+    opacity: 0;
+    transform: translateY(.9px) scaleY(.06);
+  }
+
+  68% {
+    opacity: 1;
+    transform: translateY(-.62px) scaleY(1.08);
+  }
+
+  82% {
+    opacity: 1;
+    transform: translateY(-.35px) scaleY(1.03);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0) scaleY(1);
+  }
+}
+
+@keyframes pcbCpuLashBlink {
+  0%, 21%, 66%, 100% {
+    opacity: 0;
+    transform: translateY(-.8px) scaleY(.7);
+  }
+
+  34%, 54% {
+    opacity: 1;
+    transform: translateY(.15px) scaleY(1);
+  }
+}
+
+@keyframes pcbCpuDrawLash {
+  0%, 20% {
+    stroke-dashoffset: 8;
+  }
+
+  36%, 56% {
+    stroke-dashoffset: 0;
+  }
+
+  72%, 100% {
+    stroke-dashoffset: 8;
+  }
+}
+
+@keyframes pcbCpuReopenLookUp {
+  0%, 57% {
+    transform: translateY(0);
+  }
+
+  69% {
+    transform: translateY(-.75px);
+  }
+
+  83% {
+    transform: translateY(-.42px);
+  }
+
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes pcbCpuEyeShine {
+  0%, 57% {
+    opacity: .88;
+    transform: scale(1);
+  }
+
+  70% {
+    opacity: 1;
+    transform: translateY(-.18px) scale(1.18);
+  }
+
+  100% {
+    opacity: .92;
+    transform: scale(1);
+  }
+}
+
+@keyframes pcbCpuSmileDuringBlink {
+  0%, 100% {
+    transform: translateY(0) scaleX(1);
+  }
+
+  42% {
+    transform: translateY(-.18px) scaleX(1.03);
+  }
+
+  72% {
+    transform: translateY(-.36px) scaleX(1.08);
+  }
+}
+
+@keyframes pcbCpuSparkAmbient {
+  0%, 62%, 100% {
+    opacity: .76;
+    transform: scale(1) rotate(0deg);
+    filter: none;
+  }
+
+  70% {
+    opacity: 1;
+    transform: scale(1.18) rotate(10deg);
+    filter: drop-shadow(0 0 4px rgba(255, 240, 168, .55));
+  }
+
+  80% {
+    opacity: .86;
+    transform: scale(.96) rotate(-6deg);
+    filter: none;
+  }
+}
+
+@keyframes pcbCpuScanAmbient {
+  0%, 78%, 100% {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+
+  84% {
+    opacity: .26;
+    transform: translateY(-3px);
+  }
+
+  92% {
+    opacity: .18;
+    transform: translateY(7px);
+  }
+}
+
+@keyframes pcbCpuHello {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+
+  35% {
+    transform: translateY(-1.35px) rotate(-4deg);
+  }
+
+  70% {
+    transform: translateY(.2px) rotate(3deg);
+  }
+}
+
+@keyframes pcbCpuPinGlow {
+  0%, 100% {
+    opacity: .86;
+    stroke-width: 2;
+  }
+
+  50% {
+    opacity: 1;
+    stroke-width: 2.35;
+  }
+}
+
+@keyframes pcbCpuTraceCharge {
+  0% {
+    stroke-dashoffset: 12;
+    opacity: .32;
+  }
+
+  58%, 100% {
+    stroke-dashoffset: 0;
+    opacity: .78;
+  }
+}

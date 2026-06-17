@@ -1,4 +1,122 @@
-<a class="site-title pcb-cpu" id="pcb-cpu" href="{{ '/' | relative_url }}">
-  <span class="pcb-cpu__text">{{ site.masthead_title | default: site.title }}</span>
-  <span class="pcb-cpu__face" aria-hidden="true"></span>
+{% assign masthead_label = site.masthead_title | default: site.title %}
+
+<a class="site-title pcb-cpu pcb-cpu__trigger" id="pcb-cpu" href="{{ '/' | relative_url }}" aria-label="{{ masthead_label | escape }}">
+  {% include pcb-decrypt-label.html text=masthead_label label=masthead_label alt="secure_boot()" class="pcb-cpu__text" %}
+  <span
+    class="pcb-cpu__face pcb-cpu__face--nav pcb-cpu__face--ambient"
+    data-pcb-robot="auto"
+    data-blink-min="4600"
+    data-blink-max="9400"
+    aria-hidden="true">
+    <svg class="pcb-cpu__robot" viewBox="0 0 44 44" focusable="false">
+      <defs>
+        <linearGradient id="pcbCpuRobotGradient" x1="9" y1="7" x2="35" y2="37" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stop-color="#164d3b"></stop>
+          <stop offset="1" stop-color="#06251d"></stop>
+        </linearGradient>
+      </defs>
+      <g class="pcb-cpu__robot-core">
+        <path
+          class="pcb-cpu__robot-pins pcb-cpu__robot-pins--side"
+          d="M4.6 14h5M4.6 22h5M4.6 30h5M34.4 14h5M34.4 22h5M34.4 30h5"
+          stroke="#ffda73"
+          stroke-width="2"
+          stroke-linecap="round"
+          opacity=".9">
+        </path>
+
+        <path
+          class="pcb-cpu__robot-pins pcb-cpu__robot-pins--vertical"
+          d="M14 4.6v5M22 4.6v5M30 4.6v5M14 34.4v5M22 34.4v5M30 34.4v5"
+          stroke="#ffda73"
+          stroke-width="2"
+          stroke-linecap="round"
+          opacity=".84">
+        </path>
+
+        <rect
+          class="pcb-cpu__robot-body"
+          x="9.5"
+          y="9.5"
+          width="25"
+          height="25"
+          rx="7"
+          fill="url(#pcbCpuRobotGradient)"
+          stroke="#ffd76c"
+          stroke-width="1.6">
+        </rect>
+
+        <path
+          class="pcb-cpu__robot-scan"
+          d="M12.6 16.2h18.8"
+          stroke="#78ffd4"
+          stroke-width=".9"
+          stroke-linecap="round">
+        </path>
+
+        <path
+          class="pcb-cpu__robot-traces"
+          d="M13.2 15.2h5.5M25.3 15.2h5.5"
+          stroke="#78ffd4"
+          stroke-width="1.25"
+          stroke-linecap="round"
+          opacity=".56">
+        </path>
+
+        <g class="pcb-cpu__open-eyes">
+          <g class="pcb-cpu__robot-eye pcb-cpu__robot-eye--left">
+            <circle cx="16.5" cy="20" r="2.62" fill="#dffff7"></circle>
+            <circle class="pcb-cpu__robot-pupil" cx="16.35" cy="19.85" r="1.06" fill="#0b201b"></circle>
+            <circle class="pcb-cpu__robot-shine" cx="15.55" cy="18.98" r=".45" fill="#ffffff" opacity=".92"></circle>
+          </g>
+
+          <g class="pcb-cpu__robot-eye pcb-cpu__robot-eye--right">
+            <circle cx="27.5" cy="20" r="2.62" fill="#dffff7"></circle>
+            <circle class="pcb-cpu__robot-pupil" cx="27.35" cy="19.85" r="1.06" fill="#0b201b"></circle>
+            <circle class="pcb-cpu__robot-shine" cx="26.55" cy="18.98" r=".45" fill="#ffffff" opacity=".92"></circle>
+          </g>
+        </g>
+
+        <g class="pcb-cpu__blink-lashes" fill="none" stroke="#dffff7" stroke-linecap="round" stroke-linejoin="round">
+          <g class="pcb-cpu__closed-eye pcb-cpu__closed-eye--left">
+            <path class="pcb-cpu__eyelid" d="M13.15 21.25C14.7 22.75 18.1 22.75 19.85 21.25" stroke-width=".92"></path>
+            <path class="pcb-cpu__lash" d="M13.8 21.85l-.95 .72" stroke-width=".55"></path>
+            <path class="pcb-cpu__lash" d="M15 22.35l-.52 .95" stroke-width=".55"></path>
+            <path class="pcb-cpu__lash" d="M16.25 22.55l-.18 1.08" stroke-width=".55"></path>
+            <path class="pcb-cpu__lash" d="M17.55 22.46l.22 1.05" stroke-width=".55"></path>
+            <path class="pcb-cpu__lash" d="M18.75 22.05l.72 .82" stroke-width=".55"></path>
+          </g>
+
+          <g class="pcb-cpu__closed-eye pcb-cpu__closed-eye--right">
+            <path class="pcb-cpu__eyelid" d="M24.15 21.25C25.9 22.75 29.3 22.75 30.85 21.25" stroke-width=".92"></path>
+            <path class="pcb-cpu__lash" d="M24.75 22.05l-.72 .82" stroke-width=".55"></path>
+            <path class="pcb-cpu__lash" d="M25.95 22.46l-.22 1.05" stroke-width=".55"></path>
+            <path class="pcb-cpu__lash" d="M27.25 22.55l.18 1.08" stroke-width=".55"></path>
+            <path class="pcb-cpu__lash" d="M28.5 22.35l.52 .95" stroke-width=".55"></path>
+            <path class="pcb-cpu__lash" d="M29.7 21.85l.95 .72" stroke-width=".55"></path>
+          </g>
+        </g>
+
+        <path
+          class="pcb-cpu__robot-mouth"
+          d="M16.1 26.1c1.8 3.2 10 3.2 11.8 0"
+          fill="none"
+          stroke="#dffff7"
+          stroke-width="2"
+          stroke-linecap="round">
+        </path>
+
+        <g class="pcb-cpu__robot-blush" fill="#ffda73">
+          <circle cx="13.6" cy="24.4" r=".55"></circle>
+          <circle cx="30.4" cy="24.4" r=".55"></circle>
+        </g>
+
+        <path
+          class="pcb-cpu__robot-spark"
+          d="M33.2 8.2 34.2 10.8 36.8 11.8 34.2 12.8 33.2 15.4 32.2 12.8 29.6 11.8 32.2 10.8Z"
+          fill="#fff0a8">
+        </path>
+      </g>
+    </svg>
+  </span>
 </a>

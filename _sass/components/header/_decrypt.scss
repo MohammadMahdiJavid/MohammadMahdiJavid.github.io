@@ -1,0 +1,122 @@
+.pcb-decrypt {
+  --pcb-decrypt-width: auto;
+  --pcb-decrypt-accent: #17775d;
+  --pcb-decrypt-accent-strong: #0d5f54;
+  --pcb-decrypt-glow: rgba(23, 119, 93, 0.28);
+  --pcb-decrypt-gold: #d8a84d;
+
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--pcb-decrypt-width);
+  max-width: 100%;
+  color: inherit;
+  line-height: 1;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+html[data-theme="night"] .pcb-decrypt {
+  --pcb-decrypt-accent: #8cf1d0;
+  --pcb-decrypt-accent-strong: #b5ffe8;
+  --pcb-decrypt-glow: rgba(140, 241, 208, 0.28);
+  --pcb-decrypt-gold: #ffd17a;
+}
+
+.pcb-decrypt__text {
+  display: inline-block;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  color: inherit;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: text-shadow 150ms ease, color 150ms ease, transform 150ms ease;
+}
+
+.pcb-decrypt::before,
+.pcb-decrypt::after {
+  position: absolute;
+  left: 0;
+  right: 0;
+  pointer-events: none;
+  content: "";
+}
+
+.pcb-decrypt::before {
+  bottom: -0.33em;
+  height: 2px;
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at left center, var(--pcb-decrypt-gold) 0 2.5px, transparent 2.8px),
+    radial-gradient(circle at right center, var(--pcb-decrypt-gold) 0 2.5px, transparent 2.8px),
+    linear-gradient(90deg, transparent, var(--pcb-decrypt-accent), var(--pcb-decrypt-gold), var(--pcb-decrypt-accent), transparent);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12), 0 0 10px var(--pcb-decrypt-glow);
+  opacity: 0;
+  transform: scaleX(0.16);
+  transform-origin: left center;
+  transition: transform 230ms ease, opacity 160ms ease;
+}
+
+.pcb-decrypt::after {
+  inset: -0.22em -0.28em;
+  border-radius: 0.42em;
+  background: linear-gradient(110deg, transparent 0 42%, rgba(255, 255, 255, 0.32) 50%, transparent 58%);
+  opacity: 0;
+  transform: translateX(-36%);
+  transition: opacity 160ms ease, transform 260ms ease;
+  mix-blend-mode: screen;
+}
+
+:is(a, button):hover .pcb-decrypt::before,
+:is(a, button):focus-visible .pcb-decrypt::before,
+.pcb-decrypt.is-decrypting::before {
+  opacity: 1;
+  transform: scaleX(1);
+}
+
+:is(a, button):hover .pcb-decrypt::after,
+:is(a, button):focus-visible .pcb-decrypt::after,
+.pcb-decrypt.is-decrypting::after {
+  opacity: 0.55;
+  transform: translateX(36%);
+}
+
+:is(a, button):hover .pcb-decrypt__text,
+:is(a, button):focus-visible .pcb-decrypt__text,
+.pcb-decrypt.is-decrypting .pcb-decrypt__text {
+  color: var(--pcb-decrypt-accent-strong);
+  text-shadow: 0 0 0.7rem var(--pcb-decrypt-glow);
+}
+
+.masthead.pcb-masthead .site-title .pcb-decrypt {
+  --pcb-decrypt-width: auto;
+  --pcb-decrypt-accent: #ffda73;
+  --pcb-decrypt-accent-strong: #fff7d0;
+  --pcb-decrypt-glow: rgba(255, 218, 115, 0.28);
+  --pcb-decrypt-gold: #78ffd4;
+  justify-content: flex-start;
+}
+
+.masthead.pcb-masthead .site-title .pcb-decrypt::before {
+  bottom: -0.24rem;
+}
+
+.pcb-decrypt-link {
+  position: relative;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pcb-decrypt,
+  .pcb-decrypt::before,
+  .pcb-decrypt::after,
+  .pcb-decrypt__text {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .pcb-decrypt::after {
+    display: none;
+  }
+}

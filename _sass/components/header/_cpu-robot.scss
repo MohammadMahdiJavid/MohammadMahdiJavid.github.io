@@ -37,40 +37,235 @@
 }
 
 .masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__face {
+  --pcb-robot-size: 2rem;
+  --pcb-robot-gold: #ffda73;
+  --pcb-robot-gold-strong: #ffd05c;
+  --pcb-robot-mint: #dffff7;
+  --pcb-robot-mint-strong: #78ffd4;
+  --pcb-robot-dark: #0b201b;
+  --pcb-robot-shadow: rgba(120, 255, 212, .14);
+  --pcb-robot-blink-speed: 2;
+  --pcb-robot-blink-duration: calc(820ms / var(--pcb-robot-blink-speed));
+
   position: relative;
   flex: 0 0 auto;
-  width: 1.05rem;
-  height: 1.05rem;
+  display: inline-grid;
+  place-items: center;
+  inline-size: var(--pcb-robot-size);
+  block-size: var(--pcb-robot-size);
+  width: var(--pcb-robot-size);
+  height: var(--pcb-robot-size);
+  line-height: 0;
   border-radius: 999px;
-  opacity: 0.92;
-
-  background:
-    radial-gradient(circle at 35% 42%, rgba(255, 255, 255, 0.92) 0 1.2px, transparent 1.35px),
-    radial-gradient(circle at 65% 42%, rgba(255, 255, 255, 0.92) 0 1.2px, transparent 1.35px),
-    radial-gradient(circle at 28% 64%, rgba(255, 140, 230, 0.38) 0 2px, transparent 2.2px),
-    radial-gradient(circle at 72% 64%, rgba(255, 140, 230, 0.38) 0 2px, transparent 2.2px),
-    radial-gradient(circle at 45% 35%, rgba(255, 215, 120, 0.22), transparent 60%),
-    rgba(0, 0, 0, 0.18);
-
-  box-shadow:
-    inset 0 0 0 1px rgba(255, 255, 255, 0.12),
-    0 0 10px rgba(255, 215, 120, 0.16);
+  color: var(--pcb-robot-mint);
+  opacity: 0.98;
+  filter:
+    drop-shadow(0 0 7px rgba(255, 215, 120, 0.18))
+    drop-shadow(0 0 10px rgba(120, 255, 212, 0.12));
 }
 
-.masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__face::after {
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: 58%;
-  width: 0.52rem;
-  height: 0.30rem;
-  transform: translateX(-50%);
-  border-radius: 0 0 999px 999px;
-  border: 2px solid transparent;
-  border-bottom-color: rgba(255, 255, 255, 0.74);
-  opacity: 0.9;
+.masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__face--nav {
+  --pcb-robot-size: 2rem;
 }
 
-.masthead.pcb-masthead .pcb-cpu__face.is-blink {
-  animation: pcbFaceBlink 450ms ease-in-out;
+.masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__face--tiny {
+  --pcb-robot-size: 1.6rem;
+}
+
+.masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__robot {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  transform-box: view-box;
+  transform-origin: 50% 50%;
+  contain: paint;
+}
+
+.masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__robot path,
+.masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__robot rect,
+.masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__robot circle {
+  vector-effect: non-scaling-stroke;
+}
+
+.masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__robot-core,
+.masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__robot-eye,
+.masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__open-eyes,
+.masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__blink-lashes,
+.masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__closed-eye,
+.masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__robot-pupil,
+.masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__robot-shine,
+.masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__robot-mouth,
+.masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__robot-spark,
+.masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__robot-traces,
+.masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__robot-pins,
+.masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__robot-scan,
+.masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__robot-blush,
+.masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__lash {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__robot-core,
+.masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__open-eyes,
+.masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__blink-lashes,
+.masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__robot-pupil,
+.masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__robot-mouth,
+.masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__robot-spark,
+.masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__robot-traces,
+.masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__robot-pins,
+.masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__robot-scan,
+.masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__robot-blush {
+  transition:
+    opacity 180ms ease,
+    transform 180ms ease,
+    stroke-width 180ms ease,
+    filter 180ms ease;
+}
+
+.masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__robot-body {
+  filter: drop-shadow(0 0 5px var(--pcb-robot-shadow));
+}
+
+.masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__blink-lashes,
+.masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__robot-blush {
+  opacity: 0;
+}
+
+.masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__lash,
+.masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__eyelid {
+  stroke-dasharray: 8;
+  stroke-dashoffset: 8;
+}
+
+.masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__robot-spark {
+  opacity: .82;
+}
+
+.masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__robot-scan {
+  opacity: 0;
+}
+
+.masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__face--state-blink .pcb-cpu__open-eyes {
+  opacity: 0;
+  transform: scaleY(.08);
+}
+
+.masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__face--state-blink .pcb-cpu__blink-lashes {
+  opacity: 1;
+  transform: translateY(.2px) scaleY(1);
+}
+
+.masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__face--state-blink .pcb-cpu__lash,
+.masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__face--state-blink .pcb-cpu__eyelid {
+  stroke-dashoffset: 0;
+}
+
+.masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__face--state-reopen .pcb-cpu__open-eyes {
+  transform: translateY(-.45px) scaleY(1.04);
+}
+
+.masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__face--state-reopen .pcb-cpu__robot-pupil,
+.masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__face--state-happy .pcb-cpu__robot-pupil {
+  transform: translateY(-.42px);
+}
+
+.masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__face--state-reopen .pcb-cpu__robot-shine,
+.masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__face--state-happy .pcb-cpu__robot-shine {
+  opacity: 1;
+  transform: translateY(-.18px) scale(1.1);
+}
+
+.masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__face--state-happy .pcb-cpu__robot-mouth {
+  transform: translateY(-.35px) scaleX(1.08);
+}
+
+.masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__face--state-happy .pcb-cpu__robot-spark {
+  opacity: 1;
+  transform: scale(1.18) rotate(10deg);
+}
+
+.masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__face--state-happy .pcb-cpu__robot-blush {
+  opacity: .24;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__face--ambient .pcb-cpu__robot-spark {
+    animation: pcbCpuSparkAmbient 5.4s ease-in-out infinite;
+  }
+
+  .masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__face--ambient .pcb-cpu__robot-scan {
+    animation: pcbCpuScanAmbient 8.8s ease-in-out infinite;
+  }
+
+  .masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__face.is-blinking .pcb-cpu__open-eyes {
+    animation: pcbCpuOpenEyeBlink var(--pcb-robot-blink-duration) cubic-bezier(.2, .75, .22, 1) both;
+  }
+
+  .masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__face.is-blinking .pcb-cpu__blink-lashes {
+    animation: pcbCpuLashBlink var(--pcb-robot-blink-duration) cubic-bezier(.2, .75, .22, 1) both;
+  }
+
+  .masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__face.is-blinking .pcb-cpu__eyelid,
+  .masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__face.is-blinking .pcb-cpu__lash {
+    animation: pcbCpuDrawLash var(--pcb-robot-blink-duration) cubic-bezier(.2, .75, .22, 1) both;
+  }
+
+  .masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__face.is-blinking .pcb-cpu__robot-pupil {
+    animation: pcbCpuReopenLookUp var(--pcb-robot-blink-duration) cubic-bezier(.2, .75, .22, 1) both;
+  }
+
+  .masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__face.is-blinking .pcb-cpu__robot-shine {
+    animation: pcbCpuEyeShine var(--pcb-robot-blink-duration) cubic-bezier(.2, .75, .22, 1) both;
+  }
+
+  .masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__face.is-blinking .pcb-cpu__robot-mouth {
+    animation: pcbCpuSmileDuringBlink var(--pcb-robot-blink-duration) cubic-bezier(.2, .75, .22, 1) both;
+  }
+
+  .masthead.pcb-masthead .site-title.pcb-cpu:is(:hover, :focus-visible, :focus-within) .pcb-cpu__robot-core,
+  .masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__face:is(:hover, :focus-visible) .pcb-cpu__robot-core {
+    animation: pcbCpuHello 560ms cubic-bezier(.2, .8, .2, 1);
+  }
+
+  .masthead.pcb-masthead .site-title.pcb-cpu:is(:hover, :focus-visible, :focus-within) .pcb-cpu__robot-pins,
+  .masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__face:is(:hover, :focus-visible) .pcb-cpu__robot-pins {
+    animation: pcbCpuPinGlow 820ms ease-out;
+  }
+
+  .masthead.pcb-masthead .site-title.pcb-cpu:is(:hover, :focus-visible, :focus-within) .pcb-cpu__robot-traces,
+  .masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__face:is(:hover, :focus-visible) .pcb-cpu__robot-traces {
+    stroke-dasharray: 3 5;
+    animation: pcbCpuTraceCharge 720ms linear;
+  }
+
+  .masthead.pcb-masthead .site-title.pcb-cpu:is(:hover, :focus-visible, :focus-within) .pcb-cpu__robot-mouth,
+  .masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__face:is(:hover, :focus-visible) .pcb-cpu__robot-mouth {
+    transform: translateY(-.35px) scaleX(1.08);
+  }
+
+  .masthead.pcb-masthead .site-title.pcb-cpu:is(:hover, :focus-visible, :focus-within) .pcb-cpu__robot-pupil,
+  .masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__face:is(:hover, :focus-visible) .pcb-cpu__robot-pupil {
+    transform: translateY(-.42px);
+  }
+
+  .masthead.pcb-masthead .site-title.pcb-cpu:is(:hover, :focus-visible, :focus-within) .pcb-cpu__robot-shine,
+  .masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__face:is(:hover, :focus-visible) .pcb-cpu__robot-shine {
+    transform: translateY(-.15px) scale(1.08);
+    opacity: 1;
+  }
+
+  .masthead.pcb-masthead .site-title.pcb-cpu:is(:hover, :focus-visible, :focus-within) .pcb-cpu__robot-spark,
+  .masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__face:is(:hover, :focus-visible) .pcb-cpu__robot-spark {
+    opacity: 1;
+    transform: scale(1.2) rotate(10deg);
+    filter: drop-shadow(0 0 4px rgba(255, 240, 168, .6));
+  }
+
+  .masthead.pcb-masthead .site-title.pcb-cpu:is(:hover, :focus-visible, :focus-within) .pcb-cpu__robot-blush,
+  .masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__face:is(:hover, :focus-visible) .pcb-cpu__robot-blush {
+    opacity: .24;
+  }
 }

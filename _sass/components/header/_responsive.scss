@@ -21,6 +21,23 @@
   .pcb-net .pcb-via.is-blink { animation: none; }
   .pcb-sparks { display: none; }
   .masthead.pcb-masthead .pcb-io.is-active { animation: none; }
+
+  .masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__robot,
+  .masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__robot * {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__blink-lashes,
+  .masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__robot-blush,
+  .masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__robot-scan {
+    opacity: 0 !important;
+  }
+
+  .masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__open-eyes {
+    opacity: 1 !important;
+    transform: none !important;
+  }
 }
 
 .pcb-bus--signal.is-pulse,
