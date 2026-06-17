@@ -1,6 +1,59 @@
+@media (max-width: 1100px) {
+  .masthead.pcb-masthead {
+    overflow: visible;
+    z-index: 2000;
+  }
+}
+
 /* Mobile tweaks */
-@media (max-width: 768px) {
+@media (max-width: 820px) {
+  .masthead.pcb-masthead {
+    overflow: visible;
+    z-index: 2000;
+  }
+
+  .masthead.pcb-masthead::after {
+    display: none;
+  }
+
   .masthead.pcb-masthead .greedy-nav { min-height: 3.6rem; }
+
+  .masthead.pcb-masthead .greedy-nav .visible-links {
+    flex: 0 0 0;
+    width: 0;
+  }
+
+  .masthead.pcb-masthead .greedy-nav a.site-title.pcb-cpu {
+    flex: 0 1 auto;
+    width: auto;
+    min-width: 0;
+    max-width: calc(100% - 10rem);
+    margin-right: 0.5rem;
+  }
+
+  .masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__text {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .masthead.pcb-masthead .search__toggle,
+  .masthead.pcb-masthead .greedy-nav__toggle {
+    position: relative;
+    z-index: 30;
+    flex: 0 0 auto;
+  }
+
+  .masthead.pcb-masthead .hidden-links {
+    position: fixed;
+    top: 4.75rem;
+    right: 1rem;
+    z-index: 3000;
+    max-width: calc(100vw - 2rem);
+    overflow-wrap: anywhere;
+  }
+
   .masthead.pcb-masthead .pcb-masthead__traces { opacity: 0.72; }
   .masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__face { display: none; }
 }

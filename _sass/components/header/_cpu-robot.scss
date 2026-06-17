@@ -36,6 +36,14 @@
     0 12px 28px rgba(0, 0, 0, 0.24);
 }
 
+.masthead.pcb-masthead .pcb-cpu__svg-defs {
+  position: absolute;
+  inline-size: 0;
+  block-size: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
 .masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__face {
   --pcb-robot-size: 2rem;
   --pcb-robot-gold: #ffda73;
