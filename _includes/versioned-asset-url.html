@@ -1,0 +1,21 @@
+{%- assign asset_url = include.url | default: "" -%}
+{%- assign is_external_asset = false -%}
+{%- if asset_url contains "://" or asset_url contains "//" -%}
+  {%- assign is_external_asset = true -%}
+{%- endif -%}
+{%- if asset_url != "" -%}
+  {%- if is_external_asset -%}
+    {{- asset_url -}}
+  {%- else -%}
+    {%- assign asset_version = site.asset_version | default: site.github.build_revision -%}
+    {%- if asset_version == nil or asset_version == "" -%}
+      {%- assign asset_version = site.time | date: "%Y%m%d%H%M%S" -%}
+    {%- endif -%}
+    {%- assign resolved_asset_url = asset_url | relative_url -%}
+    {%- if resolved_asset_url contains "?" -%}
+      {{- resolved_asset_url | append: "&v=" | append: asset_version -}}
+    {%- else -%}
+      {{- resolved_asset_url | append: "?v=" | append: asset_version -}}
+    {%- endif -%}
+  {%- endif -%}
+{%- endif -%}

@@ -13,7 +13,7 @@
 </script>
 
 <!-- For all browsers -->
-<link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}">
+<link rel="stylesheet" href="{% include versioned-asset-url.html url='/assets/css/main.css' %}">
 
 <!--[if IE ]>
   <style>
@@ -35,7 +35,7 @@
 {% if script contains "://" %}
 {% capture script_path %}{{ script }}{% endcapture %}
 {% else %}
-{% capture script_path %}{{ script | relative_url }}{% endcapture %}
+{% capture script_path %}{% include versioned-asset-url.html url=script %}{% endcapture %}
 {% endif %}
 <script src="{{ script_path }}"></script>
 {% endfor %}

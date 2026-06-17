@@ -371,7 +371,7 @@ classes: hobbies-quest
   }
 </style>
 
-<script src="{{ '/assets/js/hobbies-quest.js' | relative_url }}"></script>
+<script src="{% include versioned-asset-url.html url='/assets/js/hobbies-quest.js' %}"></script>
 
 
 
