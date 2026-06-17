@@ -93,6 +93,8 @@ after_footer_scripts:
   - /assets/js/mmj/header/robot-blink.js
   - /assets/js/mmj/header/resistor-art.js
   - /assets/js/mmj/header/resistor-renderer.js
+  - /assets/js/mmj/header/capacitor-art.js
+  - /assets/js/mmj/header/capacitor-renderer.js
   - /assets/js/mmj/header/pcb-trace-engine.js
   - /assets/js/mmj/header/observers.js
   - /assets/js/mmj/header/interaction.js

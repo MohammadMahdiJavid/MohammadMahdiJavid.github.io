@@ -14,6 +14,7 @@
     const activeNav = header.activeNav;
     const effects = header.effects;
     const resistorRenderer = header.resistorRenderer;
+    const capacitorRenderer = header.capacitorRenderer;
 
     function busPath(x0, x1, y, amp = 4) {
       const dx = x1 - x0;
@@ -131,6 +132,29 @@
       const resW = math.snap(resH * resistorRenderer.RESISTOR_ASPECT);
       const resX = math.snap(math.clamp(w * 0.34, 10, w - resW - 10));
       const resY = math.snap(math.clamp(yBot - (resH * resistorRenderer.RESISTOR_LEAD_END_Y), 8, h - resH - 8));
+      const componentGap = math.snap(math.clamp(w * 0.018, 10, 18));
+
+      let capComp = null;
+      const viewportWidth = window.innerWidth || w;
+      const canShowAdjacentCapacitor = viewportWidth >= 560;
+      if (capacitorRenderer && canShowAdjacentCapacitor) {
+        const capH = math.snap(math.clamp(h * 0.24, 24, 31));
+        const capW = math.snap(capH * capacitorRenderer.CAPACITOR_ASPECT);
+        const capX = math.snap(resX + resW + componentGap);
+        const capY = math.snap(math.clamp(
+          yBot - (capH * capacitorRenderer.CAPACITOR_LEAD_END_Y),
+          8,
+          h - capH - 8
+        ));
+        const nextComponentX = w * 0.56;
+        const hasRoomBesideResistor =
+          capX + capW <= nextComponentX - componentGap &&
+          capX + capW <= w - 10;
+
+        if (hasRoomBesideResistor) {
+          capComp = { x: capX, y: capY, ww: capW, hh: capH, label: "C1", type: "capacitor" };
+        }
+      }
 
       const g = svgApi.svgEl("g", {}, "pcb-decor");
       state.decorG = g;
@@ -138,15 +162,19 @@
       const comps = [
         { x: w * 0.18, y: h * 0.78, ww: 36, hh: 14, label: "R1" },
         { x: resX, y: resY, ww: resW, hh: resH, label: "R2", type: "resistor" },
+        capComp,
         { x: w * 0.56, y: h * 0.80, ww: 40, hh: 14, label: "U2" },
         { x: w * 0.74, y: h * 0.70, ww: 52, hh: 16, label: "LDO" }
-      ];
+      ].filter(Boolean);
 
       for (const c of comps) {
-        const dims = resistorRenderer.computeComponentBox(c);
+        const renderer = c.type === "capacitor" ? capacitorRenderer : resistorRenderer;
+        const dims = renderer.computeComponentBox(c);
 
         if (c.type === "resistor") {
           resistorRenderer.build(g, dims);
+        } else if (c.type === "capacitor") {
+          capacitorRenderer.build(g, { ...dims, label: c.label });
         } else {
           g.appendChild(svgApi.svgEl("rect", {
             x: dims.x,
