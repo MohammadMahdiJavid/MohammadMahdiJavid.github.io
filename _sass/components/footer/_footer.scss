@@ -1,0 +1,17 @@
+.pcb-footer {
+  position: relative;
+  margin: 0;
+  padding: 3rem 1.5rem 2.5rem;
+  color: #e8f7f1;
+  background: radial-gradient(circle at 15% 20%, rgba(80, 150, 120, 0.12), transparent 25%),
+    radial-gradient(circle at 80% 60%, rgba(120, 220, 190, 0.12), transparent 30%),
+    linear-gradient(135deg, #0c1d14, #0f2b1d 45%, #0b2217);
+  overflow: hidden;
+  border-top: 1px solid rgba(149, 255, 220, 0.22);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.pcb-footer a {
+  color: #c1fff1;
+}
+

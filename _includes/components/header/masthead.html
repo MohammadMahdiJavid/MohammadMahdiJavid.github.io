@@ -1,0 +1,32 @@
+{% assign logo_path = site.logo %}
+{% assign logo_src = "" %}
+{% if logo_path and logo_path != empty %}
+  {% if logo_path contains "://" %}
+    {% assign logo_src = logo_path %}
+  {% else %}
+    {% assign logo_src = logo_path | relative_url %}
+  {% endif %}
+{% endif %}
+
+<div class="masthead pcb-masthead" data-pcb-masthead>
+  {% include components/header/background.html %}
+
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+
+        {% include components/header/logo.html logo_src=logo_src %}
+
+        {% include components/header/cpu.html %}
+
+        {% include components/header/nav.html %}
+
+        {% include components/header/search-toggle.html %}
+
+        {% include components/header/menu-toggle.html %}
+
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>

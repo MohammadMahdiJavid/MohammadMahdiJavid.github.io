@@ -1,0 +1,33 @@
+.masthead.pcb-masthead::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1.6px) 0 0 / 18px 18px,
+    repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.03) 0 2px, transparent 2px 8px),
+    repeating-linear-gradient(0deg, rgba(214, 132, 70, 0.055) 0 1px, transparent 1px 22px),
+    repeating-linear-gradient(90deg, rgba(255, 215, 120, 0.040) 0 1px, transparent 1px 26px);
+  opacity: 0.62;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+  animation: pcbSilkScan 24s linear infinite;
+}
+
+.masthead.pcb-masthead::after {
+  content: "";
+  position: absolute;
+  left: -10%;
+  right: -10%;
+  top: -40%;
+  height: 200%;
+  background: linear-gradient(90deg,
+    transparent,
+    rgba(255, 215, 120, 0.08),
+    rgba(255, 255, 255, 0.045),
+    transparent
+  );
+  transform: rotate(-12deg) translateX(-8%);
+  opacity: 0.60;
+  pointer-events: none;
+  animation: pcbShimmer 18s ease-in-out infinite;
+}

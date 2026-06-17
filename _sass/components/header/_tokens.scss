@@ -1,0 +1,94 @@
+.masthead.pcb-masthead {
+  /* Palette: Soldermask Green + Copper + ENIG Gold + Cute Sparks */
+  --pcb-bg-0: #041c16;
+  --pcb-bg-1: #0a3b2d;
+
+  --pcb-silk: rgba(235, 255, 246, 0.82);
+
+  /* Copper + Gold accents */
+  --pcb-copper: rgba(214, 132, 70, 0.68);
+  --pcb-copper-dim: rgba(214, 132, 70, 0.26);
+  --pcb-gold: rgba(255, 215, 120, 0.95);
+  --pcb-gold-dim: rgba(255, 215, 120, 0.24);
+  --pcb-amber: rgba(255, 180, 80, 0.92);
+
+  /* Signals */
+  --pcb-signal: rgba(110, 255, 210, 0.96);
+  --pcb-signal-2: rgba(120, 210, 255, 0.92);
+
+  /* Glows */
+  --pcb-glow: rgba(110, 255, 210, 0.35);
+  --pcb-glow-gold: rgba(255, 215, 120, 0.38);
+  --pcb-spark: rgba(255, 240, 190, 0.96);
+  --pcb-spark-pink: rgba(255, 140, 230, 0.92);
+
+  /* Tuning knobs for visibility */
+  --pcb-trace-w-base: 2.7;
+  --pcb-trace-w-signal: 3.0;
+  --pcb-bus-w-base: 4.2;
+  --pcb-bus-w-signal: 2.9;
+
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+
+  background:
+    radial-gradient(circle at 16% 18%, rgba(255, 215, 120, 0.14), transparent 60%),
+    radial-gradient(circle at 82% 26%, rgba(110, 255, 210, 0.10), transparent 62%),
+    radial-gradient(circle at 70% 82%, rgba(120, 210, 255, 0.08), transparent 60%),
+    linear-gradient(180deg, var(--pcb-bg-1), var(--pcb-bg-0));
+
+  &.is-awake {
+    filter: saturate(1.08) contrast(1.02);
+  }
+
+  /* Layering: pseudo texture < SVG traces < actual nav */
+  &::before,
+  &::after {
+    z-index: 0;
+  }
+
+  .masthead__inner-wrap {
+    position: relative;
+    z-index: 2;
+    padding: 0.55rem 1rem;
+  }
+
+  .pcb-masthead__bg {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    filter: drop-shadow(0 18px 28px rgba(0, 0, 0, 0.22));
+  }
+
+  &.is-awake .pcb-masthead__bg {
+    filter: drop-shadow(0 18px 28px rgba(0, 0, 0, 0.26)) saturate(1.05);
+  }
+
+  .pcb-masthead__traces {
+    width: 100%;
+    height: 100%;
+    display: block;
+    opacity: 0.96;
+  }
+}
+
+/* Optional alternate palette (Matte Black FR4 / Silver / Electric Blue) */
+body.pcb-theme--black .masthead.pcb-masthead {
+  --pcb-bg-0: #050608;
+  --pcb-bg-1: #101318;
+  --pcb-silk: rgba(240, 245, 255, 0.78);
+
+  --pcb-copper: rgba(190, 200, 215, 0.55);
+  --pcb-copper-dim: rgba(190, 200, 215, 0.25);
+  --pcb-gold: rgba(255, 230, 160, 0.92);
+  --pcb-gold-dim: rgba(255, 230, 160, 0.22);
+
+  --pcb-signal: rgba(120, 210, 255, 0.96);
+  --pcb-signal-2: rgba(170, 255, 220, 0.92);
+
+  --pcb-glow: rgba(120, 210, 255, 0.38);
+  --pcb-glow-gold: rgba(255, 230, 160, 0.30);
+}

@@ -1,0 +1,187 @@
+/* SVG general */
+.pcb-bus path,
+.pcb-net path,
+.pcb-net circle {
+  vector-effect: non-scaling-stroke;
+}
+
+/* Bus styling (more visible) */
+.pcb-bus {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.pcb-bus--base {
+  stroke: var(--pcb-copper-dim);
+  stroke-width: var(--pcb-bus-w-base);
+  opacity: 0.36;
+}
+
+.pcb-bus--gold {
+  stroke: url(#pcbGoldHot);
+  stroke-width: 1.75;
+  opacity: 0.22;
+  filter: drop-shadow(0 0 8px rgba(255, 215, 120, 0.18));
+}
+
+.pcb-bus--signal {
+  stroke: var(--pcb-signal);
+  stroke-width: var(--pcb-bus-w-signal);
+  opacity: 0;
+  stroke-dasharray: 14 190;
+  filter: drop-shadow(0 0 6px var(--pcb-glow));
+}
+
+
+.pcb-bus--signal.is-pulse {
+  opacity: 0.34;
+  animation: pcbTraceFlowBus var(--bus-speed, 1500ms) linear infinite;
+}
+
+/* When a bus is feeding an active link */
+.pcb-bus.is-hot .pcb-bus--base { opacity: 0.46; }
+.pcb-bus.is-hot .pcb-bus--gold { opacity: 0.32; }
+.pcb-bus.is-hot .pcb-bus--signal {
+  opacity: 0.60;
+  animation-duration: 1000ms;
+}
+
+/* Silkscreen labels/components */
+.pcb-decor text.pcb-label {
+  fill: var(--pcb-silk);
+  opacity: 0.68;
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  paint-order: stroke;
+  stroke: rgba(0, 0, 0, 0.18);
+  stroke-width: 0.6;
+  text-anchor: middle;
+  dominant-baseline: middle;
+}
+
+.pcb-decor .pcb-component {
+  fill: rgba(0, 0, 0, 0.22);
+  stroke: rgba(255, 255, 255, 0.24);
+  stroke-width: 1.1;
+  rx: 2.4;
+  ry: 2.4;
+}
+/* Pads / vias */
+.pcb-pad {
+  fill: url(#pcbPadFill);
+  stroke: url(#pcbCopperGold);
+  stroke-width: 1.05;
+  opacity: 0.78;
+  filter: drop-shadow(0 0 8px rgba(255, 215, 120, 0.14));
+}
+
+.pcb-pad--pin {
+  opacity: 0.92;
+}
+
+.pcb-net.is-active .pcb-pad {
+  opacity: 0.95;
+  filter: drop-shadow(0 0 10px rgba(255, 215, 120, 0.26));
+}
+
+.pcb-net .pcb-via {
+  fill: url(#pcbPadFill);
+  stroke: url(#pcbCopperGold);
+  stroke-width: 1.35;
+  opacity: 0.84;
+}
+
+.pcb-net.is-active .pcb-via {
+  stroke: url(#pcbGoldHot);
+  opacity: 0.98;
+  filter: drop-shadow(0 0 10px rgba(255, 215, 120, 0.22));
+}
+
+.pcb-net .pcb-via.is-blink {
+  animation: pcbViaBlink 1.8s ease-out;
+}
+
+/* Net / trace styling (more readable) */
+.pcb-net .pcb-trace--base {
+  stroke: url(#pcbCopperGold);
+  stroke-width: var(--pcb-trace-w-base);
+  fill: none;
+  opacity: 0.46;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 0 8px rgba(214, 132, 70, 0.14));
+}
+
+.pcb-net .pcb-trace--highlight {
+  stroke: url(#pcbGoldHot);
+  stroke-width: 1.35;
+  fill: none;
+  opacity: 0;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 12 260;
+  filter: drop-shadow(0 0 10px rgba(255, 215, 120, 0.18));
+}
+
+.pcb-net .pcb-trace--signal {
+  stroke: var(--trace-color, var(--pcb-signal));
+  stroke-width: var(--pcb-trace-w-signal);
+  fill: none;
+  opacity: 0;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 12 220;
+  filter: drop-shadow(0 0 6px var(--pcb-glow));
+}
+
+.pcb-net.is-active .pcb-trace--signal {
+  opacity: 0.95;
+  animation: pcbTraceFlowNet var(--trace-speed, 820ms) linear infinite;
+}
+
+.pcb-net.is-active .pcb-trace--highlight {
+  opacity: 0.80;
+  animation: pcbGoldFlow var(--trace-speed, 900ms) linear infinite;
+}
+
+.pcb-net.is-idle .pcb-trace--signal {
+  opacity: 0.24;
+  animation: pcbTraceFlowNet var(--trace-speed, 1400ms) linear infinite;
+}
+
+.pcb-net.is-idle .pcb-trace--highlight {
+  opacity: 0.24;
+  animation: pcbGoldFlow 1500ms linear infinite;
+}
+
+.pcb-net.is-playful.is-active .pcb-trace--signal {
+  animation:
+    pcbTraceFlowNet var(--trace-speed, 860ms) linear infinite,
+    pcbHueSpin 1800ms linear infinite;
+}
+
+/* Sparks */
+.pcb-sparks {
+  pointer-events: none;
+}
+
+.pcb-sparks .pcb-spark {
+  fill: var(--spark-fill, var(--pcb-spark));
+  opacity: 0;
+  mix-blend-mode: screen;
+  filter: drop-shadow(0 0 10px rgba(255, 215, 120, 0.22));
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.pcb-sparks .pcb-spark--heart {
+  filter: drop-shadow(0 0 10px rgba(255, 140, 230, 0.20));
+}
+
+.pcb-sparks .pcb-spark.is-pop {
+  opacity: 1;
+  animation: pcbSparkPop var(--spark-life, 900ms) ease-out forwards;
+}
+

@@ -7,6 +7,9 @@
 @import "minimal-mistakes/skins/{{ site.minimal_mistakes_skin | default: 'default' }}"; // skin
 @import "minimal-mistakes"; // main partials
 
-@import "pcb-masthead";
-@import "pcb-footer";
+@import "theme/page-background";
 
+@import "components/header/index";
+@import "components/bio/index";
+@import "components/posts/index";
+@import "components/footer/index";

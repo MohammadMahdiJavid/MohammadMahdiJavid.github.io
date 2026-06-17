@@ -1,0 +1,8 @@
+<div class="pcb-footer__chip" aria-label="Footer CPU">
+  <div class="pcb-footer__chip-tag">CPU</div>
+  <div class="pcb-footer__chip-name">{{ site.name | default: site.title }}</div>
+  {% if site.description %}
+  <div class="pcb-footer__chip-desc">{{ site.description }}</div>
+  {% endif %}
+  <div class="pcb-footer__status"><span class="pcb-footer__led" aria-hidden="true"></span> Footer bus: idle &amp; cozy</div>
+</div>

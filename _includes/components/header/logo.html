@@ -1,0 +1,5 @@
+{% unless include.logo_src == empty %}
+  <a class="site-logo" href="{{ '/' | relative_url }}">
+    <img src="{{ include.logo_src }}" alt="">
+  </a>
+{% endunless %}

@@ -1,0 +1,30 @@
+{% assign author = page.author | default: page.authors[0] | default: site.author %}
+{% assign author = site.data.authors[author] | default: author %}
+{% assign author_src = "" %}
+{% assign author_link = "" %}
+{% if author.avatar %}
+  {% if author.avatar contains "://" %}
+    {% assign author_src = author.avatar %}
+  {% else %}
+    {% assign author_src = author.avatar | relative_url %}
+  {% endif %}
+{% endif %}
+{% if author.home %}
+  {% if author.home contains "://" %}
+    {% assign author_link = author.home %}
+  {% else %}
+    {% assign author_link = author.home | relative_url %}
+  {% endif %}
+{% endif %}
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  {% include components/bio/avatar.html author=author author_src=author_src author_link=author_link %}
+
+  {% include components/bio/content.html author=author author_link=author_link %}
+
+  {% include components/bio/links.html author=author %}
+
+  {% include components/bio/tryhackme-badge.html %}
+
+</div>

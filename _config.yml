@@ -85,8 +85,18 @@ bing_site_verification   :
 yandex_site_verification :
 naver_site_verification  :
 after_footer_scripts:
-  - /assets/js/resistor-art.js
-  - /assets/js/pcb-masthead.js
+  - /assets/js/mmj/header/math.js
+  - /assets/js/mmj/header/svg.js
+  - /assets/js/mmj/header/dom.js
+  - /assets/js/mmj/header/active-nav.js
+  - /assets/js/mmj/header/effects.js
+  - /assets/js/mmj/header/robot-blink.js
+  - /assets/js/mmj/header/resistor-art.js
+  - /assets/js/mmj/header/resistor-renderer.js
+  - /assets/js/mmj/header/pcb-trace-engine.js
+  - /assets/js/mmj/header/observers.js
+  - /assets/js/mmj/header/interaction.js
+  - /assets/js/mmj/header/index.js
 
 # Social Sharing
 twitter:
