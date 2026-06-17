@@ -127,12 +127,117 @@
     }
 
     function buildSilkscreen(svgRoot, w, h, anchors = {}) {
+      const yTop = anchors.yTop ?? math.snap(math.clamp(h * 0.20, 10, 18));
       const yBot = anchors.yBot ?? math.snap(math.clamp(h * 0.82, h - 18, h - 10));
       const resH = math.snap(math.clamp(h * 0.28, 20, 34));
       const resW = math.snap(resH * resistorRenderer.RESISTOR_ASPECT);
       const resX = math.snap(math.clamp(w * 0.34, 10, w - resW - 10));
       const resY = math.snap(math.clamp(yBot - (resH * resistorRenderer.RESISTOR_LEAD_END_Y), 8, h - resH - 8));
       const componentGap = math.snap(math.clamp(w * 0.018, 10, 18));
+      const CAPACITOR_LEFT_NUDGE = 8;
+      const CAPACITOR_MIN_R2_CLEARANCE = 5;
+
+      function boxForDims(dims) {
+        return {
+          x: dims.x,
+          y: dims.y,
+          ww: dims.ww,
+          hh: dims.hh,
+          right: dims.x + dims.ww,
+          bottom: dims.y + dims.hh
+        };
+      }
+
+      function paddedBox(box, pad) {
+        return {
+          x: box.x - pad,
+          y: box.y - pad,
+          ww: box.ww + pad * 2,
+          hh: box.hh + pad * 2,
+          right: box.right + pad,
+          bottom: box.bottom + pad
+        };
+      }
+
+      function overlaps(a, b) {
+        return !!(a && b) &&
+          a.x < b.right &&
+          a.right > b.x &&
+          a.y < b.bottom &&
+          a.bottom > b.y;
+      }
+
+      function elementBox(el, mastRect) {
+        if (!el || !el.offsetParent) return null;
+
+        const r = el.getBoundingClientRect();
+        if (r.width <= 0 || r.height <= 0) return null;
+
+        const x = math.snap(math.clamp(r.left - mastRect.left, 0, w));
+        const y = math.snap(math.clamp(r.top - mastRect.top, 0, h));
+        const ww = math.snap(math.clamp(r.width, 0, w - x));
+        const hh = math.snap(math.clamp(r.height, 0, h - y));
+        return { x, y, ww, hh, right: x + ww, bottom: y + hh };
+      }
+
+      function labelBoxFor(dims, label, position) {
+        const labelW = Math.max(12, label.length * 6.4);
+        const labelH = 10;
+        const labelX = math.snap(dims.x + dims.ww * 0.5);
+        const labelY = position === "below"
+          ? math.snap(dims.y + dims.hh + 11)
+          : math.snap(dims.y - 8);
+
+        return {
+          x: labelX - labelW * 0.5,
+          y: labelY - 8,
+          ww: labelW,
+          hh: labelH,
+          right: labelX + labelW * 0.5,
+          bottom: labelY + 2,
+          baseline: labelY
+        };
+      }
+
+      function isInsideMasthead(box) {
+        return box.x >= 0 && box.y >= 0 && box.right <= w && box.bottom <= h;
+      }
+
+      function shouldRenderCapacitor(capDims, capLabelBox, fixedComps) {
+        if (!isInsideMasthead(boxForDims(capDims)) || !isInsideMasthead(capLabelBox)) return false;
+
+        const mastRect = root.getBoundingClientRect();
+        const blockers = [];
+        const blockedElements = new Set([
+          cpu,
+          root.querySelector(".site-title.pcb-cpu"),
+          ...root.querySelectorAll(".greedy-nav .visible-links a"),
+          ...root.querySelectorAll(".greedy-nav .search__toggle"),
+          ...root.querySelectorAll(".greedy-nav .greedy-nav__toggle"),
+          ...state.ioMap.values()
+        ].filter(Boolean));
+
+        for (const el of blockedElements) {
+          const box = elementBox(el, mastRect);
+          if (box) blockers.push(paddedBox(box, 5));
+        }
+
+        for (const comp of fixedComps) {
+          if (comp.label === "R2" || comp.label === "U2" || comp.label === "LDO") {
+            blockers.push(paddedBox(boxForDims(resistorRenderer.computeComponentBox(comp)), 5));
+          }
+        }
+
+        const capBox = boxForDims(capDims);
+        return !blockers.some((blocker) => overlaps(capBox, blocker) || overlaps(capLabelBox, blocker));
+      }
+
+      const fixedComps = [
+        { x: w * 0.18, y: h * 0.78, ww: 36, hh: 14, label: "R1" },
+        { x: resX, y: resY, ww: resW, hh: resH, label: "R2", type: "resistor" },
+        { x: w * 0.56, y: h * 0.80, ww: 40, hh: 14, label: "U2" },
+        { x: w * 0.74, y: h * 0.70, ww: 52, hh: 16, label: "LDO" }
+      ];
 
       let capComp = null;
       const viewportWidth = window.innerWidth || w;
@@ -140,9 +245,10 @@
       if (capacitorRenderer && canShowAdjacentCapacitor) {
         const capH = math.snap(math.clamp(h * 0.24, 24, 31));
         const capW = math.snap(capH * capacitorRenderer.CAPACITOR_ASPECT);
-        const capX = math.snap(resX + resW + componentGap);
+        const capacitorGap = math.snap(Math.max(CAPACITOR_MIN_R2_CLEARANCE, componentGap - CAPACITOR_LEFT_NUDGE));
+        const capX = math.snap(resX + resW + capacitorGap);
         const capY = math.snap(math.clamp(
-          yBot - (capH * capacitorRenderer.CAPACITOR_LEAD_END_Y),
+          yTop - (capH * (1 - capacitorRenderer.CAPACITOR_LEAD_END_Y)),
           8,
           h - capH - 8
         ));
@@ -151,8 +257,21 @@
           capX + capW <= nextComponentX - componentGap &&
           capX + capW <= w - 10;
 
-        if (hasRoomBesideResistor) {
-          capComp = { x: capX, y: capY, ww: capW, hh: capH, label: "C1", type: "capacitor" };
+        const candidate = {
+          x: capX,
+          y: capY,
+          ww: capW,
+          hh: capH,
+          label: "C1",
+          type: "capacitor",
+          flipY: true,
+          labelPosition: "below"
+        };
+        const candidateDims = capacitorRenderer.computeComponentBox(candidate);
+        const candidateLabelBox = labelBoxFor(candidateDims, candidate.label, candidate.labelPosition);
+
+        if (hasRoomBesideResistor && shouldRenderCapacitor(candidateDims, candidateLabelBox, fixedComps)) {
+          capComp = candidate;
         }
       }
 
@@ -160,11 +279,11 @@
       state.decorG = g;
 
       const comps = [
-        { x: w * 0.18, y: h * 0.78, ww: 36, hh: 14, label: "R1" },
-        { x: resX, y: resY, ww: resW, hh: resH, label: "R2", type: "resistor" },
+        fixedComps[0],
+        fixedComps[1],
         capComp,
-        { x: w * 0.56, y: h * 0.80, ww: 40, hh: 14, label: "U2" },
-        { x: w * 0.74, y: h * 0.70, ww: 52, hh: 16, label: "LDO" }
+        fixedComps[2],
+        fixedComps[3]
       ].filter(Boolean);
 
       for (const c of comps) {
@@ -174,7 +293,7 @@
         if (c.type === "resistor") {
           resistorRenderer.build(g, dims);
         } else if (c.type === "capacitor") {
-          capacitorRenderer.build(g, { ...dims, label: c.label });
+          capacitorRenderer.build(g, { ...dims, label: c.label, flipY: c.flipY });
         } else {
           g.appendChild(svgApi.svgEl("rect", {
             x: dims.x,
@@ -184,9 +303,10 @@
           }, "pcb-component"));
         }
 
+        const labelBox = labelBoxFor(dims, c.label, c.labelPosition);
         const t = svgApi.svgEl("text", {
           x: math.snap(dims.x + dims.ww * 0.5),
-          y: math.snap(dims.y - 8)
+          y: labelBox.baseline
         }, "pcb-label");
         t.textContent = c.label;
         g.appendChild(t);

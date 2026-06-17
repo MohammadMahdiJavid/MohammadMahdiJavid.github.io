@@ -75,15 +75,36 @@
   pointer-events: none;
 }
 
+.masthead.pcb-masthead .pcb-decor .pcb-component--capacitor .pcb-c__body-glow,
 .masthead.pcb-masthead .pcb-decor .pcb-component--capacitor .pcb-c__flow,
 .masthead.pcb-masthead .pcb-decor .pcb-component--capacitor .pcb-c__rim--halo,
-.masthead.pcb-masthead .pcb-decor .pcb-component--capacitor .pcb-c__rim--flow {
-  fill: none;
-  stroke-linecap: round;
-  stroke-linejoin: round;
+.masthead.pcb-masthead .pcb-decor .pcb-component--capacitor .pcb-c__rim--flow,
+.masthead.pcb-masthead .pcb-decor .pcb-component--capacitor .pcb-c__side-glow,
+.masthead.pcb-masthead .pcb-decor .pcb-component--capacitor .pcb-c__lead-glow,
+.masthead.pcb-masthead .pcb-decor .pcb-component--capacitor .pcb-c__polarity-glow {
   opacity: 0;
   pointer-events: none;
   mix-blend-mode: screen;
+}
+
+.masthead.pcb-masthead .pcb-decor .pcb-component--capacitor .pcb-c__flow,
+.masthead.pcb-masthead .pcb-decor .pcb-component--capacitor .pcb-c__rim--halo,
+.masthead.pcb-masthead .pcb-decor .pcb-component--capacitor .pcb-c__rim--flow,
+.masthead.pcb-masthead .pcb-decor .pcb-component--capacitor .pcb-c__side-glow,
+.masthead.pcb-masthead .pcb-decor .pcb-component--capacitor .pcb-c__lead-glow,
+.masthead.pcb-masthead .pcb-decor .pcb-component--capacitor .pcb-c__polarity-glow {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.masthead.pcb-masthead .pcb-decor .pcb-component--capacitor .pcb-c__body-glow {
+  fill: var(--pcb-cap-body-hot);
+  filter:
+    drop-shadow(0 0 8px rgba(110, 255, 210, 0.18))
+    drop-shadow(0 0 12px rgba(255, 236, 178, 0.16));
+  animation: pcbCapBodyGlow var(--cap-speed, 2200ms) ease-in-out infinite;
+  animation-delay: calc(var(--cap-phase, 0ms) + 80ms);
 }
 
 .masthead.pcb-masthead .pcb-decor .pcb-component--capacitor .pcb-c__flow {
@@ -128,6 +149,37 @@
   animation-delay: var(--cap-phase, 0ms);
 }
 
+.masthead.pcb-masthead .pcb-decor .pcb-component--capacitor .pcb-c__side-glow {
+  stroke: var(--pcb-cap-rim-halo);
+  stroke-width: 0.92;
+  filter:
+    drop-shadow(0 0 8px rgba(110, 255, 210, 0.22))
+    drop-shadow(0 0 12px rgba(255, 215, 120, 0.10));
+  animation: pcbCapSideGlow var(--cap-speed, 2200ms) ease-in-out infinite;
+  animation-delay: calc(var(--cap-phase, 0ms) + 120ms);
+}
+
+.masthead.pcb-masthead .pcb-decor .pcb-component--capacitor .pcb-c__lead-glow {
+  stroke: var(--pcb-gold);
+  stroke: url(#pcbGoldHot);
+  stroke-width: 1.08;
+  filter:
+    drop-shadow(0 0 8px rgba(255, 236, 178, 0.34))
+    drop-shadow(0 0 12px rgba(110, 255, 210, 0.14));
+  animation: pcbCapLeadGlow var(--cap-speed, 2200ms) ease-in-out infinite;
+  animation-delay: calc(var(--cap-phase, 0ms) + 180ms);
+}
+
+.masthead.pcb-masthead .pcb-decor .pcb-component--capacitor .pcb-c__polarity-glow {
+  stroke: var(--pcb-cap-body-hot);
+  stroke-width: 0.78;
+  filter:
+    drop-shadow(0 0 7px rgba(255, 236, 178, 0.30))
+    drop-shadow(0 0 10px rgba(110, 255, 210, 0.12));
+  animation: pcbCapPolarityGlow var(--cap-speed, 2200ms) ease-in-out infinite;
+  animation-delay: calc(var(--cap-phase, 0ms) + 220ms);
+}
+
 @keyframes pcbCapCurrent {
   0%   { opacity: 0; stroke-dashoffset: 0; }
   16%  { opacity: 0; }
@@ -157,6 +209,38 @@
   78%, 100% { opacity: 0; }
 }
 
+@keyframes pcbCapBodyGlow {
+  0%, 20%   { opacity: 0; }
+  34%       { opacity: 0.24; }
+  46%       { opacity: 0.46; }
+  58%       { opacity: 0.26; }
+  76%, 100% { opacity: 0; }
+}
+
+@keyframes pcbCapSideGlow {
+  0%, 22%   { opacity: 0; }
+  36%       { opacity: 0.62; }
+  48%       { opacity: 0.38; }
+  60%       { opacity: 0.72; }
+  80%, 100% { opacity: 0; }
+}
+
+@keyframes pcbCapLeadGlow {
+  0%, 18%   { opacity: 0; }
+  30%       { opacity: 0.86; }
+  42%       { opacity: 0.48; }
+  52%       { opacity: 0.94; }
+  74%, 100% { opacity: 0; }
+}
+
+@keyframes pcbCapPolarityGlow {
+  0%, 26%   { opacity: 0; }
+  38%       { opacity: 0.70; }
+  50%       { opacity: 0.36; }
+  62%       { opacity: 0.76; }
+  82%, 100% { opacity: 0; }
+}
+
 @keyframes pcbCapIdleBreath {
   0%, 100% { transform: translateY(0); }
   50%      { transform: translateY(-0.32px); }
@@ -164,13 +248,21 @@
 
 @media (prefers-reduced-motion: reduce) {
   .masthead.pcb-masthead .pcb-decor .pcb-component--capacitor,
+  .masthead.pcb-masthead .pcb-decor .pcb-component--capacitor .pcb-c__body-glow,
   .masthead.pcb-masthead .pcb-decor .pcb-component--capacitor .pcb-c__flow,
   .masthead.pcb-masthead .pcb-decor .pcb-component--capacitor .pcb-c__rim--halo,
-  .masthead.pcb-masthead .pcb-decor .pcb-component--capacitor .pcb-c__rim--flow {
+  .masthead.pcb-masthead .pcb-decor .pcb-component--capacitor .pcb-c__rim--flow,
+  .masthead.pcb-masthead .pcb-decor .pcb-component--capacitor .pcb-c__side-glow,
+  .masthead.pcb-masthead .pcb-decor .pcb-component--capacitor .pcb-c__lead-glow,
+  .masthead.pcb-masthead .pcb-decor .pcb-component--capacitor .pcb-c__polarity-glow {
     animation: none;
   }
 
+  .masthead.pcb-masthead .pcb-decor .pcb-component--capacitor .pcb-c__body-glow { opacity: 0.10; }
   .masthead.pcb-masthead .pcb-decor .pcb-component--capacitor .pcb-c__flow { opacity: 0.18; }
   .masthead.pcb-masthead .pcb-decor .pcb-component--capacitor .pcb-c__rim--flow { opacity: 0.16; }
   .masthead.pcb-masthead .pcb-decor .pcb-component--capacitor .pcb-c__rim--halo { opacity: 0.10; }
+  .masthead.pcb-masthead .pcb-decor .pcb-component--capacitor .pcb-c__side-glow { opacity: 0.12; }
+  .masthead.pcb-masthead .pcb-decor .pcb-component--capacitor .pcb-c__lead-glow { opacity: 0.14; }
+  .masthead.pcb-masthead .pcb-decor .pcb-component--capacitor .pcb-c__polarity-glow { opacity: 0.12; }
 }
