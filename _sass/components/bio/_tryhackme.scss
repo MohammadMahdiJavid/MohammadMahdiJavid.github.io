@@ -1,133 +1,125 @@
-$outline: unquote("$outline") !default;
+.thm_margin {
+  margin: 0.35rem 0 0;
+}
 
-        .thm_margin {
-          margin: 5px;
-        }
-  
-        #thm_badge {
-          width: 210px;
-          display: inline-table;
-          -webkit-touch-callout: none;
-          -webkit-user-select: none;
-          -khtml-user-select: none;
-          -moz-user-select: none;
-          -ms-user-select: none;
-          user-select: none;
-        }
-  
-        #thm_badge:hover {
-          cursor: pointer;
-        }
-  
-        .thm_avatar {
-          display: block;
-          width: 50px;
-          height: 50px;
-          float: left;
-          background-size: cover;
-          background-repeat: no-repeat;
-          background-position: center center;
-          border-radius: 50%;
-          box-sizing: content-box; /* Needed for border to stop changing image width*/
-          border: 3px solid #88cc14;
-          background-color: #343c42;
-          box-shadow: inset 0px 0px 3px 3px rgba(0, 0, 0, 0.1);
-          object-fit: cover;
-          box-shadow: 0 0px 3px 0px #303030;
-        }
-  
-        @font-face {
-          font-family: 'Roboto';
-          font-style: normal;
-          font-weight: 400;
-          src: url(https://fonts.gstatic.com/s/ubuntumono/v6/ViZhet7Ak-LRXZMXzuAfkY4P5ICox8Kq3LLUNMylGO4.woff2)
-            format('woff2');
-        }
-  
-        .thm_font {
-          font-family: 'Roboto', monospace;
-        }
-  
-        .thm_nickname {
-          color: #ffffff;
-          font-size: 12px;
-          font-weight: bold;
-          text-shadow: #000 0 0 6px;
-        }
-  
-        .thm_stat {
-          color: #fff;
-          opacity: 0.5;
-          font-size: 14px;
-        }
-  
-        .thm_icon {
-          opacity: 0.85;
-          height: 16px;
-        }
-  
-        @keyframes flicker {
-          0%,
-          19.999%,
-          22%,
-          62.999%,
-          64%,
-          64.999%,
-          70%,
-          100% {
-            opacity: 0.99;
-            text-shadow: -1px -1px 0 $outline, 1px -1px 0 $outline, -1px 1px 0 $outline,
-              1px 1px 0 $outline, 0 -2px 8px, 0 0 2px, 0 0 5px #ff7e00, 0 0 15px #ff4444,
-              0 0 2px #ff7e00, 0 2px 3px #000;
-          }
-          20%,
-          21.999%,
-          63%,
-          63.999%,
-          65%,
-          69.999% {
-            opacity: 0.4;
-            text-shadow: none;
-          }
-        }
-  
-        .thm_rank {
-          color: #ffffff;
-          font-size: 11px;
-        }
-  
-        .thm_line {
-          line-height: 12px;
-          margin: 0px;
-          padding: 0px;
-        }
-  
-        .thm_link {
-          color: #fff;
-          font-size: 0.6em;
-          text-decoration: none;
-          animation: flicker 6s infinite;
-        }
-  
-        .thm_link:hover {
-          color: #fff;
-          font-size: 0.6em;
-          text-decoration: underline;
-        }
-  
-        .thm_link:visited {
-          color: #fff;
-        }
-  
-        .thm_mr {
-          margin-right: 8px;
-        }
-  
-        .thm_for_img {
-          color: #fff;
-          opacity: 0.5;
-          font-size: 14px;
-          position: relative;
-          top: -3px;
-          margin-bottom: 5px;
-        }
+#thm_badge {
+  position: relative;
+  display: block;
+  width: 245px;
+  max-width: 100%;
+  height: 56px;
+  color: #fff;
+  text-decoration: none;
+  -webkit-touch-callout: none;
+  user-select: none;
+}
+
+#thm_badge:hover,
+#thm_badge:focus-visible {
+  color: #fff;
+  text-decoration: none;
+}
+
+#thm_badge:focus-visible {
+  outline: 2px solid rgba(136, 204, 20, 0.75);
+  outline-offset: 3px;
+  border-radius: 8px;
+}
+
+#thm_badge .thm_avatar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 2;
+  display: block;
+  width: 56px;
+  height: 56px;
+  max-width: none;
+  padding: 0;
+  border: 3px solid #88cc14;
+  border-radius: 50%;
+  background: #343c42;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.32);
+  object-fit: contain;
+}
+
+.thm_panel {
+  position: absolute;
+  inset: 0 0 0 25px;
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  height: 56px;
+  padding: 6px 28px 6px 45px;
+  border-radius: 5px;
+  background-color: #343c42;
+  background-image: url("/assets/icons/bio/tryhackme-badge-cloud.svg");
+  background-repeat: no-repeat;
+  background-position: right 6px bottom 6px;
+  background-size: 24px auto;
+}
+
+.thm_font {
+  display: grid;
+  gap: 0.33rem;
+  min-width: 0;
+  font-family: "Roboto Mono", "Ubuntu Mono", Consolas, monospace;
+}
+
+.thm_line {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  line-height: 1;
+}
+
+.thm_identity {
+  gap: 0.35rem;
+}
+
+.thm_nickname {
+  min-width: 0;
+  overflow: hidden;
+  color: #fff;
+  font-size: 0.56rem;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  text-shadow: #000 0 0 6px;
+  white-space: nowrap;
+}
+
+.thm_rank {
+  flex: 0 0 auto;
+  color: rgba(255, 255, 255, 0.84);
+  font-size: 0.5rem;
+}
+
+.thm_stats {
+  gap: 0.46rem;
+  white-space: nowrap;
+}
+
+.thm_stat-item {
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+  gap: 0.18rem;
+}
+
+#thm_badge .thm_icon {
+  display: block;
+  flex: 0 0 auto;
+  width: 16px;
+  height: 16px;
+  max-width: none;
+  object-fit: contain;
+}
+
+.thm_stat {
+  flex: 0 0 auto;
+  color: rgba(255, 255, 255, 0.62);
+  font-size: 0.56rem;
+  line-height: 1;
+}

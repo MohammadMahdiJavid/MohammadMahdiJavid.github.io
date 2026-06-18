@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" role="img" aria-label="Targets">
+  <circle cx="12" cy="12" r="9" fill="#e25d63"/>
+  <circle cx="12" cy="12" r="6.4" fill="#f2a1a4"/>
+  <circle cx="12" cy="12" r="3.8" fill="#e25d63"/>
+  <circle cx="12" cy="12" r="1.5" fill="#fff4f5"/>
+  <path fill="#6ad9d2" d="M18.1 4.4 20 4l-.4 1.9 1.7 1.1-2 .5-.5 2-1.1-1.7-1.9.4.4-1.9-1.7-1.1 2-.5.5-2 1.1 1.7Z"/>
+</svg>

@@ -1,0 +1,16 @@
+<button class="theme__toggle pcb-io pcb-io--icon is-theme-light"
+        data-theme-toggle
+        data-pcb-id="theme"
+        data-theme-mode="light"
+        data-theme-active="light"
+        type="button"
+        aria-label="Theme mode is light. Switch to dark mode."
+        aria-pressed="false">
+  <span class="visually-hidden">Toggle dark mode</span>
+  <span class="theme__toggle-icon theme__toggle-icon--light"
+        style="--theme-icon: url('{{ '/assets/icons/theme-light.svg' | relative_url }}');"
+        aria-hidden="true"></span>
+  <span class="theme__toggle-icon theme__toggle-icon--night"
+        style="--theme-icon: url('{{ '/assets/icons/theme-night.svg' | relative_url }}');"
+        aria-hidden="true"></span>
+</button>

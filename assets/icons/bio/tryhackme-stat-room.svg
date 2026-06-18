@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" role="img" aria-label="Rooms">
+  <path fill="#9a613d" d="M4 5.5A1.5 1.5 0 0 1 5.5 4h13A1.5 1.5 0 0 1 20 5.5v13a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 18.5v-13Z"/>
+  <path fill="#c9824d" d="M6 6h12v12H6V6Z"/>
+  <path fill="#77462d" d="M8 8h3v3H8V8Zm5 0h3v3h-3V8Zm-5 5h3v3H8v-3Zm5 0h3v3h-3v-3Z"/>
+  <path fill="#e0a268" d="M6 6h12v1.4H6V6Z"/>
+</svg>

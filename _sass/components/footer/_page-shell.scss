@@ -1,9 +1,18 @@
+.initial-content {
+  padding-bottom: 3em;
+}
+
 .page__footer {
   background: #0c1d14;
   color: #e8f7f1;
+  margin-top: 0;
 
   footer {
+    width: 100%;
+    max-width: none;
     padding: 0;
+    margin-left: 0;
+    margin-right: 0;
     margin-top: 0;
   }
 }

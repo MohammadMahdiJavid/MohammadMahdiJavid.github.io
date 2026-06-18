@@ -38,6 +38,7 @@
     white-space: nowrap;
   }
 
+  .masthead.pcb-masthead .theme__toggle,
   .masthead.pcb-masthead .search__toggle,
   .masthead.pcb-masthead .greedy-nav__toggle {
     position: relative;
@@ -90,6 +91,10 @@
   .masthead.pcb-masthead .site-title.pcb-cpu .pcb-cpu__open-eyes {
     opacity: 1 !important;
     transform: none !important;
+  }
+
+  .masthead.pcb-masthead .theme__toggle-icon {
+    transition: none;
   }
 }
 

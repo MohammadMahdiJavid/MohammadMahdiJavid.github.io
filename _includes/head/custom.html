@@ -7,6 +7,41 @@
 <link rel="apple-touch-icon" sizes="180x180" href="{% include versioned-asset-url.html url='/apple-touch-icon.png' %}">
 <link rel="manifest" href="{% include versioned-asset-url.html url='/site.webmanifest' %}">
 <meta name="theme-color" content="#ffffff">
+<script>
+    (function () {
+        var storageKey = "mmj-theme-mode";
+        var root = document.documentElement;
+        var storedMode = null;
+        var prefersNight = false;
+
+        try {
+            storedMode = localStorage.getItem(storageKey);
+        } catch (error) {
+            storedMode = null;
+        }
+
+        try {
+            prefersNight = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+        } catch (error) {
+            prefersNight = false;
+        }
+
+        var mode = storedMode === "light" || storedMode === "night"
+            ? storedMode
+            : (prefersNight ? "night" : "light");
+        var source = storedMode === "light" || storedMode === "night" ? "stored" : "system";
+
+        root.setAttribute("data-theme-mode", mode);
+        root.setAttribute("data-theme", mode);
+        root.setAttribute("data-theme-source", source);
+        root.style.colorScheme = mode === "night" ? "dark" : "light";
+
+        var meta = document.querySelector('meta[name="theme-color"]');
+        if (meta) {
+            meta.setAttribute("content", mode === "night" ? "#071510" : "#ffffff");
+        }
+    })();
+</script>
 
 
 

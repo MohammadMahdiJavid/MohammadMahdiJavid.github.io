@@ -1,1 +1,51 @@
-/* Website background is currently provided by the active Minimal Mistakes skin. */
+:root {
+  --mmj-bg: #f3f4f6;
+  --mmj-surface: #ffffff;
+  --mmj-surface-soft: #f8fafc;
+  --mmj-text: #1f2933;
+  --mmj-text-muted: #4b5563;
+  --mmj-link: #0f766e;
+  --mmj-footer-bg: #10241d;
+  color-scheme: light;
+}
+
+html[data-theme="night"] {
+  --mmj-bg: #071510;
+  --mmj-surface: #10231d;
+  --mmj-surface-soft: #142b23;
+  --mmj-text: #e8f7ef;
+  --mmj-text-muted: #b6c8bf;
+  --mmj-link: #76ffd2;
+  --mmj-footer-bg: #041c16;
+  color-scheme: dark;
+}
+
+html[data-theme="night"] body {
+  background: var(--mmj-bg);
+  color: var(--mmj-text);
+}
+
+html[data-theme="night"] .page__content,
+html[data-theme="night"] .archive,
+html[data-theme="night"] .sidebar,
+html[data-theme="night"] .author__content,
+html[data-theme="night"] .author__urls-wrapper {
+  color: var(--mmj-text);
+}
+
+html[data-theme="night"] .archive__item-title a,
+html[data-theme="night"] .page__content a,
+html[data-theme="night"] .author__urls a {
+  color: var(--mmj-link);
+}
+
+html[data-theme="night"] .archive__item-excerpt,
+html[data-theme="night"] .page__meta,
+html[data-theme="night"] .author__bio,
+html[data-theme="night"] .author__urls {
+  color: var(--mmj-text-muted);
+}
+
+html[data-theme="night"] .page__footer {
+  background: var(--mmj-footer-bg);
+}

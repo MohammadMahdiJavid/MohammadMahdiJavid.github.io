@@ -1,18 +1,36 @@
 .pcb-footer__content {
   position: relative;
   display: grid;
-  gap: 1.25rem;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  align-items: start;
+  gap: 0.875rem;
+  grid-template-columns: repeat(auto-fit, minmax(168px, 1fr));
+  align-items: center;
+  width: 100%;
+  max-width: 896px;
+  margin: 0 auto;
   z-index: 1;
+
+  @include breakpoint($large) {
+    column-gap: 0;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    max-width: none;
+  }
+}
+
+.pcb-footer__chip,
+.pcb-footer__io,
+.pcb-footer__credits {
+  width: 100%;
+  max-width: 13rem;
+  justify-self: center;
+  align-self: center;
 }
 
 .pcb-footer__chip {
   background: linear-gradient(180deg, rgba(19, 53, 36, 0.9), rgba(14, 37, 27, 0.9));
   border: 1px solid rgba(149, 255, 220, 0.35);
-  border-radius: 18px;
-  padding: 1.1rem 1.2rem;
-  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  border-radius: 13px;
+  padding: 0.77rem 0.84rem;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.04);
   position: relative;
   overflow: hidden;
 }
@@ -21,52 +39,52 @@
 .pcb-footer__chip::after {
   content: "";
   position: absolute;
-  left: -8px;
-  right: -8px;
-  height: 4px;
-  border-radius: 4px;
+  left: -6px;
+  right: -6px;
+  height: 3px;
+  border-radius: 3px;
   background: rgba(149, 255, 220, 0.25);
 }
 
-.pcb-footer__chip::before { top: 10px; }
-.pcb-footer__chip::after { bottom: 10px; }
+.pcb-footer__chip::before { top: 7px; }
+.pcb-footer__chip::after { bottom: 7px; }
 
 .pcb-footer__chip-tag {
   color: rgba(192, 245, 224, 0.8);
-  font-size: 0.75rem;
+  font-size: 0.525rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.175rem;
 }
 
 .pcb-footer__chip-name {
-  font-size: 1.2rem;
+  font-size: 0.84rem;
   font-weight: 700;
   color: #f1fff8;
-  margin-bottom: 0.3rem;
+  margin-bottom: 0.21rem;
 }
 
 .pcb-footer__chip-desc {
   color: rgba(220, 245, 235, 0.82);
-  font-size: 0.95rem;
+  font-size: 0.665rem;
 }
 
 .pcb-footer__status {
   display: inline-flex;
   align-items: center;
-  gap: 0.45rem;
-  margin-top: 0.75rem;
-  padding: 0.35rem 0.6rem;
+  gap: 0.315rem;
+  margin-top: 0.525rem;
+  padding: 0.245rem 0.42rem;
   border-radius: 999px;
   background: rgba(110, 220, 190, 0.08);
   color: rgba(210, 245, 235, 0.85);
-  font-size: 0.85rem;
+  font-size: 0.595rem;
   border: 1px solid rgba(149, 255, 220, 0.2);
 }
 
 .pcb-footer__led {
-  width: 10px;
-  height: 10px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
   background: radial-gradient(circle, #a5ffe6 0%, #5ce2b8 70%, #2d8c68 100%);
   box-shadow: 0 0 0 0 rgba(165, 255, 230, 0.6);
@@ -74,11 +92,11 @@
 }
 
 .pcb-footer__io-heading {
-  font-size: 0.95rem;
+  font-size: 0.665rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: rgba(200, 245, 230, 0.86);
-  margin-bottom: 0.6rem;
+  margin-bottom: 0.42rem;
 }
 
 .pcb-footer__io-list {
@@ -86,7 +104,7 @@
   margin: 0;
   padding: 0;
   display: grid;
-  gap: 0.4rem;
+  gap: 0.28rem;
 }
 
 .pcb-footer__io-node {
@@ -96,13 +114,13 @@
 .pcb-footer__io-link {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.35rem;
   width: 100%;
-  padding: 0.55rem 0.75rem;
-  border-radius: 12px;
+  padding: 0.385rem 0.525rem;
+  border-radius: 8px;
   background: rgba(18, 46, 33, 0.85);
   border: 1px solid rgba(149, 255, 220, 0.18);
-  box-shadow: 0 0 0 1px rgba(120, 255, 210, 0.06), 0 6px 18px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 0 0 1px rgba(120, 255, 210, 0.06), 0 4px 13px rgba(0, 0, 0, 0.25);
   transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
   color: inherit;
 }
@@ -110,14 +128,14 @@
 .pcb-footer__io-link:hover,
 .pcb-footer__io-link:focus-visible {
   border-color: rgba(159, 255, 230, 0.6);
-  box-shadow: 0 0 12px rgba(159, 255, 230, 0.25), 0 8px 20px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 0 8px rgba(159, 255, 230, 0.25), 0 6px 14px rgba(0, 0, 0, 0.35);
   transform: translateY(-1px);
   outline: none;
 }
 
 .pcb-footer__io-dot {
-  width: 12px;
-  height: 12px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
   background: radial-gradient(circle, #cffff3 0%, #7af5cf 60%, #2b8d66 100%);
   box-shadow: 0 0 0 0 rgba(122, 245, 207, 0.4);
@@ -126,26 +144,25 @@
 
 .pcb-footer__io-icon {
   color: rgba(200, 245, 230, 0.88);
-  font-size: 0.95rem;
-  width: 1.1rem;
+  font-size: 0.665rem;
+  width: 0.77rem;
   text-align: center;
 }
 
 .pcb-footer__io-label {
   color: rgba(224, 245, 237, 0.92);
   font-weight: 600;
-  font-size: 0.98rem;
+  font-size: 0.686rem;
 }
 
 .pcb-footer__credits {
-  align-self: end;
-  font-size: 0.92rem;
+  font-size: 0.644rem;
   color: rgba(210, 235, 225, 0.82);
   background: rgba(18, 46, 33, 0.85);
   border: 1px solid rgba(149, 255, 220, 0.2);
-  border-radius: 12px;
-  padding: 0.8rem 0.9rem;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  padding: 0.56rem 0.63rem;
+  box-shadow: 0 4px 13px rgba(0, 0, 0, 0.3);
 }
 
 .pcb-footer__credit-line a {

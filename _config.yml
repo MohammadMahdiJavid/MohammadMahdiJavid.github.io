@@ -85,6 +85,7 @@ bing_site_verification   :
 yandex_site_verification :
 naver_site_verification  :
 after_footer_scripts:
+  - /assets/js/theme-mode.js
   - /assets/js/mmj/header/math.js
   - /assets/js/mmj/header/svg.js
   - /assets/js/mmj/header/dom.js
