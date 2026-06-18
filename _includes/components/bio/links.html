@@ -5,23 +5,27 @@
     <ul class="author__urls social-icons">
       {% if author.location %}
         <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
-          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">{{ author.location }}</span>
+          <span class="author__url-text">
+            {% include components/bio/link-icon.html icon="/assets/icons/bio/location.svg" %}
+            <span itemprop="name">{{ author.location }}</span>
+          </span>
         </li>
       {% endif %}
 
       {% if author.linkedin %}
         <li>
-          <a href="https://www.linkedin.com/in/{{ author.linkedin }}" itemprop="sameAs" rel="nofollow noopener noreferrer">
-            <i class="fab fa-fw fa-linkedin" aria-hidden="true"></i> LinkedIn
+          <a class="author__url-link" href="https://www.linkedin.com/in/{{ author.linkedin }}" itemprop="sameAs" rel="nofollow noopener noreferrer">
+            {% include components/bio/link-icon.html icon="/assets/icons/bio/linkedin.svg" %}
+            <span>LinkedIn</span>
           </a>
         </li>
       {% endif %}
 
       {% if author.tryhackme %}
         <li>
-          <a href="https://tryhackme.com/p/{{ author.tryhackme }}" itemprop="sameAs" rel="nofollow noopener noreferrer">
-            <img style="max-width: 100%; height: auto; width: auto; max-height: 20px;" src="https://assets.tryhackme.com/img/favicon.png" alt="MohammadMahdi Javid's TryHackMe account" > 
-              TryHackMe
+          <a class="author__url-link" href="https://tryhackme.com/p/{{ author.tryhackme }}" itemprop="sameAs" rel="nofollow noopener noreferrer">
+            {% include components/bio/link-icon.html icon="/assets/icons/bio/tryhackme.svg" %}
+            <span>TryHackMe</span>
           </a>
         </li>
       {% endif %}
@@ -29,9 +33,34 @@
       {% if author.links %}
         {% for link in author.links %}
           {% if link.label and link.url %}
-            {% if link.icon %}
+            {% assign bio_icon = link.icon_path %}
+            {% unless bio_icon %}
+              {% assign link_label_key = link.label | downcase %}
+              {% case link_label_key %}
+                {% when "email" %}
+                  {% assign bio_icon = "/assets/icons/bio/email.svg" %}
+                {% when "google scholar" %}
+                  {% assign bio_icon = "/assets/icons/bio/scholar.svg" %}
+                {% when "spotify" %}
+                  {% assign bio_icon = "/assets/icons/bio/spotify.svg" %}
+                {% when "x" %}
+                  {% assign bio_icon = "/assets/icons/bio/x.svg" %}
+                {% when "website" %}
+                  {% assign bio_icon = "/assets/icons/bio/website.svg" %}
+                {% when "github" %}
+                  {% assign bio_icon = "/assets/icons/bio/github.svg" %}
+              {% endcase %}
+            {% endunless %}
+            {% if bio_icon %}
+              <li>
+                <a class="author__url-link" href="{{ link.url }}" rel="nofollow noopener noreferrer">
+                  {% include components/bio/link-icon.html icon=bio_icon %}
+                  <span>{{ link.label }}</span>
+                </a>
+              </li>
+            {% elsif link.icon %}
               <li><a href="{{ link.url }}" rel="nofollow noopener noreferrer"><i class="{{ link.icon | default: 'fas fa-link' }}" aria-hidden="true"></i> {{ link.label }}</a></li>
-            {% else link.image %}
+            {% elsif link.image %}
               <li><a href="{{ link.url }}" rel="nofollow noopener noreferrer"><img style="max-width: 100%; height: auto; width: auto; max-height: 20px;" src="{{ link.image }}" alt="MohammadMahdi Javid's {{ link.label }}" > {{ link.label }}</a></li>
             {% endif %}
           {% endif %}
@@ -41,25 +70,28 @@
 
       {% if author.twitter %}
         <li>
-          <a href="https://twitter.com/{{ author.twitter }}" itemprop="sameAs" rel="nofollow noopener noreferrer">
-            <i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter
+          <a class="author__url-link" href="https://x.com/{{ author.twitter }}" itemprop="sameAs" rel="nofollow noopener noreferrer">
+            {% include components/bio/link-icon.html icon="/assets/icons/bio/x.svg" %}
+            <span>X</span>
           </a>
         </li>
       {% endif %}
 
       {% if author.uri %}
         <li>
-          <a href="{{ author.uri }}" itemprop="url">
-            <i class="fas fa-fw fa-link" aria-hidden="true"></i> {{ site.data.ui-text[site.locale].website_label | default: "Website" }}
+          <a class="author__url-link" href="{{ author.uri }}" itemprop="url">
+            {% include components/bio/link-icon.html icon="/assets/icons/bio/website.svg" %}
+            <span>{{ site.data.ui-text[site.locale].website_label | default: "Website" }}</span>
           </a>
         </li>
       {% endif %}
 
       {% if author.email %}
         <li>
-          <a href="mailto:{{ author.email }}">
+          <a class="author__url-link" href="mailto:{{ author.email }}">
             <meta itemprop="email" content="{{ author.email }}" />
-            <i class="fas fa-fw fa-envelope-square" aria-hidden="true"></i> {{ site.data.ui-text[site.locale].email_label | default: "Email" }}
+            {% include components/bio/link-icon.html icon="/assets/icons/bio/email.svg" %}
+            <span>{{ site.data.ui-text[site.locale].email_label | default: "Email" }}</span>
           </a>
         </li>
       {% endif %}
@@ -114,8 +146,9 @@
 
       {% if author.github %}
         <li>
-          <a href="https://github.com/{{ author.github }}" itemprop="sameAs" rel="nofollow noopener noreferrer">
-            <i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub
+          <a class="author__url-link" href="https://github.com/{{ author.github }}" itemprop="sameAs" rel="nofollow noopener noreferrer">
+            {% include components/bio/link-icon.html icon="/assets/icons/bio/github.svg" %}
+            <span>GitHub</span>
           </a>
         </li>
       {% endif %}

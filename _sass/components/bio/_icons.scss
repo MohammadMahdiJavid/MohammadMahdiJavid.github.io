@@ -1,0 +1,22 @@
+.author__urls {
+  .author__url-link,
+  .author__url-text {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55em;
+    min-width: 0;
+    font-size: clamp(0.8rem, 0.9vw, 1rem);
+    line-height: 1.35;
+  }
+
+  .author__link-icon {
+    display: inline-block;
+    flex: 0 0 1.1em;
+    width: 1.1em;
+    height: 1.1em;
+    background-color: currentColor;
+    -webkit-mask: var(--bio-icon) center / contain no-repeat;
+    mask: var(--bio-icon) center / contain no-repeat;
+    transform: translateY(-0.03em);
+  }
+}
