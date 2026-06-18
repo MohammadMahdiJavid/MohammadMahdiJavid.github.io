@@ -15,19 +15,29 @@
   }
 
   .search__toggle {
-    color: var(--pcb-signal);
+    color: rgba(235, 255, 246, 0.92);
     border: 1px solid rgba(255, 255, 255, 0.10);
     border-radius: 999px;
-    background: rgba(0, 0, 0, 0.18);
-    padding: 0.35rem 0.5rem;
+    background: rgba(0, 0, 0, 0.12);
+    box-sizing: border-box;
+    width: 1.9rem;
+    height: 1.9rem;
+    min-width: 1.9rem;
+    min-height: 1.9rem;
+    padding: 0;
     transition: box-shadow 160ms ease, border-color 160ms ease, transform 160ms ease;
   }
 
+  .search__toggle .icon {
+    display: block;
+    width: 0.72rem;
+    height: 0.72rem;
+  }
+
   .search__toggle:hover {
-    color: rgba(255, 255, 255, 0.95);
-    border-color: rgba(255, 255, 255, 0.22);
-    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.22);
-    transform: translateY(-1px);
+    color: rgba(255, 255, 255, 0.98);
+    border-color: rgba(255, 255, 255, 0.18);
+    box-shadow: 0 0 0 1px rgba(110, 255, 210, 0.08);
   }
 
   .greedy-nav__toggle {
@@ -70,6 +80,21 @@
   -webkit-backdrop-filter: blur(6px);
   backdrop-filter: blur(6px);
   transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease, filter 160ms ease;
+}
+
+.masthead.pcb-masthead .pcb-io:not(.pcb-io--icon) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.42rem;
+  min-height: 1.9rem;
+  padding: 0.24rem 0.62rem;
+  font-size: 0.82rem;
+  line-height: 1.05;
+}
+
+.masthead.pcb-masthead .visible-links .pcb-io:not(.pcb-io--icon) {
+  font-size: 0.78rem;
 }
 
 .masthead.pcb-masthead .pcb-io::after {
@@ -150,7 +175,7 @@
 }
 
 .masthead.pcb-masthead .pcb-io.pcb-io--icon {
-  padding-inline: 0.55rem;
+  padding-inline: 0;
   gap: 0.25rem;
   display: inline-flex;
   align-items: center;
