@@ -5,7 +5,7 @@
     <ul class="author__urls social-icons">
       {% if author.location %}
         <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
-          <span class="author__url-text">
+          <span class="author__url-text author__url-text--location">
             {% include components/bio/link-icon.html icon="/assets/icons/bio/location.svg" %}
             <span itemprop="name">{{ author.location }}</span>
           </span>

@@ -19,4 +19,8 @@
     mask: var(--bio-icon) center / contain no-repeat;
     transform: translateY(-0.03em);
   }
+
+  .author__url-text--location .author__link-icon {
+    color: var(--mmj-link, #{$link-color});
+  }
 }
