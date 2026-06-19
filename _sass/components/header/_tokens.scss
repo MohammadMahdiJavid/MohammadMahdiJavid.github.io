@@ -27,6 +27,9 @@
   --pcb-trace-w-signal: 3.0;
   --pcb-bus-w-base: 4.2;
   --pcb-bus-w-signal: 2.9;
+  --pcb-header-content-max: #{$max-width};
+  --pcb-header-block-size: 108px;
+  --pcb-header-inline-gap: clamp(16px, 3vw, 48px);
 
   position: relative;
   overflow: hidden;
@@ -52,7 +55,15 @@
   .masthead__inner-wrap {
     position: relative;
     z-index: 2;
-    padding: 0.55rem 1rem;
+    box-sizing: border-box;
+    min-height: var(--pcb-header-block-size);
+    max-width: min(var(--pcb-header-content-max), calc(100vw - 2rem));
+    padding: 0.75rem var(--pcb-header-inline-gap);
+    align-items: center;
+  }
+
+  .masthead__menu {
+    align-self: center;
   }
 
   .pcb-masthead__bg {
@@ -72,6 +83,18 @@
     height: 100%;
     display: block;
     opacity: 0.96;
+  }
+
+  @media (min-width: 1440px) {
+    --pcb-header-content-max: 1440px;
+    --pcb-header-block-size: 132px;
+    --pcb-header-inline-gap: clamp(36px, 4vw, 72px);
+  }
+
+  @media (min-width: 2200px) {
+    --pcb-header-content-max: 1680px;
+    --pcb-header-block-size: 148px;
+    --pcb-header-inline-gap: clamp(48px, 5vw, 96px);
   }
 }
 

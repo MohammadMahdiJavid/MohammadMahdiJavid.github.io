@@ -7,6 +7,7 @@
 # .\scripts\verify-pages.ps1 -Port 4000 -KeepServer
 # .\scripts\verify-pages.ps1 -SkipBuild -Port 4000
 # .\scripts\verify-pages.ps1 -Browser Chrome -OutputDirectory verification-artifacts\manual-full
+# .\scripts\verify-pages.ps1 -KeepServer -DisplayViewports "3440x1440@1","1920x1080@2"
 # .\scripts\verify-pages.ps1 -UpdateVisualBaselines
 #
 # Useful options
@@ -15,6 +16,7 @@
 # -BindAddress chooses the local bind address.
 # -Browser chooses Auto, Chrome, Edge, or Chromium.
 # -OutputDirectory chooses where reports and screenshots are written.
+# -DisplayViewports forwards wide and high-DPI cases to verify-browser-pages.ps1.
 # -SkipBuild uses the current _site folder.
 # -SkipBrowser skips browser verification.
 # -SkipScreenshots skips screenshot capture.
@@ -30,3 +32,4 @@
 # Notes
 # This is the preferred full verification command.
 # It verifies server freshness before browser checks.
+# Display profiles use WIDTHxHEIGHT@DPR syntax, including 3440x1440@1 for ultrawide WQHD.

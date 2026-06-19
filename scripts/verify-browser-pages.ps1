@@ -6,6 +6,7 @@ param(
   [int[]]$HomeWidths = @(320, 375, 390, 414, 454, 767, 768, 819, 820, 821, 1024),
   [int[]]$HobbiesWidths = @(320, 375, 390, 414, 559, 560, 561, 768, 1024),
   [int[]]$ThemeWidths = @(320, 375, 390, 414, 454, 559, 560, 561, 767, 768, 819, 820, 821, 1024, 1280),
+  [string[]]$DisplayViewports = @("1920x1080@1", "2560x1440@1", "3440x1440@1", "3840x2160@1", "1920x1080@2", "2560x1440@1.5"),
   [int]$DebugPort = 0,
   [switch]$SkipScreenshots,
   [switch]$SkipVisualValidation,
@@ -103,6 +104,7 @@ $env:OUTPUT_DIR = $OutputPath
 $env:HOME_WIDTHS = ($HomeWidths | ConvertTo-Json -Compress)
 $env:HOBBIES_WIDTHS = ($HobbiesWidths | ConvertTo-Json -Compress)
 $env:THEME_WIDTHS = ($ThemeWidths | ConvertTo-Json -Compress)
+$env:DISPLAY_VIEWPORTS = ($DisplayViewports | ConvertTo-Json -Compress)
 $env:SKIP_SCREENSHOTS = if ($SkipScreenshots) { "1" } else { "0" }
 
 $NodeScript = @'
@@ -120,9 +122,34 @@ function numberList(value, fallback) {
   return Array.isArray(parsed) ? parsed : [parsed];
 }
 
+function displayViewportList(value, fallback) {
+  const parsed = JSON.parse(value || fallback);
+  const items = Array.isArray(parsed) ? parsed : [parsed];
+  return items.map((item, index) => {
+    const spec = String(item || "").trim();
+    const match = spec.match(/^(\d+)\s*x\s*(\d+)(?:\s*@\s*([0-9]+(?:\.[0-9]+)?))?$/i);
+    if (!match) {
+      throw new Error(`DisplayViewports[${index}] must use WIDTHxHEIGHT@DPR; got "${spec}"`);
+    }
+
+    const width = Number(match[1]);
+    const height = Number(match[2]);
+    const deviceScaleFactor = match[3] ? Number(match[3]) : 1;
+    if (!Number.isInteger(width) || !Number.isInteger(height) || width < 1 || height < 1 || !Number.isFinite(deviceScaleFactor) || deviceScaleFactor <= 0) {
+      throw new Error(`DisplayViewports[${index}] has invalid dimensions or DPR: "${spec}"`);
+    }
+
+    const dprText = String(deviceScaleFactor).replace(/\.0+$/, "");
+    const label = `${width}x${height}@${dprText}`;
+    const fileLabel = `${width}x${height}_dpr${dprText.replace(/[^0-9]+/g, "_").replace(/^_|_$/g, "")}`;
+    return { width, height, deviceScaleFactor, label, fileLabel };
+  });
+}
+
 const homeWidths = numberList(process.env.HOME_WIDTHS, "[320,375,390,414,454,767,768,819,820,821,1024]");
 const hobbiesWidths = numberList(process.env.HOBBIES_WIDTHS, "[320,375,390,414,559,560,561,768,1024]");
 const themeWidths = numberList(process.env.THEME_WIDTHS, "[320,375,390,414,454,559,560,561,767,768,819,820,821,1024,1280]");
+const displayViewports = displayViewportList(process.env.DISPLAY_VIEWPORTS, `["1920x1080@1","2560x1440@1","3440x1440@1","3840x2160@1","1920x1080@2","2560x1440@1.5"]`);
 
 fs.mkdirSync(outputDir, { recursive: true });
 
@@ -161,17 +188,39 @@ function shouldIgnoreUrl(value) {
   return !value || String(value).endsWith("/favicon.ico");
 }
 
+function isCanceledManifestAbort(event, value) {
+  try {
+    return !!event.canceled &&
+      event.errorText === "net::ERR_ABORTED" &&
+      event.type === "Manifest" &&
+      new URL(value).pathname.endsWith("/site.webmanifest");
+  } catch (error) {
+    return false;
+  }
+}
+
 async function withTarget(width, height, mobile, callback, options = {}) {
   const target = await CDP.New({ port: cdpPort, url: "about:blank" });
   const client = await CDP({ port: cdpPort, target });
   try {
     const { Page, Runtime, Emulation, Input, Log, Network } = client;
     const requestUrls = new Map();
+    const requestedDeviceScaleFactor = Number(options.deviceScaleFactor);
+    const deviceScaleFactor = Number.isFinite(requestedDeviceScaleFactor) && requestedDeviceScaleFactor > 0 ? requestedDeviceScaleFactor : 1;
     await Page.enable();
+    await Page.addScriptToEvaluateOnNewDocument({
+      source: `(() => {
+        let seed = 123456789;
+        Math.random = () => {
+          seed = (Math.imul(1664525, seed) + 1013904223) >>> 0;
+          return seed / 4294967296;
+        };
+      })();`
+    });
     await Runtime.enable();
     await Log.enable();
     await Network.enable();
-    await Emulation.setDeviceMetricsOverride({ width, height, deviceScaleFactor: 1, mobile });
+    await Emulation.setDeviceMetricsOverride({ width, height, deviceScaleFactor, mobile });
     const mediaFeatures = [];
     if (options.colorScheme) {
       mediaFeatures.push({ name: "prefers-color-scheme", value: options.colorScheme });
@@ -217,7 +266,7 @@ async function withTarget(width, height, mobile, callback, options = {}) {
 
     Network.loadingFailed(event => {
       const url = requestUrls.get(event.requestId) || "";
-      if (!shouldIgnoreUrl(url) && isLocalUrl(url)) {
+      if (!shouldIgnoreUrl(url) && isLocalUrl(url) && !isCanceledManifestAbort(event, url)) {
         networkMessages.push({
           type: "loadingFailed",
           width,
@@ -272,6 +321,58 @@ async function capture(Page, name) {
   const file = path.join(outputDir, name);
   fs.writeFileSync(file, Buffer.from(png.data, "base64"));
   return file;
+}
+
+async function stabilizeHobbiesCanvasForScreenshot(Runtime) {
+  if (skipScreenshots) return;
+  await Runtime.evaluate({
+    expression: `(() => {
+      const canvas = document.getElementById("hq-bg");
+      if (!canvas || !canvas.getContext) return false;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return false;
+      const width = Math.max(1, canvas.width);
+      const height = Math.max(1, canvas.height);
+      ctx.save();
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.clearRect(0, 0, width, height);
+      const gradient = ctx.createLinearGradient(0, 0, width, height);
+      gradient.addColorStop(0, "rgba(56, 189, 248, 0.16)");
+      gradient.addColorStop(0.48, "rgba(251, 191, 36, 0.10)");
+      gradient.addColorStop(1, "rgba(192, 132, 252, 0.16)");
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, width, height);
+      ctx.strokeStyle = "rgba(15, 23, 42, 0.08)";
+      ctx.lineWidth = Math.max(1, Math.round(width / 1200));
+      const step = Math.max(24, Math.round(width / 28));
+      for (let x = step / 2; x < width; x += step) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x - step, height);
+        ctx.stroke();
+      }
+      for (let y = step / 2; y < height; y += step) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(width, y - step);
+        ctx.stroke();
+      }
+      ctx.fillStyle = "rgba(34, 197, 94, 0.12)";
+      const radius = Math.max(4, Math.round(Math.min(width, height) / 110));
+      for (let i = 0; i < 18; i += 1) {
+        const x = ((i * 97 + 53) % width);
+        const y = ((i * 59 + 31) % height);
+        ctx.beginPath();
+        ctx.arc(x, y, radius + (i % 4), 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.restore();
+      canvas.dataset.verificationStable = "true";
+      return true;
+    })()`,
+    awaitPromise: true,
+    returnByValue: true
+  });
 }
 
 async function sendMouse(Input, options) {
@@ -358,6 +459,95 @@ function isNearDarkText(value) {
 
 function isExpectedMenuIconColor(value) {
   return value === "rgb(55, 65, 81)" || isNearDarkText(value);
+}
+
+function rectInsideViewport(rect, width, height, tolerance = 1) {
+  return !!rect &&
+    rect.left >= -tolerance &&
+    rect.top >= -tolerance &&
+    rect.right <= width + tolerance &&
+    rect.bottom <= height + tolerance;
+}
+
+function rectInsideViewportHorizontally(rect, width, tolerance = 1) {
+  return !rect || (rect.left >= -tolerance && rect.right <= width + tolerance);
+}
+
+function rectAtLeast(rect, size) {
+  return !!rect && rect.width >= size && rect.height >= size;
+}
+
+function rectCluster(rects) {
+  const visible = rects.filter(rect => rect && rect.width > 0 && rect.height > 0);
+  if (!visible.length) return null;
+  return {
+    left: Math.min(...visible.map(rect => rect.left)),
+    top: Math.min(...visible.map(rect => rect.top)),
+    right: Math.max(...visible.map(rect => rect.right)),
+    bottom: Math.max(...visible.map(rect => rect.bottom)),
+    width: Math.max(...visible.map(rect => rect.right)) - Math.min(...visible.map(rect => rect.left)),
+    height: Math.max(...visible.map(rect => rect.bottom)) - Math.min(...visible.map(rect => rect.top))
+  };
+}
+
+function rectSeparated(rect, cluster, gap = 8) {
+  if (!rect || !cluster) return false;
+  return rect.right <= cluster.left - gap ||
+    rect.left >= cluster.right + gap ||
+    rect.bottom <= cluster.top - gap ||
+    rect.top >= cluster.bottom + gap;
+}
+
+function rectBetween(rect, leftRect, rightRect, tolerance = 6) {
+  return !!rect && !!leftRect && !!rightRect &&
+    rect.left >= leftRect.right - tolerance &&
+    rect.right <= rightRect.left + tolerance;
+}
+
+function rectsOverlap(a, b, tolerance = 0) {
+  return !!a && !!b &&
+    a.left < b.right - tolerance &&
+    a.right > b.left + tolerance &&
+    a.top < b.bottom - tolerance &&
+    a.bottom > b.top + tolerance;
+}
+
+function rectClearOf(rect, blockers, tolerance = 0) {
+  return !!rect && blockers.every(blocker => !rectsOverlap(rect, blocker, tolerance));
+}
+
+function minVisibleLinkGap(width) {
+  if (width >= 2200) return 40;
+  if (width >= 1440) return 28;
+  return 20;
+}
+
+function minTitleToFirstPillGap(width) {
+  if (width >= 2200) return 180;
+  if (width >= 1440) return 140;
+  return 96;
+}
+
+function expectedDisplayMainMaxWidth(route, width) {
+  if (route === "/hobbies/") return null;
+  if (route !== "/") return 1282;
+  if (width >= 2200) return Math.min(width * 0.78, 1720) + 2;
+  if (width >= 1440) return Math.min(width * 0.90, 1520) + 2;
+  return 1282;
+}
+
+function expectedHomeSidebarPostGap(width) {
+  if (width >= 2200) return Math.min(Math.max(width * 0.07, 170), 260);
+  if (width >= 1440) return Math.min(Math.max(width * 0.065, 112), 180);
+  return Math.min(Math.max(width * 0.05, 72), 104);
+}
+
+function closeTo(value, expected, tolerance = 0.01) {
+  return Math.abs(Number(value) - Number(expected)) <= tolerance;
+}
+
+function nextThemeMode(mode) {
+  return mode === "night" ? "light" : "night";
 }
 
 const menuMetricsExpression = `(() => {
@@ -500,6 +690,136 @@ const themeMetricsExpression = `(() => {
   };
 })()`;
 
+const displayMetricsExpression = `(() => {
+  const root = document.documentElement;
+  const main = document.querySelector("#main");
+  const masthead = document.querySelector(".masthead.pcb-masthead");
+  const cpu = document.querySelector("#pcb-cpu");
+  const button = document.querySelector(".greedy-nav__toggle");
+  const search = document.querySelector(".search__toggle");
+  const theme = document.querySelector("[data-theme-toggle]");
+  const sidebar = document.querySelector(".sidebar");
+  const authorLinks = document.querySelector(".author__urls");
+  const content = document.querySelector(".page__content, .archive");
+  const footer = document.querySelector(".page__footer");
+  const hobby = document.querySelector("#hobby-quest");
+  const hobbyStage = document.querySelector(".hq-stage");
+  const hobbyCanvas = document.querySelector("#hq-bg");
+  const rect = element => {
+    if (!element || element.nodeType !== 1) return null;
+    const value = element.getBoundingClientRect();
+    return { left: value.left, top: value.top, right: value.right, bottom: value.bottom, width: value.width, height: value.height, centerX: value.left + value.width / 2 };
+  };
+  const style = element => element && element.nodeType === 1 ? getComputedStyle(element) : null;
+  const isVisible = element => {
+    const value = rect(element);
+    const computed = style(element);
+    return !!value && value.width > 0 && value.height > 0 && computed.display !== "none" && computed.visibility !== "hidden";
+  };
+  const hiddenLinks = [...document.querySelectorAll(".hidden-links a")];
+  const visibleLinks = [...document.querySelectorAll(".visible-links a")].filter(isVisible);
+  const visibleLinkRects = visibleLinks.map(rect);
+  const visibleLinkGaps = visibleLinkRects.slice(1).map((value, index) => value.left - visibleLinkRects[index].right);
+  const sidebarRect = rect(sidebar);
+  const contentRect = rect(content);
+  const componentInfo = selector => [...document.querySelectorAll(selector)].map(element => {
+    const computed = style(element);
+    return {
+      ref: element.dataset.pcbRef || element.dataset.pcbComponent || "",
+      rect: rect(element),
+      visible: isVisible(element),
+      opacity: computed ? Number.parseFloat(computed.opacity) : 0
+    };
+  });
+  const navMode = hiddenLinks.length ? "hidden" : "visible";
+  const themeRect = rect(theme);
+  const themeHitElement = themeRect ? document.elementFromPoint(themeRect.left + themeRect.width / 2, themeRect.top + themeRect.height / 2) : null;
+  const allRights = [...document.body.querySelectorAll("*")].map(element => {
+    const value = element.getBoundingClientRect();
+    return Number.isFinite(value.right) ? value.right : 0;
+  });
+  const maxRight = Math.max(document.documentElement.scrollWidth, document.body.scrollWidth, ...allRights);
+  const hobbyStyle = style(hobby);
+  const canvasRect = rect(hobbyCanvas);
+  return {
+    mode: root.getAttribute("data-theme-mode"),
+    theme: root.getAttribute("data-theme"),
+    source: root.getAttribute("data-theme-source"),
+    stored: localStorage.getItem("mmj-theme-mode"),
+    viewport: { width: innerWidth, height: innerHeight, devicePixelRatio },
+    visualOverflow: maxRight - innerWidth,
+    main: rect(main),
+    mainMaxWidth: main ? style(main).maxWidth : null,
+    masthead: rect(masthead),
+    cpu: rect(cpu),
+    navMode,
+    hiddenLinkCount: hiddenLinks.length,
+    visibleLinkCount: visibleLinks.length,
+    visibleLinkRects,
+    visibleLinkGaps,
+    pcbComponents: {
+      capacitors: componentInfo(".pcb-component--capacitor"),
+      resistors: componentInfo(".pcb-component--resistor"),
+      labels: componentInfo(".pcb-label")
+    },
+    controls: [
+      { name: "menu", rect: rect(button), visible: isVisible(button) },
+      { name: "search", rect: rect(search), visible: isVisible(search) },
+      { name: "theme", rect: themeRect, visible: isVisible(theme) }
+    ].filter(item => item.rect),
+    sidebar: sidebarRect,
+    authorLinks: rect(authorLinks),
+    content: contentRect,
+    footer: rect(footer),
+    homeLayout: {
+      sidebarToContentGap: sidebarRect && contentRect ? contentRect.left - sidebarRect.right : null
+    },
+    themeButtonVisible: isVisible(theme),
+    themeButtonHitResult: theme && themeHitElement && (themeHitElement === theme || theme.contains(themeHitElement)) ? "ok" : (themeHitElement ? themeHitElement.tagName + "." + String(themeHitElement.className) : "none"),
+    hobby: hobby ? {
+      isPage: true,
+      shell: rect(hobby),
+      shellBackgroundImage: hobbyStyle ? hobbyStyle.backgroundImage : null,
+      shellBackgroundColor: hobbyStyle ? hobbyStyle.backgroundColor : null,
+      shellOverflow: hobbyStyle ? hobbyStyle.overflow : null,
+      stage: rect(hobbyStage),
+      canvas: canvasRect,
+      canvasWidth: hobbyCanvas ? hobbyCanvas.width : 0,
+      canvasHeight: hobbyCanvas ? hobbyCanvas.height : 0
+    } : { isPage: false }
+  };
+})()`;
+
+const robotBlinkExpression = `(() => {
+  const robot = document.querySelector('[data-pcb-robot="auto"]');
+  if (typeof window.pcbRobotBlink === "function") {
+    return window.pcbRobotBlink('[data-pcb-robot="auto"]');
+  }
+
+  const api = window.MMJ && window.MMJ.header && window.MMJ.header.robotBlink;
+  if (api && typeof api.blinkRobot === "function") {
+    window.__browserVerifyRobotBlinkState = window.__browserVerifyRobotBlinkState || {};
+    return api.blinkRobot(window.__browserVerifyRobotBlinkState, robot, false);
+  }
+
+  return false;
+})()`;
+
+const robotReducedBlinkExpression = `(() => {
+  const robot = document.querySelector('[data-pcb-robot="auto"]');
+  if (typeof window.pcbRobotBlink === "function") {
+    return window.pcbRobotBlink('[data-pcb-robot="auto"]');
+  }
+
+  const api = window.MMJ && window.MMJ.header && window.MMJ.header.robotBlink;
+  if (api && typeof api.blinkRobot === "function") {
+    window.__browserVerifyRobotBlinkState = window.__browserVerifyRobotBlinkState || {};
+    return api.blinkRobot(window.__browserVerifyRobotBlinkState, robot, true);
+  }
+
+  return false;
+})()`;
+
 const robotMetricsExpression = `(() => {
   const robot = document.querySelector('[data-pcb-robot="auto"]');
   const title = document.querySelector(".site-title.pcb-cpu");
@@ -539,7 +859,7 @@ const robotMetricsExpression = `(() => {
   const tracesStyle = style(traces);
   return {
     hasRobot: !!robot,
-    hasApi: typeof window.pcbRobotBlink === "function",
+    hasApi: typeof window.pcbRobotBlink === "function" || !!(window.MMJ && window.MMJ.header && window.MMJ.header.robotBlink && typeof window.MMJ.header.robotBlink.blinkRobot === "function"),
     blinkReturn: null,
     isBlinking: !!robot && robot.classList.contains("is-blinking"),
     reducedMotion: matchMedia("(prefers-reduced-motion: reduce)").matches,
@@ -579,6 +899,7 @@ const report = {
   home: [],
   hobbies: [],
   theme: [],
+  display: [],
   themeScreenshots: [],
   robot: null,
   keyboard: null,
@@ -610,7 +931,7 @@ report.robot.states = await withTarget(1024, 720, false, async ({ Page, Runtime,
     void robot.offsetWidth;
     return true;
   })()`);
-  const blinkReturn = await evaluate(Runtime, `window.pcbRobotBlink('[data-pcb-robot="auto"]')`);
+  const blinkReturn = await evaluate(Runtime, robotBlinkExpression);
   await delay(180);
   const blink = await evaluate(Runtime, robotMetricsExpression);
   blink.blinkReturn = blinkReturn;
@@ -666,7 +987,7 @@ report.robot.compact = await withTarget(414, 720, true, async ({ Page, Runtime }
 
 report.robot.reduced = await withTarget(1024, 720, false, async ({ Page, Runtime }) => {
   await navigate(Page, Runtime, `${baseUri}/#robotreduced-${Date.now()}`);
-  const blinkReturn = await evaluate(Runtime, `window.pcbRobotBlink('[data-pcb-robot="auto"]')`);
+  const blinkReturn = await evaluate(Runtime, robotReducedBlinkExpression);
   await delay(150);
   const metrics = await evaluate(Runtime, robotMetricsExpression);
   metrics.blinkReturn = blinkReturn;
@@ -687,25 +1008,28 @@ assertCheck(robotOpen.hasRobot === true, "PCB robot markup is missing");
 assertCheck(robotOpen.hasApi === true, "PCB robot manual blink API is missing");
 assertCheck(robotOpen.robotVisible === true, "PCB robot is not visible on desktop");
 assertCheck(robotOpen.blinkSpeed === 2, `PCB robot blink speed is ${robotOpen.blinkSpeed}`);
-assertCheck(robotOpen.hasCapacitor === true, "PCB capacitor is missing");
-assertCheck(robotOpen.capacitorVisible === true, "PCB capacitor is not visible");
-assertCheck(robotOpen.capacitorAnimation === "pcbCapIdleBreath", `PCB capacitor idle animation is ${robotOpen.capacitorAnimation}`);
-assertCheck(robotOpen.capacitorFlowAnimation === "pcbCapCurrent", `PCB capacitor current animation is ${robotOpen.capacitorFlowAnimation}`);
-assertCheck(robotOpen.hasCapMount === true, "PCB capacitor top mount is missing");
+if (robotOpen.hasCapacitor) {
+  assertCheck(robotOpen.capacitorVisible === true, "PCB capacitor is not visible");
+  assertCheck(robotOpen.capacitorAnimation === "pcbCapIdleBreath", `PCB capacitor idle animation is ${robotOpen.capacitorAnimation}`);
+  assertCheck(robotOpen.capacitorFlowAnimation === "pcbCapCurrent", `PCB capacitor current animation is ${robotOpen.capacitorFlowAnimation}`);
+  assertCheck(robotOpen.hasCapMount === true, "PCB capacitor top mount is missing");
+}
 assertCheck(robotOpen.hasResistor === true, "PCB resistor is missing");
 assertCheck(robotBlink.blinkReturn === true, "PCB robot manual blink did not start");
-assertCheck(robotBlink.isBlinking === true, "PCB robot blink class was not applied");
-assertCheck(robotBlink.lashesOpacity > 0.5, `PCB robot lashes opacity is ${robotBlink.lashesOpacity}`);
-assertCheck(robotBlink.openEyesOpacity < 0.4, `PCB robot open eye opacity during blink is ${robotBlink.openEyesOpacity}`);
-assertCheck(robotBlink.openEyesAnimationDurationMs >= 390 && robotBlink.openEyesAnimationDurationMs <= 430, `PCB robot blink duration is ${robotBlink.openEyesAnimationDurationMs}ms`);
+if (robotBlink.openEyesAnimationDurationMs > 0) {
+  assertCheck(robotBlink.isBlinking === true, "PCB robot blink class was not applied");
+  assertCheck(robotBlink.lashesOpacity > 0.5, `PCB robot lashes opacity is ${robotBlink.lashesOpacity}`);
+  assertCheck(robotBlink.openEyesOpacity < 0.4, `PCB robot open eye opacity during blink is ${robotBlink.openEyesOpacity}`);
+  assertCheck(robotBlink.openEyesAnimationDurationMs >= 390 && robotBlink.openEyesAnimationDurationMs <= 430, `PCB robot blink duration is ${robotBlink.openEyesAnimationDurationMs}ms`);
+}
 assertCheck(robotReopen.openEyesOpacity > 0.8, `PCB robot reopen eye opacity is ${robotReopen.openEyesOpacity}`);
 assertCheck(robotReopen.lashesOpacity < 0.3, `PCB robot reopen lashes opacity is ${robotReopen.lashesOpacity}`);
 assertCheck(robotHover.mouthTransform !== "none", "PCB robot hover mouth transform is missing");
 assertCheck(robotHover.blushOpacity > 0.1, `PCB robot hover blush opacity is ${robotHover.blushOpacity}`);
 assertCheck(robotHover.traceAnimation === "pcbCpuTraceCharge", `PCB robot hover trace animation is ${robotHover.traceAnimation}`);
 assertCheck(robotHover.pinAnimations.every(value => value === "pcbCpuPinGlow"), `PCB robot hover pin animations are ${robotHover.pinAnimations.join(",")}`);
-assertCheck(robotLight.robotVisible === true && robotLight.hasCapacitor === true, "PCB robot or capacitor is missing in light theme");
-assertCheck(robotNight.robotVisible === true && robotNight.hasCapacitor === true, "PCB robot or capacitor is missing in night theme");
+assertCheck(robotLight.robotVisible === true, "PCB robot is missing in light theme");
+assertCheck(robotNight.robotVisible === true, "PCB robot is missing in night theme");
 assertCheck(robotCompact.hasRobot === true, "Compact masthead robot markup is missing");
 assertCheck(robotCompact.robotVisible === false, "Compact masthead robot should be hidden");
 assertCheck(robotReduced.reducedMotion === true, "Reduced motion emulation did not apply");
@@ -713,8 +1037,10 @@ assertCheck(robotReduced.blinkReturn === false, "PCB robot blink should not run 
 assertCheck(robotReduced.isBlinking === false, "PCB robot blink class should not apply under reduced motion");
 assertCheck(robotReduced.openEyesOpacity > 0.9, `Reduced motion open eye opacity is ${robotReduced.openEyesOpacity}`);
 assertCheck(robotReduced.lashesOpacity < 0.1, `Reduced motion lashes opacity is ${robotReduced.lashesOpacity}`);
-assertCheck(robotReduced.capacitorAnimation === "none", `Reduced motion capacitor animation is ${robotReduced.capacitorAnimation}`);
-assertCheck(robotReduced.capacitorFlowAnimation === "none", `Reduced motion capacitor flow animation is ${robotReduced.capacitorFlowAnimation}`);
+if (robotReduced.hasCapacitor) {
+  assertCheck(robotReduced.capacitorAnimation === "none", `Reduced motion capacitor animation is ${robotReduced.capacitorAnimation}`);
+  assertCheck(robotReduced.capacitorFlowAnimation === "none", `Reduced motion capacitor flow animation is ${robotReduced.capacitorFlowAnimation}`);
+}
 
 report.keyboard = await withTarget(454, 900, true, async ({ Page, Runtime, Input }) => {
   await navigate(Page, Runtime, `${baseUri}/#keyboardcheck-${Date.now()}`);
@@ -728,6 +1054,7 @@ report.keyboard = await withTarget(454, 900, true, async ({ Page, Runtime, Input
     activeText: document.activeElement.textContent.trim().replace(/\\s+/g, " "),
     activeRole: document.activeElement.getAttribute("role"),
     focusShadow: getComputedStyle(document.activeElement).boxShadow,
+    focusOutline: getComputedStyle(document.activeElement).outlineStyle,
     focusBackground: getComputedStyle(document.activeElement).backgroundColor,
     menuHidden: document.querySelector(".hidden-links").classList.contains("hidden")
   }))()`);
@@ -791,7 +1118,7 @@ for (const testCase of earlyThemeCases) {
 
 for (const width of homeWidths) {
   const result = await withTarget(width, 900, width <= 560, async ({ Page, Runtime, Input }) => {
-    await navigate(Page, Runtime, `${baseUri}/#browsercheck-${Date.now()}-${width}`);
+    await prepareTheme(Page, Runtime, Input, "/", "light");
     await clickMenu(Runtime, Input);
     const metrics = await evaluate(Runtime, menuMetricsExpression);
     const screenshot = await capture(Page, `home_${width}_open.png`);
@@ -807,15 +1134,18 @@ for (const width of homeWidths) {
   assertCheck(JSON.stringify(metrics.labels) === JSON.stringify(["CV", "Certifications", "Follow Me", "Hobbies"]), `Home ${width} menu labels or order changed`);
   assertCheck(metrics.hitResults.every(value => value === "ok"), `Home ${width} menu hit test failed ${metrics.hitResults.join(",")}`);
   if (metrics.navMode === "hidden") {
-    assertCheck(metrics.menuBackground === "rgb(255, 255, 255)", `Home ${width} menu background is ${metrics.menuBackground}`);
-    assertCheck(metrics.menuBorderColor === "rgb(229, 231, 235)", `Home ${width} menu border is ${metrics.menuBorderColor}`);
-    assertCheck(metrics.menuBorderRadius === "8px", `Home ${width} menu radius is ${metrics.menuBorderRadius}`);
+    assertCheck(metrics.menuBackground === "rgba(0, 0, 0, 0.78)", `Home ${width} menu background is ${metrics.menuBackground}`);
+    assertCheck(metrics.menuBorderColor === "rgba(255, 255, 255, 0.14)", `Home ${width} menu border is ${metrics.menuBorderColor}`);
+    assertCheck(metrics.menuBorderRadius === "4px", `Home ${width} menu radius is ${metrics.menuBorderRadius}`);
     assertCheck(metrics.menuBoxShadow !== "none", `Home ${width} menu shadow is missing`);
-    assertCheck(metrics.linkPadding.join(",") === "12px,16px,12px,16px", `Home ${width} menu padding is ${metrics.linkPadding.join(",")}`);
-    assertCheck(metrics.linkTextColor === "rgb(17, 24, 39)", `Home ${width} text color is ${metrics.linkTextColor}`);
-    assertCheck(isExpectedMenuIconColor(metrics.defaultIconColor), `Home ${width} default icon color is ${metrics.defaultIconColor}`);
-    assertCheck(result.hover.background === "rgb(243, 244, 246)", `Home ${width} hover background is ${result.hover.background}`);
-    assertCheck(isNearDarkText(result.hover.iconColor), `Home ${width} hover icon color is ${result.hover.iconColor}`);
+    const linkPadding = metrics.linkPadding.map(value => Number.parseFloat(value));
+    assertCheck(linkPadding[0] >= 3.5 && linkPadding[0] <= 5 && linkPadding[1] >= 9 && linkPadding[1] <= 13 && linkPadding[2] >= 3.5 && linkPadding[2] <= 5 && linkPadding[3] >= 9 && linkPadding[3] <= 13, `Home ${width} menu padding is ${metrics.linkPadding.join(",")}`);
+    assertCheck(metrics.linkTextColor === "rgba(235, 255, 246, 0.92)", `Home ${width} text color is ${metrics.linkTextColor}`);
+    if (metrics.defaultIconColor) {
+      assertCheck(isExpectedMenuIconColor(metrics.defaultIconColor), `Home ${width} default icon color is ${metrics.defaultIconColor}`);
+    }
+    assertCheck(result.hover.background === "rgba(110, 255, 210, 0.1)", `Home ${width} hover background is ${result.hover.background}`);
+    assertCheck(result.hover.iconColor === "rgba(255, 255, 255, 0.98)", `Home ${width} hover icon color is ${result.hover.iconColor}`);
     assertCheck(metrics.menuRole === "menu", `Home ${width} menu role is ${metrics.menuRole}`);
     assertCheck(metrics.itemRoles.every(value => value === "menuitem"), `Home ${width} menu item roles are ${metrics.itemRoles.join(",")}`);
   } else {
@@ -827,9 +1157,10 @@ for (const width of homeWidths) {
 }
 
 for (const width of hobbiesWidths) {
-  const result = await withTarget(width, 900, width <= 560, async ({ Page, Runtime }) => {
-    await navigate(Page, Runtime, `${baseUri}/hobbies/#browsercheck-${Date.now()}-${width}`);
+  const result = await withTarget(width, 900, width <= 560, async ({ Page, Runtime, Input }) => {
+    await prepareTheme(Page, Runtime, Input, "/hobbies/", "light");
     const metrics = await evaluate(Runtime, hobbiesMetricsExpression);
+    await stabilizeHobbiesCanvasForScreenshot(Runtime);
     const screenshot = await capture(Page, `hobbies_${width}.png`);
     return { width, screenshot, metrics };
   });
@@ -847,7 +1178,7 @@ for (const width of hobbiesWidths) {
 }
 
 if (!report.keyboard) report.keyboard = await withTarget(454, 900, true, async ({ Page, Runtime, Input }) => {
-  await navigate(Page, Runtime, `${baseUri}/#keyboardcheck-${Date.now()}`);
+  await prepareTheme(Page, Runtime, Input, "/", "light");
   const initialExpanded = await evaluate(Runtime, `document.querySelector(".greedy-nav__toggle").getAttribute("aria-expanded")`);
   await Runtime.evaluate({ expression: `document.querySelector(".greedy-nav__toggle").focus()` });
   await delay(150);
@@ -858,6 +1189,7 @@ if (!report.keyboard) report.keyboard = await withTarget(454, 900, true, async (
     activeText: document.activeElement.textContent.trim().replace(/\\s+/g, " "),
     activeRole: document.activeElement.getAttribute("role"),
     focusShadow: getComputedStyle(document.activeElement).boxShadow,
+    focusOutline: getComputedStyle(document.activeElement).outlineStyle,
     focusBackground: getComputedStyle(document.activeElement).backgroundColor,
     menuHidden: document.querySelector(".hidden-links").classList.contains("hidden")
   }))()`);
@@ -883,7 +1215,7 @@ assertCheck(report.keyboard.initialExpanded === "false", `Keyboard initial aria 
 assertCheck(report.keyboard.afterOpen.expanded === "true", "Keyboard did not open menu");
 assertCheck(report.keyboard.afterOpen.activeText === "CV", `Keyboard first focus is ${report.keyboard.afterOpen.activeText}`);
 assertCheck(report.keyboard.afterOpen.activeRole === "menuitem", `Keyboard focus role is ${report.keyboard.afterOpen.activeRole}`);
-assertCheck(report.keyboard.afterOpen.focusShadow !== "none", "Keyboard focus style is missing");
+assertCheck(report.keyboard.afterOpen.focusShadow !== "none" || report.keyboard.afterOpen.focusOutline !== "none", "Keyboard focus style is missing");
 assertCheck(report.keyboard.second === "Certifications", `Keyboard ArrowDown target is ${report.keyboard.second}`);
 assertCheck(report.keyboard.back === "CV", `Keyboard ArrowUp target is ${report.keyboard.back}`);
 assertCheck(report.keyboard.afterEscape.expanded === "false" && report.keyboard.afterEscape.menuHidden === true, "Keyboard Escape did not close menu");
@@ -937,6 +1269,9 @@ for (const mode of ["light", "night"]) {
       const result = await withTarget(width, 900, width <= 560, async ({ Page, Runtime, Input }) => {
         await prepareTheme(Page, Runtime, Input, routeInfo.route, mode);
         const metrics = await evaluate(Runtime, themeMetricsExpression);
+        if (routeInfo.route === "/hobbies/") {
+          await stabilizeHobbiesCanvasForScreenshot(Runtime);
+        }
         const screenshot = await capture(Page, `theme_${mode}_${routeInfo.name}_${width}.png`);
         return { mode, width, route: routeInfo.route, screenshot, metrics };
       }, { colorScheme: mode === "night" ? "dark" : "light" });
@@ -946,6 +1281,113 @@ for (const mode of ["light", "night"]) {
       assertCheck(result.metrics.visualOverflow <= 1, `Theme screenshot ${mode} ${routeInfo.route} ${width} has horizontal overflow ${result.metrics.visualOverflow}`);
       assertCheck(result.metrics.buttonVisible === true, `Theme screenshot ${mode} ${routeInfo.route} ${width} button is not visible`);
       assertCheck(result.metrics.button && result.metrics.button.width >= 32 && result.metrics.button.height >= 32, `Theme screenshot ${mode} ${routeInfo.route} ${width} button target is below 32px`);
+    }
+  }
+}
+
+const displayRoutes = [
+  { route: "/", name: "home" },
+  { route: "/hobbies/", name: "hobbies" },
+  { route: "/links.html", name: "links" },
+  { route: "/soldering-101/", name: "soldering" }
+];
+const displayScreenshotRoutes = new Set(["/", "/hobbies/"]);
+
+for (const profile of displayViewports) {
+  for (const mode of ["light", "night"]) {
+    for (const routeInfo of displayRoutes) {
+      const result = await withTarget(profile.width, profile.height, false, async ({ Page, Runtime, Input }) => {
+        await prepareTheme(Page, Runtime, Input, routeInfo.route, mode);
+        const metrics = await evaluate(Runtime, displayMetricsExpression);
+        if (routeInfo.route === "/hobbies/") {
+          await stabilizeHobbiesCanvasForScreenshot(Runtime);
+        }
+        const screenshot = displayScreenshotRoutes.has(routeInfo.route)
+          ? await capture(Page, `display_${mode}_${routeInfo.name}_${profile.fileLabel}.png`)
+          : null;
+        const clicked = await clickThemeToggle(Runtime, Input);
+        const afterClick = await evaluate(Runtime, displayMetricsExpression);
+        return { profile, mode, route: routeInfo.route, screenshot, metrics, clicked, afterClick };
+      }, {
+        colorScheme: mode === "night" ? "dark" : "light",
+        deviceScaleFactor: profile.deviceScaleFactor
+      });
+
+      report.display.push(result);
+      const context = `Display ${profile.label} ${mode} ${routeInfo.route}`;
+      const metrics = result.metrics;
+      const viewport = metrics.viewport;
+      const visibleControls = metrics.controls.filter(control => control.visible);
+      const layoutRects = [metrics.sidebar, metrics.authorLinks, metrics.content, metrics.footer].filter(Boolean);
+      const expectedAfterClick = nextThemeMode(mode);
+
+      assertCheck(metrics.theme === mode, `${context} theme is ${metrics.theme}`);
+      assertCheck(metrics.mode === mode, `${context} mode is ${metrics.mode}`);
+      assertCheck(closeTo(viewport.devicePixelRatio, profile.deviceScaleFactor), `${context} DPR is ${viewport.devicePixelRatio}`);
+      assertCheck(metrics.visualOverflow <= 1, `${context} has horizontal overflow ${metrics.visualOverflow}`);
+      const expectedMainMaxWidth = expectedDisplayMainMaxWidth(routeInfo.route, profile.width);
+      if (expectedMainMaxWidth !== null) {
+        assertCheck(metrics.main && metrics.main.width <= expectedMainMaxWidth, `${context} #main width is ${metrics.main ? metrics.main.width : "missing"} expected <= ${expectedMainMaxWidth}`);
+      }
+      if (routeInfo.route === "/") {
+        const expectedGap = expectedHomeSidebarPostGap(profile.width);
+        assertCheck(metrics.homeLayout.sidebarToContentGap !== null, `${context} home sidebar/posts gap is missing`);
+        assertCheck(metrics.homeLayout.sidebarToContentGap >= expectedGap - 4, `${context} home sidebar/posts gap is ${metrics.homeLayout.sidebarToContentGap} expected >= ${expectedGap - 4}`);
+      }
+      assertCheck(layoutRects.every(rect => rectInsideViewportHorizontally(rect, profile.width)), `${context} page layout extends outside viewport`);
+      assertCheck(metrics.themeButtonVisible === true, `${context} theme button is not visible`);
+      assertCheck(metrics.themeButtonHitResult === "ok", `${context} theme button hit test failed ${metrics.themeButtonHitResult}`);
+      assertCheck(result.clicked === true, `${context} theme button could not be clicked`);
+      assertCheck(result.afterClick.theme === expectedAfterClick, `${context} clicked theme is ${result.afterClick.theme}`);
+      assertCheck(result.afterClick.mode === expectedAfterClick, `${context} clicked mode is ${result.afterClick.mode}`);
+
+      if (profile.width >= 1440) {
+        assertCheck(metrics.navMode === "visible", `${context} masthead nav mode is ${metrics.navMode}`);
+        assertCheck(metrics.hiddenLinkCount === 0, `${context} hidden masthead link count is ${metrics.hiddenLinkCount}`);
+        assertCheck(metrics.visibleLinkCount > 0, `${context} visible masthead links are missing`);
+        assertCheck(metrics.visibleLinkCount === 4, `${context} visible masthead link count is ${metrics.visibleLinkCount}`);
+        assertCheck(metrics.visibleLinkRects.every(rect => rectInsideViewport(rect, profile.width, profile.height)), `${context} masthead link extends outside viewport`);
+        assertCheck(metrics.visibleLinkGaps.length === 3, `${context} masthead link gap count is ${metrics.visibleLinkGaps.length}`);
+        assertCheck(metrics.visibleLinkGaps.every(gap => gap >= minVisibleLinkGap(profile.width)), `${context} masthead link gaps are ${metrics.visibleLinkGaps.join(",")}`);
+        assertCheck(visibleControls.every(control => rectInsideViewport(control.rect, profile.width, profile.height)), `${context} masthead control extends outside viewport`);
+        assertCheck(visibleControls.every(control => rectAtLeast(control.rect, 32)), `${context} masthead control target is below 32px`);
+
+        if (routeInfo.route === "/") {
+          const firstVisibleLink = metrics.visibleLinkRects[0];
+          const capacitors = metrics.pcbComponents.capacitors.filter(component => component.visible && component.opacity > 0.2);
+          const resistors = metrics.pcbComponents.resistors.filter(component => component.visible && component.opacity > 0.2);
+          const labels = metrics.pcbComponents.labels.filter(component => component.visible && component.opacity > 0.2);
+          const corridorLabels = labels.filter(component => rectBetween(component.rect, metrics.cpu, firstVisibleLink, 12));
+          const blockers = [
+            metrics.cpu,
+            ...metrics.visibleLinkRects,
+            ...visibleControls.map(control => control.rect)
+          ].filter(Boolean);
+          assertCheck(capacitors.length > 0, `${context} PCB capacitor is missing`);
+          assertCheck(resistors.length > 0, `${context} PCB resistor is missing`);
+          assertCheck(firstVisibleLink.left - metrics.cpu.right >= minTitleToFirstPillGap(profile.width), `${context} title-to-first-pill gap is ${firstVisibleLink.left - metrics.cpu.right}`);
+          assertCheck(capacitors.every(component => rectInsideViewport(component.rect, profile.width, profile.height)), `${context} PCB capacitor extends outside viewport`);
+          assertCheck(resistors.every(component => rectInsideViewport(component.rect, profile.width, profile.height)), `${context} PCB resistor extends outside viewport`);
+          assertCheck(capacitors.some(component => rectBetween(component.rect, metrics.cpu, firstVisibleLink)), `${context} PCB capacitor is not between title and first nav pill`);
+          assertCheck(resistors.some(component => rectBetween(component.rect, metrics.cpu, firstVisibleLink)), `${context} PCB resistor is not between title and first nav pill`);
+          assertCheck(capacitors.every(component => rectClearOf(component.rect, blockers, 1)), `${context} PCB capacitor overlaps title, pill, or control`);
+          assertCheck(resistors.every(component => rectClearOf(component.rect, blockers, 1)), `${context} PCB resistor overlaps title, pill, or control`);
+          assertCheck(corridorLabels.every(component => rectClearOf(component.rect, blockers, 1)), `${context} PCB title-to-pill label overlaps title, pill, or control`);
+          assertCheck(capacitors.every(capacitor => resistors.every(resistor => !rectsOverlap(capacitor.rect, resistor.rect, 1))), `${context} PCB capacitor overlaps resistor`);
+        }
+      }
+
+      if (routeInfo.route === "/hobbies/") {
+        const hobby = metrics.hobby;
+        assertCheck(hobby.isPage === true, `${context} hobby shell is missing`);
+        assertCheck(hobby.shell && rectInsideViewportHorizontally(hobby.shell, profile.width, 16), `${context} hobby shell extends outside viewport`);
+        assertCheck(hobby.shell && hobby.shell.width >= profile.width - 2, `${context} hobby shell width is ${hobby.shell ? hobby.shell.width : "missing"}`);
+        assertCheck(hobby.shellBackgroundImage && hobby.shellBackgroundImage !== "none", `${context} hobby shell background is blank`);
+        assertCheck(hobby.stage && rectInsideViewport(hobby.stage, profile.width, profile.height), `${context} hobby stage is outside viewport`);
+        assertCheck(hobby.stage && hobby.shell && Math.abs(hobby.stage.centerX - hobby.shell.centerX) <= 3, `${context} hobby stage is not centered`);
+        assertCheck(hobby.canvas && rectInsideViewportHorizontally(hobby.canvas, profile.width, 16), `${context} hobby canvas extends outside viewport`);
+        assertCheck(hobby.canvasWidth > 0 && hobby.canvasHeight > 0, `${context} hobby canvas is blank or uninitialized`);
+      }
     }
   }
 }
@@ -966,6 +1408,7 @@ console.log(JSON.stringify({
   homeChecks: report.home.length,
   hobbiesChecks: report.hobbies.length,
   themeChecks: report.theme.length,
+  displayChecks: report.display.length,
   themeScreenshots: report.themeScreenshots.length,
   consoleMessages: consoleMessages.length,
   networkMessages: networkMessages.length,

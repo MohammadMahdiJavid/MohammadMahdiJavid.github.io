@@ -5,6 +5,7 @@ param(
   [ValidateSet("Auto", "Chrome", "Edge", "Chromium")]
   [string]$Browser = "Auto",
   [string]$OutputDirectory = "",
+  [string[]]$DisplayViewports = @("1920x1080@1", "2560x1440@1", "3440x1440@1", "3840x2160@1", "1920x1080@2", "2560x1440@1.5"),
   [switch]$SkipBuild,
   [switch]$SkipBrowser,
   [switch]$SkipScreenshots,
@@ -45,6 +46,7 @@ try {
     $BrowserArgs = @{
       BaseUri = $BaseUri
       Browser = $Browser
+      DisplayViewports = $DisplayViewports
     }
 
     if ($OutputDirectory) {

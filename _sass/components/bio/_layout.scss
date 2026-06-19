@@ -1,17 +1,59 @@
 .layout--home {
+  --home-main-top-gap: 24px;
+  --home-main-max-width: 1280px;
+  --home-sidebar-width: 280px;
+  --home-content-gap: clamp(72px, 5vw, 104px);
+  --home-posts-max-width: 900px;
+
   @include breakpoint($large) {
     #main {
+      display: grid;
+      grid-template-columns: minmax(15.5rem, var(--home-sidebar-width)) minmax(0, 1fr);
+      column-gap: var(--home-content-gap);
+      align-items: start;
+      box-sizing: border-box;
+      width: 100%;
+      max-width: var(--home-main-max-width);
       min-height: 40rem;
+      padding-top: var(--home-main-top-gap);
     }
 
     .archive {
-      width: calc(100% - #{$right-sidebar-width} - 1rem);
+      float: none;
+      width: auto;
+      max-width: var(--home-posts-max-width);
+      margin-top: 0;
+      padding-right: 0;
     }
 
     .sidebar.sticky {
+      float: none;
+      width: auto;
       height: auto;
       min-height: 40rem;
       overflow-y: visible;
+    }
+
+    .sidebar > *:first-child {
+      margin-top: 0;
+    }
+
+    .archive__subtitle {
+      margin-top: 0;
+    }
+
+    .list__item + .list__item {
+      margin-top: clamp(2.25rem, 3vw, 3.25rem);
+    }
+
+    .archive__item-title {
+      margin-top: 0;
+      margin-bottom: 0.32em;
+    }
+
+    .archive__item-excerpt {
+      max-width: 50rem;
+      line-height: 1.55;
     }
 
     .author__urls {
@@ -30,6 +72,18 @@
       }
     }
 
+    .author__content {
+      margin-top: 1.25rem;
+    }
+
+    .author__bio {
+      margin-bottom: 1.45rem;
+    }
+
+    .author__urls-wrapper {
+      margin-top: 1.65rem;
+    }
+
     .author__avatar {
       text-align: center;
 
@@ -44,5 +98,19 @@
         max-width: 132px;
       }
     }
+  }
+
+  @media (min-width: 1440px) {
+    --home-main-top-gap: clamp(30px, 2.2vw, 44px);
+    --home-main-max-width: min(90vw, 1520px);
+    --home-sidebar-width: 292px;
+    --home-content-gap: clamp(112px, 6.5vw, 180px);
+    --home-posts-max-width: 960px;
+  }
+
+  @media (min-width: 2200px) {
+    --home-main-max-width: min(78vw, 1720px);
+    --home-content-gap: clamp(170px, 7vw, 260px);
+    --home-posts-max-width: 1000px;
   }
 }

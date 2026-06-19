@@ -288,6 +288,26 @@ classes: hobbies-quest
     background: rgba(255, 255, 255, 0.5);
   }
 
+  @media (max-width: 560px) {
+    .hq-stage {
+      width: min(100%, 100vw);
+      padding: 12px;
+      box-sizing: border-box;
+    }
+
+    .hq-footer {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 8px;
+    }
+
+    .hq-btn {
+      width: 100%;
+      min-width: 0;
+      padding: 10px;
+    }
+  }
+
   .hq-hint {
     margin-top: 8px;
     font-size: 12px;
@@ -296,6 +316,10 @@ classes: hobbies-quest
   }
 
   /* Dark mode: keep it cute, not neon */
+  html[data-theme="night"] #hobby-quest {
+    color-scheme: dark;
+  }
+
   @media (prefers-color-scheme: dark) {
     #hobby-quest {
       background:

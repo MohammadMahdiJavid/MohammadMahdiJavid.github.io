@@ -37,6 +37,7 @@ In coordinated multi-agent mode, agents should not run `pages-local.ps1`, `build
 .\scripts\pages-local.ps1 -Mode Serve -Port 4000
 .\scripts\verify-pages.ps1 -SkipBuild -Port 4000
 .\scripts\verify-pages.ps1 -Port 4000 -KeepServer
+.\scripts\verify-pages.ps1 -Port 4000 -KeepServer -DisplayViewports "3440x1440@1","1920x1080@2"
 ```
 
 `Build` installs dependencies when needed and builds the Jekyll site.
@@ -92,6 +93,14 @@ Verifies generated HTML, CSS, and JavaScript tokens after a Pages build.
 `verify-browser-pages.ps1`
 
 Runs headless Chrome or Edge visual, DOM, keyboard, console, network, and target size checks. Screenshots and reports are written under `verification-artifacts`.
+
+Wide and high-DPI profiles use `WIDTHxHEIGHT@DPR` syntax. Defaults cover `1920x1080@1`, `2560x1440@1`, `3440x1440@1`, `3840x2160@1`, `1920x1080@2`, and `2560x1440@1.5`.
+
+```powershell
+.\scripts\verify-browser-pages.ps1 -SkipVisualValidation
+.\scripts\verify-browser-pages.ps1 -DisplayViewports "3440x1440@1","1920x1080@2"
+.\scripts\verify-browser-pages.ps1 -DisplayViewports "3440x1440@1" -SkipScreenshots -SkipVisualValidation
+```
 
 `verify-visual-artifacts.ps1`
 

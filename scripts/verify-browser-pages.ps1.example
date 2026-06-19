@@ -7,12 +7,15 @@
 # .\scripts\verify-browser-pages.ps1 -BaseUri http://127.0.0.1:4000
 # .\scripts\verify-browser-pages.ps1 -Browser Chrome
 # .\scripts\verify-browser-pages.ps1 -OutputDirectory verification-artifacts\manual-check
+# .\scripts\verify-browser-pages.ps1 -DisplayViewports "3440x1440@1","1920x1080@2"
+# .\scripts\verify-browser-pages.ps1 -DisplayViewports "3440x1440@1" -SkipScreenshots -SkipVisualValidation
 # .\scripts\verify-browser-pages.ps1 -UpdateVisualBaselines
 #
 # Useful options
 # -BaseUri chooses the local site URL.
 # -Browser chooses Auto, Chrome, Edge, or Chromium.
 # -OutputDirectory chooses where reports and screenshots are written.
+# -DisplayViewports chooses wide and high-DPI cases using WIDTHxHEIGHT@DPR syntax.
 # -SkipScreenshots skips screenshot capture.
 # -SkipVisualValidation skips visual artifact validation.
 # -VisualBaselineDirectory chooses a baseline folder.
@@ -26,3 +29,4 @@
 # Notes
 # Prefer verify-pages.ps1 for full local verification.
 # This script expects a running local server.
+# Default display profiles include 3440x1440@1 for 34-inch ultrawide WQHD and high-DPI DPR cases.

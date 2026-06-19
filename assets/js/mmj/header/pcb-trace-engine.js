@@ -129,13 +129,44 @@
     function buildSilkscreen(svgRoot, w, h, anchors = {}) {
       const yTop = anchors.yTop ?? math.snap(math.clamp(h * 0.20, 10, 18));
       const yBot = anchors.yBot ?? math.snap(math.clamp(h * 0.82, h - 18, h - 10));
+      const mastRect = root.getBoundingClientRect();
+      const titleBox = elementBox(root.querySelector(".site-title.pcb-cpu"), mastRect);
+      const firstVisibleLink = Array.from(root.querySelectorAll(".greedy-nav .visible-links a"))
+        .find((el) => {
+          const r = el.getBoundingClientRect();
+          return !!el.offsetParent && r.width > 0 && r.height > 0;
+        });
+      const firstLinkBox = elementBox(firstVisibleLink, mastRect);
+      const gapStart = titleBox ? titleBox.right : null;
+      const gapEnd = firstLinkBox ? firstLinkBox.x : null;
+      const centerGapWidth = gapStart !== null && gapEnd !== null ? gapEnd - gapStart : 0;
       const resH = math.snap(math.clamp(h * 0.28, 20, 34));
       const resW = math.snap(resH * resistorRenderer.RESISTOR_ASPECT);
-      const resX = math.snap(math.clamp(w * 0.34, 10, w - resW - 10));
-      const resY = math.snap(math.clamp(yBot - (resH * resistorRenderer.RESISTOR_LEAD_END_Y), 8, h - resH - 8));
       const componentGap = math.snap(math.clamp(w * 0.018, 10, 18));
       const CAPACITOR_LEFT_NUDGE = 8;
       const CAPACITOR_MIN_R2_CLEARANCE = 5;
+      const capGapEstimate = math.snap(Math.max(CAPACITOR_MIN_R2_CLEARANCE, componentGap - CAPACITOR_LEFT_NUDGE));
+      const capHEstimate = capacitorRenderer ? math.snap(math.clamp(h * 0.24, 24, 31)) : 0;
+      const capWEstimate = capacitorRenderer ? math.snap(capHEstimate * capacitorRenderer.CAPACITOR_ASPECT) : 0;
+      const corridorStartPad = centerGapWidth > 0 ? math.snap(math.clamp(centerGapWidth * 0.08, 18, 36)) : 0;
+      const corridorEndPad = centerGapWidth > 0 ? math.snap(math.clamp(centerGapWidth * 0.07, 20, 40)) : 0;
+      const corridorStart = gapStart !== null ? math.snap(gapStart + corridorStartPad) : null;
+      const corridorEnd = gapEnd !== null ? math.snap(gapEnd - corridorEndPad) : null;
+      const corridorWidth = corridorStart !== null && corridorEnd !== null ? corridorEnd - corridorStart : 0;
+      const pairWidthEstimate = resW + capGapEstimate + capWEstimate;
+      const canPlaceResistorInCorridor = corridorWidth >= resW;
+      const canPlacePairInCorridor = capacitorRenderer && corridorWidth >= pairWidthEstimate;
+      const defaultResX = math.snap(math.clamp(w * 0.34, 10, w - resW - 10));
+      const placedWidthEstimate = canPlacePairInCorridor ? pairWidthEstimate : resW;
+      const corridorSlack = Math.max(0, corridorWidth - placedWidthEstimate);
+      const resX = canPlaceResistorInCorridor
+        ? math.snap(math.clamp(
+          corridorStart + corridorSlack * 0.18,
+          corridorStart,
+          corridorEnd - resW
+        ))
+        : defaultResX;
+      const resY = math.snap(math.clamp(yBot - (resH * resistorRenderer.RESISTOR_LEAD_END_Y), 8, h - resH - 8));
 
       function boxForDims(dims) {
         return {
@@ -206,13 +237,13 @@
       function shouldRenderCapacitor(capDims, capLabelBox, fixedComps) {
         if (!isInsideMasthead(boxForDims(capDims)) || !isInsideMasthead(capLabelBox)) return false;
 
-        const mastRect = root.getBoundingClientRect();
         const blockers = [];
         const blockedElements = new Set([
           cpu,
           root.querySelector(".site-title.pcb-cpu"),
           ...root.querySelectorAll(".greedy-nav .visible-links a"),
           ...root.querySelectorAll(".greedy-nav .search__toggle"),
+          ...root.querySelectorAll(".greedy-nav .theme__toggle"),
           ...root.querySelectorAll(".greedy-nav .greedy-nav__toggle"),
           ...state.ioMap.values()
         ].filter(Boolean));
@@ -252,10 +283,10 @@
           8,
           h - capH - 8
         ));
-        const nextComponentX = w * 0.56;
-        const hasRoomBesideResistor =
-          capX + capW <= nextComponentX - componentGap &&
-          capX + capW <= w - 10;
+        const nextComponentX = canPlaceResistorInCorridor ? corridorEnd : w * 0.56;
+        const hasRoomBesideResistor = canPlaceResistorInCorridor
+          ? canPlacePairInCorridor && capX + capW <= nextComponentX
+          : capX + capW <= nextComponentX - componentGap && capX + capW <= w - 10;
 
         const candidate = {
           x: capX,
