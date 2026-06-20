@@ -2,10 +2,20 @@
   to { stroke-dashoffset: -280; }
 }
 
+@keyframes pcb-footer-packet {
+  to { stroke-dashoffset: -148; }
+}
+
 @keyframes pcb-footer-via {
-  0%, 85% { opacity: 0.6; transform: scale(0.98); }
-  90% { opacity: 1; transform: scale(1.08); }
-  100% { opacity: 0.6; transform: scale(0.98); }
+  0%, 85%, 100% {
+    opacity: 0.62;
+    filter: drop-shadow(0 0 4px rgba(144, 255, 230, 0.55));
+  }
+
+  90% {
+    opacity: 1;
+    filter: drop-shadow(0 0 10px rgba(144, 255, 230, 0.9));
+  }
 }
 
 @keyframes pcb-footer-sensor {
@@ -46,10 +56,16 @@
 @media (prefers-reduced-motion: reduce) {
   .pcb-footer__background::before,
   .pcb-footer__trace--pulse,
+  .pcb-footer__trace--packet,
   .pcb-footer__via--blink,
   .pcb-footer__sensor::after,
   .pcb-footer__led,
   .pcb-footer__io-dot {
     animation: none !important;
+  }
+
+  .pcb-footer__trace--packet {
+    opacity: 0.32;
+    stroke-dashoffset: 0;
   }
 }

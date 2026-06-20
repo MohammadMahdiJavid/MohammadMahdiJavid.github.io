@@ -5,28 +5,55 @@
         <stop offset="0%" stop-color="#7fffd4" stop-opacity="0.9" />
         <stop offset="100%" stop-color="#7fffd4" stop-opacity="0" />
       </linearGradient>
+      <linearGradient id="pcb-footer-packet" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="#baffef" stop-opacity="0" />
+        <stop offset="45%" stop-color="#baffef" stop-opacity="1" />
+        <stop offset="100%" stop-color="#44d7b6" stop-opacity="0" />
+      </linearGradient>
     </defs>
-    <path class="pcb-footer__trace" d="M160 200 H360" />
-    <path class="pcb-footer__trace" d="M360 200 Q480 200 540 140 T720 140" />
-    <path class="pcb-footer__trace" d="M720 140 H1000" />
-    <path class="pcb-footer__trace" d="M360 200 Q520 200 620 240 T840 240" />
-    <path class="pcb-footer__trace pcb-footer__trace--branch" d="M720 140 Q800 80 940 80" />
-    <path class="pcb-footer__trace pcb-footer__trace--branch" d="M840 240 Q960 260 1100 260" />
-    <path class="pcb-footer__trace pcb-footer__trace--pulse" d="M160 200 H360 Q520 200 620 240 T840 240" />
-    <path class="pcb-footer__trace pcb-footer__trace--pulse" d="M360 200 Q480 200 540 140 T720 140 H1000" />
-    <circle class="pcb-footer__via" cx="360" cy="200" r="3" />
-    <circle class="pcb-footer__via" cx="540" cy="140" r="3" />
-    <circle class="pcb-footer__via" cx="620" cy="240" r="3" />
-    <circle class="pcb-footer__via" cx="720" cy="140" r="3" />
-    <circle class="pcb-footer__via" cx="840" cy="240" r="3" />
-    <circle class="pcb-footer__via pcb-footer__via--blink" cx="940" cy="80" r="3" />
-    <circle class="pcb-footer__via pcb-footer__via--blink" cx="1100" cy="260" r="3" />
-    <text x="170" y="188" class="pcb-footer__silk">CLK</text>
-    <text x="400" y="188" class="pcb-footer__silk">IO-A</text>
-    <text x="585" y="132" class="pcb-footer__silk">BUS</text>
-    <text x="640" y="252" class="pcb-footer__silk">UART</text>
-    <text x="920" y="92" class="pcb-footer__silk">DATA2</text>
-    <text x="1020" y="252" class="pcb-footer__silk">CAN</text>
+    <g class="pcb-footer__trace-layer pcb-footer__trace-layer--base">
+      <path class="pcb-footer__trace" d="M350 172 C390 170 420 128 455 128" />
+      <path class="pcb-footer__trace" d="M350 226 C390 228 420 224 455 224" />
+      <path class="pcb-footer__trace" d="M715 128 C770 126 810 150 850 150" />
+      <path class="pcb-footer__trace" d="M715 224 C765 230 808 228 850 224" />
+      <path class="pcb-footer__trace pcb-footer__trace--branch" d="M715 128 C790 88 880 76 948 78" />
+      <path class="pcb-footer__trace pcb-footer__trace--branch" d="M715 224 C850 266 990 278 1120 276" />
+      <path class="pcb-footer__trace pcb-footer__trace--aux" d="M520 128 C558 96 580 78 600 78" />
+      <path class="pcb-footer__trace pcb-footer__trace--aux" d="M350 244 V286" />
+      <path class="pcb-footer__trace pcb-footer__trace--aux" d="M1088 150 C1110 136 1098 116 1072 102" />
+      <path class="pcb-footer__trace pcb-footer__trace--aux" d="M715 224 C765 196 804 188 838 188" />
+    </g>
+    <g class="pcb-footer__trace-layer pcb-footer__trace-layer--active">
+      <path class="pcb-footer__trace pcb-footer__trace--active" d="M350 172 C390 170 420 128 455 128" />
+      <path class="pcb-footer__trace pcb-footer__trace--active" d="M350 226 C390 228 420 224 455 224" />
+      <path class="pcb-footer__trace pcb-footer__trace--active" d="M715 128 C770 126 810 150 850 150" />
+      <path class="pcb-footer__trace pcb-footer__trace--active" d="M715 224 C765 230 808 228 850 224" />
+      <path class="pcb-footer__trace pcb-footer__trace--active pcb-footer__trace--branch" d="M715 128 C790 88 880 76 948 78" />
+      <path class="pcb-footer__trace pcb-footer__trace--active pcb-footer__trace--branch" d="M715 224 C850 266 990 278 1120 276" />
+    </g>
+    <g class="pcb-footer__trace-layer pcb-footer__trace-layer--packets">
+      <path class="pcb-footer__trace pcb-footer__trace--packet pcb-footer__trace--packet-a" d="M350 172 C390 170 420 128 455 128" />
+      <path class="pcb-footer__trace pcb-footer__trace--packet pcb-footer__trace--packet-b" d="M350 226 C390 228 420 224 455 224" />
+      <path class="pcb-footer__trace pcb-footer__trace--packet pcb-footer__trace--packet-c" d="M715 128 C790 88 880 76 948 78" />
+      <path class="pcb-footer__trace pcb-footer__trace--packet pcb-footer__trace--packet-d" d="M715 224 C850 266 990 278 1120 276" />
+      <path class="pcb-footer__trace pcb-footer__trace--packet pcb-footer__trace--packet-e" d="M715 128 C770 126 810 150 850 150" />
+      <path class="pcb-footer__trace pcb-footer__trace--packet pcb-footer__trace--packet-f" d="M715 224 C765 230 808 228 850 224" />
+    </g>
+    <g class="pcb-footer__node-layer">
+      <circle class="pcb-footer__via pcb-footer__node--endpoint" cx="350" cy="172" r="3.5" />
+      <circle class="pcb-footer__via pcb-footer__node--endpoint" cx="350" cy="226" r="3.5" />
+      <circle class="pcb-footer__via pcb-footer__node--endpoint" cx="455" cy="128" r="3" />
+      <circle class="pcb-footer__via pcb-footer__node--endpoint" cx="455" cy="224" r="3" />
+      <circle class="pcb-footer__via pcb-footer__node--endpoint" cx="715" cy="128" r="3" />
+      <circle class="pcb-footer__via pcb-footer__node--endpoint" cx="715" cy="224" r="3" />
+      <circle class="pcb-footer__via pcb-footer__node--endpoint pcb-footer__via--blink pcb-footer__via--data2" cx="948" cy="78" r="3.5" />
+      <circle class="pcb-footer__via pcb-footer__node--endpoint" cx="850" cy="150" r="3.5" />
+      <circle class="pcb-footer__via pcb-footer__node--endpoint" cx="850" cy="224" r="3.5" />
+      <circle class="pcb-footer__via pcb-footer__node--endpoint" cx="600" cy="78" r="3" />
+      <circle class="pcb-footer__via pcb-footer__node--endpoint" cx="350" cy="286" r="3" />
+      <circle class="pcb-footer__via pcb-footer__node--endpoint" cx="1072" cy="102" r="3" />
+      <circle class="pcb-footer__via pcb-footer__node--endpoint pcb-footer__via--blink pcb-footer__via--can" cx="1120" cy="276" r="3.5" />
+    </g>
   </svg>
   <div class="pcb-footer__components">
     <span class="pcb-footer__resistor" aria-hidden="true"></span>
