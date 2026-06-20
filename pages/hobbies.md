@@ -38,6 +38,11 @@ classes: hobbies-quest
     display: none !important;
   }
 
+  body.hobbies-quest {
+    overflow-x: hidden;
+    overflow-x: clip;
+  }
+
   /* Minimal Mistakes content wrappers (safe to override only on this page) */
   body.hobbies-quest #main,
   body.hobbies-quest .initial-content,
@@ -47,22 +52,60 @@ classes: hobbies-quest
     max-width: none !important;
   }
 
+  body.hobbies-quest #main {
+    width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  body.hobbies-quest .initial-content {
+    padding-bottom: 0 !important;
+  }
+
+  body.hobbies-quest .page {
+    float: none;
+    width: 100%;
+    padding-right: 0;
+  }
+
+  body.hobbies-quest .page__inner-wrap,
+  body.hobbies-quest .page__content {
+    float: none;
+    clear: none;
+    width: 100%;
+    margin: 0;
+  }
+
+  body.hobbies-quest .page__inner-wrap {
+    margin-top: 0;
+  }
+
   body.hobbies-quest .page__content {
     padding-top: 0 !important;
     padding-bottom: 0 !important;
   }
 
+  body.hobbies-quest .pcb-footer {
+    border-top: 0;
+    box-shadow: none;
+  }
+
   /* --- The component --- */
   #hobby-quest {
     position: relative;
-    width: 100vw;
+    width: 100%;
+    max-width: none;
     min-height: 100vh;
-    margin-left: calc(50% - 50vw);
+    min-height: 100svh;
+    margin: 0;
     overflow: hidden;
-    border-radius: 22px;
+    border-radius: 0;
     isolation: isolate;
     display: grid;
     place-items: center;
+    box-sizing: border-box;
 
     /* Cute animated background (kept subtle) */
     background:
