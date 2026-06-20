@@ -1,3 +1,13 @@
+.sidebar {
+  .author__name {
+    font-size: 0.8em;
+  }
+
+  .author__bio {
+    font-size: 0.6em;
+  }
+}
+
 .layout--home {
   --home-main-top-gap: 24px;
   --home-main-max-width: 1280px;
@@ -70,7 +80,7 @@
       .author__url-link,
       .author__url-text {
         gap: 0.42em;
-        font-size: 0.72rem;
+        font-size: 0.576rem;
         line-height: 1.28;
       }
 
