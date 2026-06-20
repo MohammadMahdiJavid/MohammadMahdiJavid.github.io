@@ -1,11 +1,21 @@
 .layout--home {
   --home-main-top-gap: 24px;
   --home-main-max-width: 1280px;
+  --home-rail-inline-padding: 1em;
   --home-sidebar-width: 280px;
   --home-content-gap: clamp(72px, 5vw, 104px);
   --home-posts-max-width: 900px;
 
   @include breakpoint($large) {
+    .masthead.pcb-masthead {
+      --pcb-header-content-max: var(--home-main-max-width);
+      --home-title-rail-shift: calc(var(--home-rail-inline-padding) - var(--pcb-header-inline-gap));
+    }
+
+    .masthead.pcb-masthead .site-title.pcb-cpu {
+      margin-left: var(--home-title-rail-shift);
+    }
+
     #main {
       display: grid;
       grid-template-columns: minmax(15.5rem, var(--home-sidebar-width)) minmax(0, 1fr);
@@ -96,6 +106,25 @@
         margin-left: auto;
         margin-right: auto;
         max-width: 132px;
+      }
+    }
+
+    .pcb-footer__content {
+      box-sizing: border-box;
+      grid-template-columns: minmax(15.5rem, var(--home-sidebar-width)) minmax(0, 1fr) minmax(0, 1fr);
+      column-gap: var(--home-content-gap);
+      width: 100%;
+      max-width: min(var(--home-main-max-width), calc(100vw - 2rem));
+      padding-inline: var(--home-rail-inline-padding);
+    }
+
+    .pcb-footer__chip {
+      justify-self: center;
+    }
+
+    @media (max-width: 1439px) {
+      .pcb-footer__chip {
+        transform: translateX(calc(-1 * clamp(24px, 2.6vw, 34px)));
       }
     }
   }

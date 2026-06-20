@@ -188,12 +188,12 @@ function shouldIgnoreUrl(value) {
   return !value || String(value).endsWith("/favicon.ico");
 }
 
-function isCanceledManifestAbort(event, value) {
+function isCanceledLocalAssetAbort(event, value) {
   try {
     return !!event.canceled &&
       event.errorText === "net::ERR_ABORTED" &&
-      event.type === "Manifest" &&
-      new URL(value).pathname.endsWith("/site.webmanifest");
+      (event.type === "Manifest" || event.type === "Image") &&
+      new URL(value).origin === new URL(baseUri).origin;
   } catch (error) {
     return false;
   }
@@ -266,7 +266,7 @@ async function withTarget(width, height, mobile, callback, options = {}) {
 
     Network.loadingFailed(event => {
       const url = requestUrls.get(event.requestId) || "";
-      if (!shouldIgnoreUrl(url) && isLocalUrl(url) && !isCanceledManifestAbort(event, url)) {
+      if (!shouldIgnoreUrl(url) && isLocalUrl(url) && !isCanceledLocalAssetAbort(event, url)) {
         networkMessages.push({
           type: "loadingFailed",
           width,
@@ -321,6 +321,34 @@ async function capture(Page, name) {
   const file = path.join(outputDir, name);
   fs.writeFileSync(file, Buffer.from(png.data, "base64"));
   return file;
+}
+
+async function stabilizeVisualMotionForScreenshot(Runtime) {
+  if (skipScreenshots) return;
+  await Runtime.evaluate({
+    expression: `(() => {
+      let style = document.getElementById("browser-verify-static-motion");
+      if (!style) {
+        style = document.createElement("style");
+        style.id = "browser-verify-static-motion";
+        document.head.appendChild(style);
+      }
+      style.textContent = [
+        "html.browser-verify-static-motion *,",
+        "html.browser-verify-static-motion *::before,",
+        "html.browser-verify-static-motion *::after {",
+        "  animation: none !important;",
+        "  transition: none !important;",
+        "  caret-color: transparent !important;",
+        "}"
+      ].join("\\n");
+      document.documentElement.classList.add("browser-verify-static-motion");
+      document.querySelectorAll(".is-blinking").forEach(element => element.classList.remove("is-blinking"));
+      return true;
+    })()`,
+    awaitPromise: true,
+    returnByValue: true
+  });
 }
 
 async function stabilizeHobbiesCanvasForScreenshot(Runtime) {
@@ -542,6 +570,12 @@ function expectedHomeSidebarPostGap(width) {
   return Math.min(Math.max(width * 0.05, 72), 104);
 }
 
+function maxCenterDelta(centers) {
+  const values = centers.filter(value => Number.isFinite(value));
+  if (values.length < 2) return Infinity;
+  return Math.max(...values) - Math.min(...values);
+}
+
 function closeTo(value, expected, tolerance = 0.01) {
   return Math.abs(Number(value) - Number(expected)) <= tolerance;
 }
@@ -702,6 +736,7 @@ const displayMetricsExpression = `(() => {
   const authorLinks = document.querySelector(".author__urls");
   const content = document.querySelector(".page__content, .archive");
   const footer = document.querySelector(".page__footer");
+  const footerChip = document.querySelector(".pcb-footer__chip");
   const hobby = document.querySelector("#hobby-quest");
   const hobbyStage = document.querySelector(".hq-stage");
   const hobbyCanvas = document.querySelector("#hq-bg");
@@ -771,8 +806,14 @@ const displayMetricsExpression = `(() => {
     authorLinks: rect(authorLinks),
     content: contentRect,
     footer: rect(footer),
+    footerChip: rect(footerChip),
     homeLayout: {
-      sidebarToContentGap: sidebarRect && contentRect ? contentRect.left - sidebarRect.right : null
+      sidebarToContentGap: sidebarRect && contentRect ? contentRect.left - sidebarRect.right : null,
+      leftRailCenters: {
+        headerTitle: cpu ? rect(cpu).centerX : null,
+        bioColumn: sidebarRect ? sidebarRect.centerX : null,
+        footerCpu: footerChip ? rect(footerChip).centerX : null
+      }
     },
     themeButtonVisible: isVisible(theme),
     themeButtonHitResult: theme && themeHitElement && (themeHitElement === theme || theme.contains(themeHitElement)) ? "ok" : (themeHitElement ? themeHitElement.tagName + "." + String(themeHitElement.className) : "none"),
@@ -936,7 +977,7 @@ report.robot.states = await withTarget(1024, 720, false, async ({ Page, Runtime,
   const blink = await evaluate(Runtime, robotMetricsExpression);
   blink.blinkReturn = blinkReturn;
   const blinkScreenshot = await capture(Page, "robot_blink.png");
-  await delay(190);
+  await delay(320);
   const reopen = await evaluate(Runtime, robotMetricsExpression);
   reopen.blinkReturn = blinkReturn;
   const reopenScreenshot = await capture(Page, "robot_reopen.png");
@@ -1121,6 +1162,7 @@ for (const width of homeWidths) {
     await prepareTheme(Page, Runtime, Input, "/", "light");
     await clickMenu(Runtime, Input);
     const metrics = await evaluate(Runtime, menuMetricsExpression);
+    await stabilizeVisualMotionForScreenshot(Runtime);
     const screenshot = await capture(Page, `home_${width}_open.png`);
     await hoverSecondMenuItem(Runtime, Input);
     const hover = await evaluate(Runtime, hoverMetricsExpression);
@@ -1160,6 +1202,7 @@ for (const width of hobbiesWidths) {
   const result = await withTarget(width, 900, width <= 560, async ({ Page, Runtime, Input }) => {
     await prepareTheme(Page, Runtime, Input, "/hobbies/", "light");
     const metrics = await evaluate(Runtime, hobbiesMetricsExpression);
+    await stabilizeVisualMotionForScreenshot(Runtime);
     await stabilizeHobbiesCanvasForScreenshot(Runtime);
     const screenshot = await capture(Page, `hobbies_${width}.png`);
     return { width, screenshot, metrics };
@@ -1269,6 +1312,7 @@ for (const mode of ["light", "night"]) {
       const result = await withTarget(width, 900, width <= 560, async ({ Page, Runtime, Input }) => {
         await prepareTheme(Page, Runtime, Input, routeInfo.route, mode);
         const metrics = await evaluate(Runtime, themeMetricsExpression);
+        await stabilizeVisualMotionForScreenshot(Runtime);
         if (routeInfo.route === "/hobbies/") {
           await stabilizeHobbiesCanvasForScreenshot(Runtime);
         }
@@ -1299,8 +1343,11 @@ for (const profile of displayViewports) {
       const result = await withTarget(profile.width, profile.height, false, async ({ Page, Runtime, Input }) => {
         await prepareTheme(Page, Runtime, Input, routeInfo.route, mode);
         const metrics = await evaluate(Runtime, displayMetricsExpression);
-        if (routeInfo.route === "/hobbies/") {
-          await stabilizeHobbiesCanvasForScreenshot(Runtime);
+        if (displayScreenshotRoutes.has(routeInfo.route)) {
+          await stabilizeVisualMotionForScreenshot(Runtime);
+          if (routeInfo.route === "/hobbies/") {
+            await stabilizeHobbiesCanvasForScreenshot(Runtime);
+          }
         }
         const screenshot = displayScreenshotRoutes.has(routeInfo.route)
           ? await capture(Page, `display_${mode}_${routeInfo.name}_${profile.fileLabel}.png`)
@@ -1333,6 +1380,10 @@ for (const profile of displayViewports) {
         const expectedGap = expectedHomeSidebarPostGap(profile.width);
         assertCheck(metrics.homeLayout.sidebarToContentGap !== null, `${context} home sidebar/posts gap is missing`);
         assertCheck(metrics.homeLayout.sidebarToContentGap >= expectedGap - 4, `${context} home sidebar/posts gap is ${metrics.homeLayout.sidebarToContentGap} expected >= ${expectedGap - 4}`);
+        const railCenters = metrics.homeLayout.leftRailCenters || {};
+        const leftRailDelta = maxCenterDelta([railCenters.headerTitle, railCenters.bioColumn, railCenters.footerCpu]);
+        assertCheck(metrics.footerChip && rectInsideViewportHorizontally(metrics.footerChip, profile.width), `${context} footer CPU card extends outside viewport`);
+        assertCheck(Number.isFinite(leftRailDelta) && leftRailDelta <= 14, `${context} left rail centers drift by ${leftRailDelta}: ${JSON.stringify(railCenters)}`);
       }
       assertCheck(layoutRects.every(rect => rectInsideViewportHorizontally(rect, profile.width)), `${context} page layout extends outside viewport`);
       assertCheck(metrics.themeButtonVisible === true, `${context} theme button is not visible`);
