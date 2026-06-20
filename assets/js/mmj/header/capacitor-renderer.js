@@ -9,6 +9,9 @@
   const CAPACITOR_VIEWBOX = "0 0 24 24";
   const CAPACITOR_ASPECT = 1;
   const CAPACITOR_LEAD_END_Y = 22.45 / 24;
+  const BASE_LIGHTING_SPEED_MIN_MS = 1600;
+  const BASE_LIGHTING_SPEED_RANGE_MS = 1300;
+  const LIGHTING_FREQUENCY_MULTIPLIER = 3;
 
   function computeComponentBox(comp) {
     const math = header.math;
@@ -120,7 +123,8 @@
     orientation.appendChild(fx);
     capacitor.appendChild(orientation);
 
-    const speed = 1600 + Math.random() * 1300;
+    const baseSpeed = BASE_LIGHTING_SPEED_MIN_MS + Math.random() * BASE_LIGHTING_SPEED_RANGE_MS;
+    const speed = baseSpeed / LIGHTING_FREQUENCY_MULTIPLIER;
     const phase = -Math.random() * speed;
 
     capacitor.style.setProperty("--cap-speed", `${speed}ms`);

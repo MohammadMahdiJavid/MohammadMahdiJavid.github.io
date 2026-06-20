@@ -9,6 +9,7 @@
 
 .masthead.pcb-masthead {
   --pcb-cap-alpha: 1;
+  --pcb-cap-lighting-speed: 733.333ms;
   --pcb-cap-body: rgba(198, 246, 224, 0.98);
   --pcb-cap-body-hot: rgba(255, 236, 178, 0.96);
   --pcb-cap-lead: rgba(230, 178, 86, 0.96);
@@ -103,7 +104,7 @@
   filter:
     drop-shadow(0 0 8px rgba(110, 255, 210, 0.18))
     drop-shadow(0 0 12px rgba(255, 236, 178, 0.16));
-  animation: pcbCapBodyGlow var(--cap-speed, 2200ms) ease-in-out infinite;
+  animation: pcbCapBodyGlow var(--cap-speed, var(--pcb-cap-lighting-speed)) ease-in-out infinite;
   animation-delay: calc(var(--cap-phase, 0ms) + 80ms);
 }
 
@@ -119,7 +120,7 @@
   filter:
     drop-shadow(0 0 8px rgba(255, 215, 120, 0.30))
     drop-shadow(0 0 12px rgba(255, 240, 190, 0.18));
-  animation: pcbCapCurrent var(--cap-speed, 2200ms) linear infinite;
+  animation: pcbCapCurrent var(--cap-speed, var(--pcb-cap-lighting-speed)) linear infinite;
   animation-delay: var(--cap-phase, 0ms);
 }
 
@@ -129,7 +130,7 @@
   filter:
     drop-shadow(0 0 10px rgba(110, 255, 210, 0.16))
     drop-shadow(0 0 14px rgba(255, 215, 120, 0.10));
-  animation: pcbCapRimGlow var(--cap-speed, 2200ms) ease-in-out infinite;
+  animation: pcbCapRimGlow var(--cap-speed, var(--pcb-cap-lighting-speed)) ease-in-out infinite;
   animation-delay: var(--cap-phase, 0ms);
 }
 
@@ -145,7 +146,7 @@
   filter:
     drop-shadow(0 0 8px rgba(255, 240, 190, 0.28))
     drop-shadow(0 0 12px rgba(110, 255, 210, 0.16));
-  animation: pcbCapRimFlow var(--cap-speed, 2200ms) linear infinite;
+  animation: pcbCapRimFlow var(--cap-speed, var(--pcb-cap-lighting-speed)) linear infinite;
   animation-delay: var(--cap-phase, 0ms);
 }
 
@@ -155,7 +156,7 @@
   filter:
     drop-shadow(0 0 8px rgba(110, 255, 210, 0.22))
     drop-shadow(0 0 12px rgba(255, 215, 120, 0.10));
-  animation: pcbCapSideGlow var(--cap-speed, 2200ms) ease-in-out infinite;
+  animation: pcbCapSideGlow var(--cap-speed, var(--pcb-cap-lighting-speed)) ease-in-out infinite;
   animation-delay: calc(var(--cap-phase, 0ms) + 120ms);
 }
 
@@ -166,7 +167,7 @@
   filter:
     drop-shadow(0 0 8px rgba(255, 236, 178, 0.34))
     drop-shadow(0 0 12px rgba(110, 255, 210, 0.14));
-  animation: pcbCapLeadGlow var(--cap-speed, 2200ms) ease-in-out infinite;
+  animation: pcbCapLeadGlow var(--cap-speed, var(--pcb-cap-lighting-speed)) ease-in-out infinite;
   animation-delay: calc(var(--cap-phase, 0ms) + 180ms);
 }
 
@@ -176,7 +177,7 @@
   filter:
     drop-shadow(0 0 7px rgba(255, 236, 178, 0.30))
     drop-shadow(0 0 10px rgba(110, 255, 210, 0.12));
-  animation: pcbCapPolarityGlow var(--cap-speed, 2200ms) ease-in-out infinite;
+  animation: pcbCapPolarityGlow var(--cap-speed, var(--pcb-cap-lighting-speed)) ease-in-out infinite;
   animation-delay: calc(var(--cap-phase, 0ms) + 220ms);
 }
 
