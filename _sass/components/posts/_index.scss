@@ -7,14 +7,23 @@
   --home-post-rule-color: #d2d7dc;
 
   .archive__subtitle {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
     max-width: 68ch;
-    margin: 0 0 1.05rem;
-    padding-bottom: 0.55rem;
-    border-bottom: 1px solid var(--home-post-rule-color);
+    margin: 0 0 1.2rem;
     color: var(--home-post-heading-color);
     font-size: 1rem;
     font-weight: 700;
     line-height: 1.25;
+    white-space: nowrap;
+  }
+
+  .archive__subtitle::after {
+    content: "";
+    flex: 1 1 auto;
+    min-width: 2rem;
+    border-bottom: 1px solid var(--home-post-rule-color);
   }
 
   .list__item {

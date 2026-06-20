@@ -119,8 +119,8 @@
   }
 
   @media (min-width: 1024px) and (max-width: 1439px) {
-    --pcb-nav-pill-gap: clamp(22px, 1.8vw, 32px);
-    --pcb-nav-pill-end-buffer: clamp(16px, 1.4vw, 32px);
+    --pcb-nav-pill-gap: clamp(30px, 2.6vw, 40px);
+    --pcb-nav-pill-end-buffer: clamp(24px, 2vw, 42px);
 
     .greedy-nav .visible-links a {
       margin-left: 0;
@@ -129,8 +129,8 @@
   }
 
   @media (min-width: 1440px) {
-    --pcb-nav-pill-gap: clamp(30px, 2vw, 48px);
-    --pcb-nav-pill-end-buffer: clamp(28px, 1.8vw, 64px);
+    --pcb-nav-pill-gap: clamp(44px, 3vw, 64px);
+    --pcb-nav-pill-end-buffer: clamp(42px, 2.6vw, 80px);
 
     .greedy-nav {
       min-height: 5rem;
@@ -156,8 +156,8 @@
   }
 
   @media (min-width: 2200px) {
-    --pcb-nav-pill-gap: clamp(42px, 1.55vw, 60px);
-    --pcb-nav-pill-end-buffer: clamp(48px, 2vw, 92px);
+    --pcb-nav-pill-gap: clamp(56px, 2.6vw, 76px);
+    --pcb-nav-pill-end-buffer: clamp(64px, 2.8vw, 108px);
   }
 }
 
