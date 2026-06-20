@@ -1,1 +1,110 @@
-/* Posts component styles are currently provided by Minimal Mistakes. */
+.layout--home {
+  --home-post-heading-color: #3f4650;
+  --home-post-title-color: #343b45;
+  --home-post-title-hover-color: #0f766e;
+  --home-post-meta-color: #66717c;
+  --home-post-excerpt-color: #2f3742;
+  --home-post-rule-color: #d2d7dc;
+
+  .archive__subtitle {
+    max-width: 68ch;
+    margin: 0 0 1.05rem;
+    padding-bottom: 0.55rem;
+    border-bottom: 1px solid var(--home-post-rule-color);
+    color: var(--home-post-heading-color);
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.25;
+  }
+
+  .list__item {
+    max-width: 68ch;
+  }
+
+  .list__item + .list__item {
+    margin-top: clamp(44px, 4vw, 56px);
+  }
+
+  .archive__item-title {
+    margin: 0 0 0.28rem;
+    font-family: $sans-serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+    line-height: 1.22;
+  }
+
+  .archive__item-title a {
+    color: var(--home-post-title-color);
+    text-decoration-line: underline;
+    text-decoration-thickness: 0.045em;
+    text-underline-offset: 0.11em;
+  }
+
+  .archive__item-title a:hover,
+  .archive__item-title a:focus {
+    color: var(--home-post-title-hover-color);
+    text-decoration-thickness: 0.07em;
+  }
+
+  .list__item .page__meta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.24rem;
+    margin: 0 0 0.38rem;
+    color: var(--home-post-meta-color);
+    font-size: 0.8rem;
+    line-height: 1.35;
+  }
+
+  .archive__item-excerpt {
+    max-width: 68ch;
+    margin: 0;
+    color: var(--home-post-excerpt-color);
+    font-size: 0.95rem;
+    line-height: 1.58;
+  }
+
+  @include breakpoint($large) {
+    .archive__subtitle {
+      font-size: 0.9rem;
+    }
+
+    .archive__item-title {
+      font-size: 1.15rem;
+    }
+
+    .list__item .page__meta {
+      font-size: 0.62rem;
+    }
+
+    .archive__item-excerpt {
+      font-size: 0.78rem;
+    }
+  }
+}
+
+html[data-theme="night"] .layout--home {
+  --home-post-heading-color: #9fb5ad;
+  --home-post-title-color: #5ee6c2;
+  --home-post-title-hover-color: #76ffd2;
+  --home-post-meta-color: #9bb1a8;
+  --home-post-excerpt-color: #c4d3cc;
+  --home-post-rule-color: rgba(185, 215, 205, 0.34);
+
+  .archive__item-title a {
+    color: var(--home-post-title-color);
+  }
+
+  .archive__item-title a:hover,
+  .archive__item-title a:focus {
+    color: var(--home-post-title-hover-color);
+  }
+
+  .list__item .page__meta {
+    color: var(--home-post-meta-color);
+  }
+
+  .archive__item-excerpt {
+    color: var(--home-post-excerpt-color);
+  }
+}

@@ -58,24 +58,6 @@
       margin-top: 0;
     }
 
-    .archive__subtitle {
-      margin-top: 0;
-    }
-
-    .list__item + .list__item {
-      margin-top: clamp(2.25rem, 3vw, 3.25rem);
-    }
-
-    .archive__item-title {
-      margin-top: 0;
-      margin-bottom: 0.32em;
-    }
-
-    .archive__item-excerpt {
-      max-width: 50rem;
-      line-height: 1.55;
-    }
-
     .author__urls {
       .author__url-link,
       .author__url-text {
